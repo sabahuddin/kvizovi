@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biljke u Kur'anu - Kviz</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Lora', serif;
+            background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #065f46 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        
+        .quiz-header { text-align: center; margin-bottom: 3rem; }
+        
+        .quiz-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle { font-size: 1.3rem; color: #d1fae5; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #fbbf24;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        .back-link:hover { color: #f59e0b; transform: translateX(-5px); }
+        
+        .quiz-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .start-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        .start-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.05);
+        }
+        
+        .quiz-screen { display: none; }
+        .quiz-screen.active { display: block; }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .question-count { font-size: 1.3rem; color: #d1fae5; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 0.75rem;
+            background: rgba(16, 185, 129, 0.3);
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transition: width 0.5s;
+        }
+        
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .question-text {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .answers-grid { display: grid; gap: 1rem; }
+        
+        .answer-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(110, 231, 183, 0.5);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        .answer-btn:hover:not(:disabled) {
+            background: rgba(16, 185, 129, 0.5);
+            transform: scale(1.02);
+        }
+        .answer-btn:disabled { cursor: not-allowed; }
+        .answer-btn.correct { background: #10b981; border-color: #34d399; }
+        .answer-btn.incorrect { background: #ef4444; border-color: #f87171; }
+        .answer-btn.show-correct { background: rgba(16, 185, 129, 0.3); border-color: #34d399; }
+        .answer-btn.faded {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .explanation-box {
+            background: rgba(251, 191, 36, 0.2);
+            border: 2px solid rgba(251, 191, 36, 0.5);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation-box.show { display: block; animation: fadeIn 0.5s; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .explanation-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .explanation-icon { font-size: 2.5rem; }
+        .explanation-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
+        .explanation-text { color: #fef3c7; font-size: 1.1rem; line-height: 1.6; }
+        
+        .next-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1.5rem;
+            transition: all 0.3s;
+        }
+        .next-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.02);
+        }
+        
+        .result-screen { display: none; text-align: center; padding: 3rem; }
+        .result-screen.active { display: block; }
+        
+        .result-emoji {
+            font-size: 6rem;
+            margin-bottom: 2rem;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .result-message { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 2rem; }
+        .result-score { font-size: 4rem; font-weight: bold; color: #fbbf24; margin-bottom: 1rem; }
+        .result-percentage { font-size: 2rem; color: #d1fae5; margin-bottom: 3rem; }
+        
+        .result-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .reset-btn, .home-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .reset-btn:hover, .home-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .subtitle { font-size: 1.1rem; }
+            .question-text { font-size: 1.4rem; }
+            .answer-btn { font-size: 1.1rem; padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="welcomeScreen">
+        <a href="index.html" class="back-link">← Nazad na Home</a>
+        
+        <div class="quiz-header">
+            <div class="quiz-icon">🌿</div>
+            <h1>Biljke u Kur'anu</h1>
+            <p class="subtitle">Testirajte znanje o biljkama i plodovima spomenutim u Časnom Kur'anu</p>
+        </div>
+        
+        <div class="quiz-info">
+            <p style="font-size: 1.3rem; margin-bottom: 1rem;">
+                <strong>25</strong> pitanja
+            </p>
+            <p style="color: #d1fae5; margin-bottom: 0.5rem;">
+                ⚡ Svaki put drugačiji raspored pitanja!
+            </p>
+            <p style="color: #d1fae5;">
+                Hurma, maslina, smokva, grožđe, zekkum i mnoge druge
+            </p>
+            <button class="start-btn" onclick="startQuiz()">🎯 Započni kviz</button>
+        </div>
+    </div>
+    
+    <div class="container quiz-screen" id="quizScreen">
+        <a href="index.html" class="back-link">← Nazad na Home</a>
+        
+        <div class="progress-info">
+            <div class="question-count" id="questionCount"></div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-text" id="questionText"></div>
+            <div class="answers-grid" id="answersGrid"></div>
+        </div>
+        
+        <div class="explanation-box" id="explanationBox">
+            <div class="explanation-header">
+                <span class="explanation-icon" id="explanationIcon"></span>
+                <h3 class="explanation-title" id="explanationTitle"></h3>
+            </div>
+            <p class="explanation-text" id="explanationText"></p>
+            <button class="next-btn" onclick="nextQuestion()">Sljedeće pitanje</button>
+        </div>
+    </div>
+    
+    <div class="container result-screen" id="resultScreen">
+        <div class="result-emoji" id="resultEmoji"></div>
+        <h2 class="result-message" id="resultMessage"></h2>
+        <div class="result-score" id="resultScore"></div>
+        <p class="result-percentage" id="resultPercentage"></p>
+        <div class="result-buttons">
+            <button class="reset-btn" onclick="location.reload()">
+                <span>↻</span> Ponovi kviz
+            </button>
+            <a href="index.html" class="home-btn">
+                <span>🏠</span> Nazad na Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            { type: 'truefalse', question: 'Da li je hurma spomenuta u Kur\'anu?', answer: true, explanation: 'Tačno! Hurma je spomenuta u suri Maryam (19:25), gdje Allah naređuje hazreti Merjemi da protrese stablo urme.' },
+            { type: 'truefalse', question: 'Da li je jabuka spomenuta u Kur\'anu?', answer: false, explanation: 'Netačno! Jabuka nije direktno spomenuta u Kur\'anu.' },
+            { type: 'truefalse', question: 'Da li je maslina spomenuta u Kur\'anu?', answer: true, explanation: 'Tačno! Maslina je spomenuta u suri Et-Tīn (95:1), gdje se Allah kune smokvom i maslinom.' },
+            { type: 'truefalse', question: 'Da li je ruža spomenuta u Kur\'anu?', answer: false, explanation: 'Netačno! Ruža nije spomenuta u Kur\'anu.' },
+            { type: 'truefalse', question: 'Da li je smokva spomenuta u Kur\'anu?', answer: true, explanation: 'Tačno! Smokva je spomenuta uz maslinu u suri Et-Tīn (95:1).' },
+            { type: 'truefalse', question: 'Da li je narandža spomenuta u Kur\'anu?', answer: false, explanation: 'Netačno! Narandža nije spomenuta u Kur\'anu.' },
+            { type: 'truefalse', question: 'Da li je grožđe spomenuto u Kur\'anu?', answer: true, explanation: 'Tačno! Grožđe je spomenuto u suri El-Mu\'minūn (23:19) kao dio vrtova koje Allah daje ljudima.' },
+            { type: 'truefalse', question: 'Da li je breskva spomenuta u Kur\'anu?', answer: false, explanation: 'Netačno! Breskva nije spomenuta u Kur\'anu.' },
+            { type: 'truefalse', question: 'Da li je đumbir spomenut u Kur\'anu?', answer: true, explanation: 'Tačno! Đumbir je spomenut kao okus pića u Džennetu (El-Insān, 76:17).' },
+            { type: 'truefalse', question: 'Da li je lala spomenuta u Kur\'anu?', answer: false, explanation: 'Netačno! Lala nije spomenuta u Kur\'anu.' },
+            { type: 'multiple', question: 'Koja biljka je izrasla iznad Junusa, a.s., nakon što ga je kit izbacio?', options: ['Tikva', 'Grožđe', 'Smokva', 'Dinja'], answer: 'Tikva', explanation: 'Tačno! Tikva (yaqtīn) je izrasla iznad Junusa, a.s., kako bi mu pravila hlad (Es-Sāffāt, 37:146).' },
+            { type: 'multiple', question: 'Koje drvo je spomenuto kao simbol Džehennema?', options: ['Zekkum', 'Tamaris', 'Smokva', 'Hrast'], answer: 'Zekkum', explanation: 'Tačno! Zekkum je strašno drvo u Džehennemu koje će biti hrana grješnicima (Ed-Duhān, 44:43-44).' },
+            { type: 'multiple', question: 'Koje voće će biti u džennetskim baščama?', options: ['Limun', 'Nar (šipak)', 'Breskva', 'Kruška'], answer: 'Nar (šipak)', explanation: 'Tačno! Nar je spomenut kao plod koji će se nalaziti u džennetskim baščama (Er-Rahmān, 55:68).' },
+            { type: 'multiple', question: 'Koja biljka je korištena u metafori o dobročinstvu?', options: ['Pšenica', 'Kukuruz', 'Raž', 'Ječam'], answer: 'Pšenica', explanation: 'Tačno! Pšenica (zrno) je korištena u metafori o onima koji daju na Allahovom putu (El-Bekara, 2:261).' },
+            { type: 'multiple', question: 'Koje povrće su tražili sinovi Israilovi od Musaa, a.s.?', options: ['Paradajz i paprika', 'Krastavci, bijeli luk, leća i crveni luk', 'Kupus i mrkva', 'Kelj i spanać'], answer: 'Krastavci, bijeli luk, leća i crveni luk', explanation: 'Tačno! Tražili su povrće koje zemlja rađa: krastavce, bijeli luk, leću i crveni luk (El-Bekara, 2:61).' },
+            { type: 'multiple', question: 'Gdje raste maslina koja je posebno spomenuta?', options: ['U Mekki', 'Na Sinajskoj gori', 'U Medini', 'U Palestini'], answer: 'Na Sinajskoj gori', explanation: 'Tačno! Maslina koja raste na Sinajskoj gori (Tūr Sinā) je posebno spomenuta (El-Mu\'minūn, 23:20).' },
+            { type: 'multiple', question: 'Šta se spominje kao mirisno bilje?', options: ['Bosiljak (rayhān)', 'Nana', 'Lavanda', 'Kamilica'], answer: 'Bosiljak (rayhān)', explanation: 'Tačno! Bosiljak (rayhān) je spomenut kao mirisno bilje u suri Er-Rahmān (55:12).' },
+            { type: 'multiple', question: 'Koja biljka se spominje kao hrana stanovnicima Džehennema?', options: ['Obična trava', 'Gorka trava (darī\')', 'Trnje', 'Korov'], answer: 'Gorka trava (darī\')', explanation: 'Tačno! Darī\' je vrsta gorke, trnovite biljke koja će biti hrana stanovnicima Džehennema (El-Gāšije, 88:6).' },
+            { type: 'multiple', question: 'Što se spominje kao okus pića u Džennetu pored đumbira?', options: ['Vanila', 'Kamfor (kāfūr)', 'Cimet', 'Med'], answer: 'Kamfor (kāfūr)', explanation: 'Tačno! Kamfor je spomenut kao mješavina u džennetskim peharima (El-Insān, 76:5).' },
+            { type: 'multiple', question: 'Koliko klasova nikne iz jednog zrna u metafori o davanju?', options: ['Tri', 'Pet', 'Sedam', 'Deset'], answer: 'Sedam', explanation: 'Tačno! Iz jednog zrna nikne sedam klasova u metafori o onima koji daju na Allahovom putu (El-Bekara, 2:261).' },
+            { type: 'truefalse', question: 'Da li je banana spomenuta u Kur\'anu?', answer: true, explanation: 'Tačno! Banana (talh) je spomenuta kao džennetsko voće nanizano jedno do drugog (El-Wāqi\'a, 56:29).' },
+            { type: 'truefalse', question: 'Da li se lotosovo drvo spominje u Kur\'anu?', answer: true, explanation: 'Tačno! Lotosovo drvo (sidr) se spominje kao "Sidretul-munteha" - granično drvo iznad sedmog neba (En-Nedžm, 53:14).' },
+            { type: 'truefalse', question: 'Da li je gorušica spomenuta u Kur\'anu?', answer: true, explanation: 'Tačno! Zrno gorušice je spomenuto kao simbol nečeg najmanjeg što će Allah izvesti na vaganje (El-Enbijā\', 21:47).' },
+            { type: 'multiple', question: 'Koje drvo je zamijenilo plodne vrtove naroda Sebe\'?', options: ['Hrast', 'Tamaris', 'Bor', 'Jela'], answer: 'Tamaris', explanation: 'Tačno! Tamaris i drvo sa gorkim plodovima je zamijenilo plodne vrtove naroda Sebe\' (Sebe\', 34:16).' },
+            { type: 'multiple', question: 'Šta Allah spominje uz česticu kao primjer najmanjeg?', options: ['Zrno pijeska', 'Zrno gorušice', 'Prašinu', 'Kap vode'], answer: 'Zrno gorušice', explanation: 'Tačno! Zrno gorušice se spominje kao primjer nečeg veoma malog (Lukmān, 31:16; El-Enbijā\', 21:47).' }
+        ];
+
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function shuffleQuestionOptions(question) {
+            if (question.type === 'truefalse') {
+                return { ...question, options: shuffleArray(['Da', 'Ne']) };
+            }
+            return { ...question, options: shuffleArray(question.options) };
+        }
+        
+        function startQuiz() {
+            let shuffledQuestions = shuffleArray(allQuestions);
+            questions = shuffledQuestions.map(q => shuffleQuestionOptions(q));
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('quizScreen').classList.add('active');
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            const total = questions.length;
+            
+            document.getElementById('questionCount').textContent = `Pitanje ${currentQuestion + 1} / ${total}`;
+            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / total) * 100}%`;
+            document.getElementById('questionText').textContent = q.question;
+            
+            const answersGrid = document.getElementById('answersGrid');
+            answersGrid.innerHTML = '';
+            answersGrid.className = 'answers-grid';
+            
+            if (q.type === 'truefalse') {
+                answersGrid.style.gridTemplateColumns = '1fr 1fr';
+            } else {
+                answersGrid.style.gridTemplateColumns = '1fr';
+            }
+            
+            q.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option);
+                answersGrid.appendChild(btn);
+            });
+            
+            document.getElementById('explanationBox').classList.remove('show');
+        }
+        
+        function checkAnswer(userAnswer) {
+            const q = questions[currentQuestion];
+            let isCorrect;
+            
+            if (q.type === 'truefalse') {
+                isCorrect = (userAnswer === 'Da' && q.answer === true) || (userAnswer === 'Ne' && q.answer === false);
+            } else {
+                isCorrect = userAnswer === q.answer;
+            }
+            
+            if (isCorrect) score++;
+            
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                
+                let correctAnswer;
+                if (q.type === 'truefalse') {
+                    correctAnswer = q.answer ? 'Da' : 'Ne';
+                } else {
+                    correctAnswer = q.answer;
+                }
+                
+                if (btn.textContent === userAnswer) {
+                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                } else if (btn.textContent === correctAnswer) {
+                    btn.classList.add('show-correct');
+                } else {
+                    btn.classList.add('faded');
+                }
+            });
+            
+            document.getElementById('explanationIcon').textContent = isCorrect ? '✅' : '❌';
+            document.getElementById('explanationTitle').textContent = isCorrect ? 'Tačno!' : 'Netačno!';
+            document.getElementById('explanationText').textContent = q.explanation;
+            document.getElementById('explanationBox').classList.add('show');
+            
+            const nextBtn = document.querySelector('.next-btn');
+            nextBtn.textContent = currentQuestion < questions.length - 1 ? 'Sljedeće pitanje' : 'Prikaži rezultate';
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        function showResults() {
+            const percentage = Math.round((score / questions.length) * 100);
+            let message, emoji;
+            
+            if (percentage >= 90) {
+                message = 'Izvrsno! Mashallah!';
+                emoji = '🌟';
+            } else if (percentage >= 70) {
+                message = 'Vrlo dobro!';
+                emoji = '✨';
+            } else if (percentage >= 50) {
+                message = 'Dobro! Nastavite učiti.';
+                emoji = '📚';
+            } else {
+                message = 'Potrebno je više učenja.';
+                emoji = '💪';
+            }
+            
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.add('active');
+            
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultScore').textContent = `${score}/${questions.length}`;
+            document.getElementById('resultPercentage').textContent = `${percentage}% tačnih odgovora`;
+        }
+    </script>
+</body>
+</html>

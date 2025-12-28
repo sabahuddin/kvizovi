@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Osnove Islama - Kviz 1A</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lora', serif;
+            background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #065f46 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .quiz-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: #d1fae5;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #fbbf24;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            color: #f59e0b;
+            transform: translateX(-5px);
+        }
+        
+        .quiz-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .start-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .start-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.05);
+        }
+        
+        .quiz-screen {
+            display: none;
+        }
+        
+        .quiz-screen.active {
+            display: block;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .question-count {
+            font-size: 1.3rem;
+            color: #d1fae5;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 0.75rem;
+            background: rgba(16, 185, 129, 0.3);
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transition: width 0.5s;
+        }
+        
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .question-text {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .answers-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .answer-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(110, 231, 183, 0.5);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            text-align: left;
+        }
+        
+        .answer-btn:hover:not(:disabled) {
+            background: rgba(16, 185, 129, 0.5);
+            transform: scale(1.02);
+        }
+        
+        .answer-btn:disabled {
+            cursor: not-allowed;
+        }
+        
+        .answer-btn.correct {
+            background: #10b981;
+            border-color: #34d399;
+        }
+        
+        .answer-btn.incorrect {
+            background: #ef4444;
+            border-color: #f87171;
+        }
+        
+        .answer-btn.show-correct {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: #34d399;
+        }
+        
+        .answer-btn.faded {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .explanation-box {
+            background: rgba(251, 191, 36, 0.2);
+            border: 2px solid rgba(251, 191, 36, 0.5);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .explanation-box.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .explanation-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .explanation-icon {
+            font-size: 2.5rem;
+        }
+        
+        .explanation-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+        }
+        
+        .explanation-text {
+            color: #fef3c7;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .next-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .next-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.02);
+        }
+        
+        .result-screen {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .result-screen.active {
+            display: block;
+        }
+        
+        .result-emoji {
+            font-size: 6rem;
+            margin-bottom: 2rem;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .result-message {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .result-score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #fbbf24;
+            margin-bottom: 1rem;
+        }
+        
+        .result-percentage {
+            font-size: 2rem;
+            color: #d1fae5;
+            margin-bottom: 3rem;
+        }
+        
+        .result-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .reset-btn, .home-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .reset-btn:hover, .home-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .subtitle { font-size: 1.1rem; }
+            .question-text { font-size: 1.4rem; }
+            .answer-btn { font-size: 1.1rem; padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="welcomeScreen">
+        <a href="index.html" class="back-link">← Nazad na sve kvizove</a>
+        
+        <div class="quiz-header">
+            <div class="quiz-icon">📚</div>
+            <h1>Osnove Islama</h1>
+            <p class="subtitle">Testovi znanja o osnovama islamske vjere - Kviz 1A</p>
+        </div>
+        
+        <div class="quiz-info">
+            <p style="font-size: 1.3rem; margin-bottom: 1rem;">
+                <strong>20</strong> pitanja
+            </p>
+            <p style="color: #d1fae5; margin-bottom: 0.5rem;">
+                ⚡ Svaki put drugačiji raspored pitanja!
+            </p>
+            <p style="color: #d1fae5;">
+                Testirajte znanje o vjeri, poslaniku, osnovama islama
+            </p>
+            <button class="start-btn" onclick="startQuiz()">🎯 Započni kviz</button>
+        </div>
+    </div>
+    
+    <div class="container quiz-screen" id="quizScreen">
+        <a href="#" class="back-link" onclick="location.reload()">← Nazad na početak</a>
+        
+        <div class="progress-info">
+            <div class="question-count" id="questionCount"></div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-text" id="questionText"></div>
+            <div class="answers-grid" id="answersGrid"></div>
+        </div>
+        
+        <div class="explanation-box" id="explanationBox">
+            <div class="explanation-header">
+                <span class="explanation-icon" id="explanationIcon"></span>
+                <h3 class="explanation-title" id="explanationTitle"></h3>
+            </div>
+            <p class="explanation-text" id="explanationText"></p>
+            <button class="next-btn" onclick="nextQuestion()">Sljedeće pitanje</button>
+        </div>
+    </div>
+    
+    <div class="container result-screen" id="resultScreen">
+        <div class="result-emoji" id="resultEmoji"></div>
+        <h2 class="result-message" id="resultMessage"></h2>
+        <div class="result-score" id="resultScore"></div>
+        <p class="result-percentage" id="resultPercentage"></p>
+        <div class="result-buttons">
+            <button class="reset-btn" onclick="location.reload()">
+                <span>↻</span> Ponovi kviz
+            </button>
+            <a href="index.html" class="home-btn">
+                <span>🏠</span> Svi kvizovi
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // SVA PITANJA - 20 odabranih iz PDF-a
+        const allQuestions = [
+            {
+                question: 'Moja knjiga je',
+                options: ['Allah', 'Kur\'an', 'Islam', 'Muhammed a.s.'],
+                answer: 'Kur\'an',
+                explanation: 'Tačno! Naša sveta knjiga je Časni Kur\'an, koji je objavljen Muhammedu, s.a.v.s.'
+            },
+            {
+                question: 'Moja vjera je',
+                options: ['Allah dž.š.', 'Muhammed a.s.', 'Islam', 'Kur\'an'],
+                answer: 'Islam',
+                explanation: 'Tačno! Naša vjera se zove Islam.'
+            },
+            {
+                question: 'Moj Gospodar je',
+                options: ['Allah dž.š.', 'Muhammed a.s.', 'Davud a.s.', 'Islam'],
+                answer: 'Allah dž.š.',
+                explanation: 'Tačno! Naš Gospodar je Allah dž.š. (dželle šanuhu - Uzvišen neka je).'
+            },
+            {
+                question: 'Moj poslanik je',
+                options: ['Allah dž.š.', 'Muhammed a.s.', 'Kur\'an', 'Islam'],
+                answer: 'Muhammed a.s.',
+                explanation: 'Tačno! Naš poslanik je Muhammed, s.a.v.s. (sallallahu alejhi ve sellem).'
+            },
+            {
+                question: 'Islamski pozdrav je',
+                options: ['Selam', 'Zdravo', 'Ćao', 'Merhaba'],
+                answer: 'Selam',
+                explanation: 'Tačno! Islamski pozdrav je "Es-selamu alejkum" (Mir neka je s vama).'
+            },
+            {
+                question: 'Gdje najbolje naučimo o svojoj vjeri',
+                options: ['U školi', 'U mektebu', 'U obdaništu', 'U igraonici'],
+                answer: 'U mektebu',
+                explanation: 'Tačno! Mekteb je mjesto gdje djeca uče osnove islamske vjere.'
+            },
+            {
+                question: 'U mektebu o islamu učimo iz',
+                options: ['Ilmihala', 'Šuare', 'Takvima', 'Kur\'ana'],
+                answer: 'Ilmihala',
+                explanation: 'Tačno! Ilmihal je udžbenik u kojem učimo osnove islama.'
+            },
+            {
+                question: 'Osoba koja poučava djecu u mektebu',
+                options: ['Muallim', 'Imam', 'Muktedija', 'Mutevellija'],
+                answer: 'Muallim',
+                explanation: 'Tačno! Muallim je učitelj koji poučava djecu u mektebu.'
+            },
+            {
+                question: 'Mi smo po naciji',
+                options: ['Bošnjaci', 'Muslimani', 'Islami', 'Bosanci'],
+                answer: 'Bošnjaci',
+                explanation: 'Tačno! Po naciji smo Bošnjaci, a po vjeri muslimani.'
+            },
+            {
+                question: 'Mi smo po vjeri',
+                options: ['Bošnjaci', 'Muslimani', 'Islami', 'Bosanci'],
+                answer: 'Muslimani',
+                explanation: 'Tačno! Po vjeri smo muslimani (oni koji se pokoravaju Allahu).'
+            },
+            {
+                question: 'Allah dž.š. je islam objavio',
+                options: ['Samo Arapima', 'Samo Bošnjacima', 'Samo Turcima', 'Svim ljudima'],
+                answer: 'Svim ljudima',
+                explanation: 'Tačno! Islam je univerzalna vjera objavljena svim ljudima, ne samo jednom narodu.'
+            },
+            {
+                question: 'Allahova objava koja je objavljena Muhammedu a.s.',
+                options: ['Ilmihal', 'Tevrat', 'Indžil', 'Kur\'an'],
+                answer: 'Kur\'an',
+                explanation: 'Tačno! Kur\'an je posljednja Allahova objava, objavljena Muhammedu, s.a.v.s.'
+            },
+            {
+                question: 'Otac Muhammeda a.s. se zvao',
+                options: ['Abdullah', 'Abdul Muttalib', 'Ebu Talib', 'El Kasim'],
+                answer: 'Abdullah',
+                explanation: 'Tačno! Otac Poslanika Muhammeda, s.a.v.s., se zvao Abdullah.'
+            },
+            {
+                question: 'Djed Muhammeda a.s. se zvao',
+                options: ['Abdullah', 'Abdul Muttalib', 'Ebu Talib', 'El Kasim'],
+                answer: 'Abdul Muttalib',
+                explanation: 'Tačno! Djed Poslanika se zvao Abdul Muttalib.'
+            },
+            {
+                question: 'Majka Muhammeda a.s. se zvala',
+                options: ['Hatidža', 'Halima', 'Amina', 'Fatima'],
+                answer: 'Amina',
+                explanation: 'Tačno! Majka Poslanika se zvala Amina.'
+            },
+            {
+                question: 'Muhammed a.s. je rođen u',
+                options: ['Medini', 'Mekki', 'Benu Sad', 'Jesribu'],
+                answer: 'Mekki',
+                explanation: 'Tačno! Poslanik Muhammed, s.a.v.s., rođen je u Mekki, u Arabiji.'
+            },
+            {
+                question: 'Posljednji Allahov poslanik je',
+                options: ['Isa a.s.', 'Musa a.s.', 'Davud a.s.', 'Muhammed a.s.'],
+                answer: 'Muhammed a.s.',
+                explanation: 'Tačno! Muhammed, s.a.v.s., je posljednji Allahov poslanik (Hatemu-l-enbija).'
+            },
+            {
+                question: 'Prva sura u Kur\'anu je',
+                options: ['Rabbi Jessir', 'Subhaneke', 'El-Fatiha', 'En-Nas'],
+                answer: 'El-Fatiha',
+                explanation: 'Tačno! Prva sura u Kur\'anu je El-Fatiha (Otvarač/Početak).'
+            },
+            {
+                question: 'Najbolja voda na zemlji je',
+                options: ['Zemzem', 'Morska', 'Izvorska', 'Riječna'],
+                answer: 'Zemzem',
+                explanation: 'Tačno! Zemzem je blažena voda iz bunara u Mekki, pored Ka\'be.'
+            },
+            {
+                question: 'Imanskih šartova ima',
+                options: ['3', '4', '5', '6'],
+                answer: '6',
+                explanation: 'Tačno! Imanskih šartova (temeljnih istina vjere) ima 6: vjerovanje u Allaha, meleke, knjige, poslanike, Sudnji dan i Kader.'
+            }
+        ];
+
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        
+        // RANDOMIZACIJA - Fisher-Yates shuffle algoritam
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Randomizacija opcija unutar pitanja
+        function shuffleQuestionOptions(question) {
+            const shuffledOptions = shuffleArray(question.options);
+            return {
+                ...question,
+                options: shuffledOptions
+            };
+        }
+        
+        function startQuiz() {
+            // Randomizuj redoslijed pitanja
+            let shuffledQuestions = shuffleArray(allQuestions);
+            
+            // Randomizuj opcije unutar svakog pitanja
+            questions = shuffledQuestions.map(q => shuffleQuestionOptions(q));
+            
+            currentQuestion = 0;
+            score = 0;
+            
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('quizScreen').classList.add('active');
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            const total = questions.length;
+            
+            document.getElementById('questionCount').textContent = `Pitanje ${currentQuestion + 1} / ${total}`;
+            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / total) * 100}%`;
+            document.getElementById('questionText').textContent = q.question;
+            
+            const answersGrid = document.getElementById('answersGrid');
+            answersGrid.innerHTML = '';
+            answersGrid.className = 'answers-grid';
+            
+            q.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option);
+                answersGrid.appendChild(btn);
+            });
+            
+            document.getElementById('explanationBox').classList.remove('show');
+        }
+        
+        function checkAnswer(userAnswer) {
+            const q = questions[currentQuestion];
+            const isCorrect = userAnswer === q.answer;
+            
+            if (isCorrect) score++;
+            
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                
+                if (btn.textContent === userAnswer) {
+                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                } else if (btn.textContent === q.answer) {
+                    btn.classList.add('show-correct');
+                } else {
+                    btn.classList.add('faded');
+                }
+            });
+            
+            document.getElementById('explanationIcon').textContent = isCorrect ? '✅' : '❌';
+            document.getElementById('explanationTitle').textContent = isCorrect ? 'Tačno!' : 'Netačno!';
+            document.getElementById('explanationText').textContent = q.explanation;
+            document.getElementById('explanationBox').classList.add('show');
+            
+            const nextBtn = document.querySelector('.next-btn');
+            nextBtn.textContent = currentQuestion < questions.length - 1 ? 'Sljedeće pitanje' : 'Prikaži rezultate';
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        function showResults() {
+            const percentage = Math.round((score / questions.length) * 100);
+            let message, emoji;
+            
+            if (percentage >= 90) {
+                message = 'Izvrsno! Mashallah!';
+                emoji = '🌟';
+            } else if (percentage >= 70) {
+                message = 'Vrlo dobro!';
+                emoji = '✨';
+            } else if (percentage >= 50) {
+                message = 'Dobro! Nastavite učiti.';
+                emoji = '📚';
+            } else {
+                message = 'Potrebno je više učenja.';
+                emoji = '💪';
+            }
+            
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.add('active');
+            
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultScore').textContent = `${score}/${questions.length}`;
+            document.getElementById('resultPercentage').textContent = `${percentage}% tačnih odgovora`;
+        }
+    </script>
+</body>
+</html>
