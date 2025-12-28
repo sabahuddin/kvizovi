@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Završni Kviz - NIVO 1</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Lora', serif;
+            background: linear-gradient(135deg, #92400e 0%, #b45309 50%, #78350f 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        
+        .quiz-header { text-align: center; margin-bottom: 3rem; }
+        
+        .quiz-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle { font-size: 1.3rem; color: #fed7aa; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #fbbf24;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        .back-link:hover { color: #f59e0b; transform: translateX(-5px); }
+        
+        .quiz-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(251, 191, 36, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .start-btn {
+            background: linear-gradient(to right, #f59e0b, #d97706);
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        .start-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.05);
+        }
+        
+        .quiz-screen { display: none; }
+        .quiz-screen.active { display: block; }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .question-count { font-size: 1.3rem; color: #fed7aa; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 0.75rem;
+            background: rgba(251, 191, 36, 0.3);
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transition: width 0.5s;
+        }
+        
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(251, 191, 36, 0.3);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .question-text {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .answers-grid { display: grid; gap: 1rem; }
+        
+        .answer-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(251, 191, 36, 0.5);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        .answer-btn:hover:not(:disabled) {
+            background: rgba(251, 191, 36, 0.5);
+            transform: scale(1.02);
+        }
+        .answer-btn:disabled { cursor: not-allowed; }
+        .answer-btn.correct { background: #10b981; border-color: #34d399; }
+        .answer-btn.incorrect { background: #ef4444; border-color: #f87171; }
+        .answer-btn.show-correct { background: rgba(16, 185, 129, 0.3); border-color: #34d399; }
+        .answer-btn.faded {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .explanation-box {
+            background: rgba(251, 191, 36, 0.2);
+            border: 2px solid rgba(251, 191, 36, 0.5);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation-box.show { display: block; animation: fadeIn 0.5s; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .explanation-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .explanation-icon { font-size: 2.5rem; }
+        .explanation-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
+        .explanation-text { color: #fef3c7; font-size: 1.1rem; line-height: 1.6; }
+        
+        .next-btn {
+            background: linear-gradient(to right, #f59e0b, #d97706);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1.5rem;
+            transition: all 0.3s;
+        }
+        .next-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.02);
+        }
+        
+        .result-screen { display: none; text-align: center; padding: 3rem; }
+        .result-screen.active { display: block; }
+        
+        .result-emoji {
+            font-size: 6rem;
+            margin-bottom: 2rem;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .result-message { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 2rem; }
+        .result-score { font-size: 4rem; font-weight: bold; color: #fbbf24; margin-bottom: 1rem; }
+        .result-percentage { font-size: 2rem; color: #fed7aa; margin-bottom: 3rem; }
+        
+        .result-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .reset-btn, .home-btn {
+            background: linear-gradient(to right, #f59e0b, #d97706);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .reset-btn:hover, .home-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .subtitle { font-size: 1.1rem; }
+            .question-text { font-size: 1.4rem; }
+            .answer-btn { font-size: 1.1rem; padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="welcomeScreen">
+        <a href="index.html" class="back-link">← Nazad na Home</a>
+        
+        <div class="quiz-header">
+            <div class="quiz-icon">🏆</div>
+            <h1>Završni Kviz - NIVO 1</h1>
+            <p class="subtitle">Kompletno znanje osnova islama</p>
+        </div>
+        
+        <div class="quiz-info">
+            <p style="font-size: 1.3rem; margin-bottom: 1rem;">
+                <strong>25</strong> pitanja iz <strong>71</strong> ukupno
+            </p>
+            <p style="color: #fed7aa; margin-bottom: 0.5rem;">
+                ⚡ Svaki put drugačija pitanja!
+            </p>
+            <p style="font-size: 1.1rem; color: #fed7aa; margin-top: 1rem;">
+                Obuhvata sva znanja iz kvizova 1a, 1b i 1c
+            </p>
+            <button class="start-btn" onclick="startQuiz()">🎯 Započni završni kviz</button>
+        </div>
+    </div>
+    
+    <div class="container quiz-screen" id="quizScreen">
+        <a href="index.html" class="back-link">← Nazad na Home</a>
+        
+        <div class="progress-info">
+            <div class="question-count" id="questionCount"></div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-text" id="questionText"></div>
+            <div class="answers-grid" id="answersGrid"></div>
+        </div>
+        
+        <div class="explanation-box" id="explanationBox">
+            <div class="explanation-header">
+                <span class="explanation-icon" id="explanationIcon"></span>
+                <h3 class="explanation-title" id="explanationTitle"></h3>
+            </div>
+            <p class="explanation-text" id="explanationText"></p>
+            <button class="next-btn" onclick="nextQuestion()">Sljedeće pitanje</button>
+        </div>
+    </div>
+    
+    <div class="container result-screen" id="resultScreen">
+        <div class="result-emoji" id="resultEmoji"></div>
+        <h2 class="result-message" id="resultMessage"></h2>
+        <div class="result-score" id="resultScore"></div>
+        <p class="result-percentage" id="resultPercentage"></p>
+        <div class="result-buttons">
+            <button class="reset-btn" onclick="location.reload()">
+                <span>↻</span> Ponovi kviz
+            </button>
+            <a href="index.html" class="home-btn">
+                <span>🏠</span> Nazad na Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // SVA PITANJA IZ 1ABC.PDF - 71 pitanje (Document 6)
+        const allQuestions = [
+            {question: 'Šta je temelj islamske vjere?', options: ['Kur\'an', 'Mekteb', 'Vjerovanje u Allaha', 'Namaz'], answer: 'Vjerovanje u Allaha', explanation: 'Vjerovanje u Allaha je osnova svega.'},
+            {question: 'Koja izjava najbolje opisuje vjerovanje (iman)?', options: ['Izgovaranje šehadeta', 'Vjerovanje srcem', 'Klanjanje namaza', 'Davanje zekata'], answer: 'Vjerovanje srcem', explanation: 'Iman je prije svega unutrašnje vjerovanje srcem.'},
+            {question: 'Koliko ima imanskih šarta?', options: ['4', '5', '6', '7'], answer: '6', explanation: 'Iman se sastoji od šest šarta - temeljnih istina vjere.'},
+            {question: 'Šta NE spada u imanske šarte?', options: ['Vjerovanje u Allaha', 'Vjerovanje u meleke', 'Vjerovanje u knjige', 'Obavljanje namaza'], answer: 'Obavljanje namaza', explanation: 'Namaz je islamski, a ne imanski šart.'},
+            {question: 'Koja je prva rečenica kojom čovjek ulazi u islam?', options: ['Bismillah', 'Kelime-i šehadet', 'Subhanallah', 'Elhamdulillah'], answer: 'Kelime-i šehadet', explanation: 'Šehadet potvrđuje vjerovanje i s njim se ulazi u islam.'},
+            {question: 'Šta znači da je Muhammed, a.s., Allahov poslanik?', options: ['Da je bio učen čovjek', 'Da je prenosio Allahovu objavu', 'Da je bio kralj', 'Da je napisao Kur\'an'], answer: 'Da je prenosio Allahovu objavu', explanation: 'Allahovi poslanici prenose Allahovu poruku ljudima.'},
+            {question: 'Šta je Kur\'an?', options: ['Veliki ilmihal', 'Zbirka hadisa', 'Allahova objava', 'Knjiga pravila ponašanja'], answer: 'Allahova objava', explanation: 'Kur\'an je Allahov govor objavljen Poslaniku, a.s.'},
+            {question: 'Koji pozdrav je islamski?', options: ['Zdravo', 'Merhaba', 'Selam alejkum', 'Dobar dan'], answer: 'Selam alejkum', explanation: 'Selam alejkum je islamski pozdrav mira.'},
+            {question: 'Šta znači riječ "islam"?', options: ['Muslimansko ime', 'Pokornost Allahu', 'Molitva', 'Vjerovanje'], answer: 'Pokornost Allahu', explanation: 'Islam znači svjesno pokoravanje Allahu.'},
+            {question: 'Koliko ima islamskih šarta?', options: ['3', '4', '5', '6'], answer: '5', explanation: 'Islam se temelji na pet osnovnih dužnosti.'},
+            {question: 'Šta NIJE islamski šart?', options: ['Namaz', 'Post', 'Vjerovanje u meleke', 'Zekat'], answer: 'Vjerovanje u meleke', explanation: 'Vjerovanje u meleke je imanski šart.'},
+            {question: 'Zašto se mekteb smatra važnim?', options: ['Zato što se družimo', 'Zato što tako kaže babo i mama', 'Zato što se u mektebu uči o vjeri', 'Zato što je interesantno'], answer: 'Zato što se u mektebu uči o vjeri', explanation: 'Mekteb je mjesto gdje se uče osnove islama.'},
+            {question: 'Ko je posljednji Allahov poslanik?', options: ['Musa, a.s.', 'Isa, a.s.', 'Muhammed, a.s.', 'Ibrahim, a.s.'], answer: 'Muhammed, a.s.', explanation: 'Muhammed, a.s., je posljednji poslanik.'},
+            {question: 'Šta znači vjerovati u Sudnji dan?', options: ['Vjerovati u smrt', 'Vjerovati u presudu i odgovornost', 'Vjerovati u meleke', 'Vjerovati u džennet'], answer: 'Vjerovati u presudu i odgovornost', explanation: 'Sudnji dan znači polaganje računa za svoja djela.'},
+            {question: 'Šta je ihsan?', options: ['Najniži stepen vjere', 'Vjera samo riječima', 'Robovanje Allahu kao da Ga vidimo', 'Samo dobro ponašanje'], answer: 'Robovanje Allahu kao da Ga vidimo', explanation: 'Ihsan znači svjesno i iskreno robovanje Allahu.'},
+            {question: 'Zašto je čistoća važna u islamu?', options: ['Zbog zdravlja', 'Zbog navike', 'Zbog namaza', 'Zbog tradicije'], answer: 'Zbog namaza', explanation: 'Čistoća je važna u islamu, namaz se ne može klanjati ako nismo čisti.'},
+            {question: 'Šta je abdest?', options: ['Kupanje cijelog tijela', 'Pranje određenih dijelova tijela', 'Brisanje tijela', 'Samo nijet'], answer: 'Pranje određenih dijelova tijela', explanation: 'Abdest je propisano pranje određenih dijelova tijela.'},
+            {question: 'Šta NIJE farz abdesta?', options: ['Pranje lica', 'Pranje ruku do laktova', 'Pranje stopala', 'Učenje dove'], answer: 'Učenje dove', explanation: 'Dova je lijepa, ali nije obavezni dio abdesta.'},
+            {question: 'Šta kvari abdest?', options: ['Znojenje', 'Spavanje', 'Miris', 'Pranje ruku'], answer: 'Spavanje', explanation: 'Spavanje kvari abdest.'},
+            {question: 'Kada je obavezan gusul?', options: ['Prije svakog namaza', 'Nakon sna', 'Nakon džunupluka', 'Nakon abdesta'], answer: 'Nakon džunupluka', explanation: 'Džunupluk zahtijeva potpuno kupanje – gusul.'},
+            {question: 'Šta je tejemmum?', options: ['Zamjena za namaz', 'Zamjena za abdest ili gusul', 'Posebna dova', 'Vrsta abdesta'], answer: 'Zamjena za abdest ili gusul', explanation: 'Tejemmum se uzima kada nema vode ili se ne smije koristiti.'},
+            {question: 'Čime se uzima tejemmum?', options: ['Vodom', 'Uljem', 'Zemljom', 'Pepelom'], answer: 'Zemljom', explanation: 'Tejemmum se uzima čistom zemljom, predmetom od zemlje ili prašinom.'},
+            {question: 'Šta je nečisto u šerijatskom smislu?', options: ['Znoj', 'Suza', 'Krv', 'Kiša'], answer: 'Krv', explanation: 'Krv spada u šerijatske nečistoće.'},
+            {question: 'Ako nema vode, a nastupi vrijeme namaza, šta musliman treba učiniti?', options: ['Preskočiti namaz', 'Odgoditi namaz', 'Uzeti tejemmum i klanjati', 'Klanjati bez abdesta'], answer: 'Uzeti tejemmum i klanjati', explanation: 'Islam propisuje tejemmum u nuždi.'},
+            {question: 'Šta je nijet?', options: ['Izgovor naglas', 'Odluka u srcu', 'Dova nakon abdesta', 'Radnja rukom'], answer: 'Odluka u srcu', explanation: 'Nijet je odluka u srcu da se uradi ono što odlučimo.'},
+            {question: 'Da li je abdest ispravan bez nijeta?', options: ['Ne', 'Da', 'Samo nekad', 'Samo kod djece'], answer: 'Da', explanation: 'Nijet je sunnet, ali je preporučen radi svjesnosti.'},
+            {question: 'Šta je namaz?', options: ['Dova', 'Razgovor', 'Poseban ibadet u određenom vremenu', 'Čitanje Kur\'ana'], answer: 'Poseban ibadet u određenom vremenu', explanation: 'Namaz je propisan ibadet sa tačno određenim radnjama.'},
+            {question: 'Koliko ima farz-namaza dnevno?', options: ['3', '4', '5', '6'], answer: '5', explanation: 'Pet dnevnih namaza je obaveza svakog muslimana.'},
+            {question: 'Koji namaz ima najmanje rekata?', options: ['Sabah', 'Podne', 'Akšam', 'Jacija'], answer: 'Sabah', explanation: 'Sabah ima dva rekata farza i dva sunneta.'},
+            {question: 'Koliko rekata imaju zajedno sabah i akšam-namaz?', options: ['4', '5', '9', '7'], answer: '9', explanation: 'Sabah ima 4, a akšam 5 rekata.'},
+            {question: 'Šta NIJE rukn namaza?', options: ['Kijam', 'Ruku', 'Sedžda', 'Abdest'], answer: 'Abdest', explanation: 'Abdest je uvjet, a ne dio samog namaza.'},
+            {question: 'Koja radnja dolazi odmah nakon ruku\'a?', options: ['Kijam', 'Sedžda', 'Sjedenje', 'Selam'], answer: 'Sedžda', explanation: 'Nakon ruku\'a slijedi sedžda.'},
+            {question: 'Šta znači farz?', options: ['Preporučeno', 'Strogo zabranjeno', 'Obavezno i strogo naređeno', 'Pohvalno'], answer: 'Obavezno i strogo naređeno', explanation: 'Farz je ono što je obavezno izvršiti.'},
+            {question: 'Šta se uči na svakom rekatu namaza?', options: ['Ihlas', 'Fatiha', 'Ajetul-kursi', 'Subhaneke'], answer: 'Fatiha', explanation: 'Fatiha je obavezna na svakom rekatu.'},
+            {question: 'Ko poziva na namaz?', options: ['Imam', 'Muallim', 'Mujezin', 'Hatib'], answer: 'Mujezin', explanation: 'Mujezin uči ezan.'},
+            {question: 'Koja je razlika između ezana i ikameta?', options: ['Nema razlike', 'Ikamet se uči brže i ima dodatak Kad kametis-salah 2x', 'Ezan je u namazu', 'Ikamet je samo za džumu'], answer: 'Ikamet se uči brže i ima dodatak Kad kametis-salah 2x', explanation: 'Ikamet uče muškarci prije farza svakog namaza.'},
+            {question: 'Šta znači klanjati u džematu?', options: ['Samostalno', 'U žurbi', 'Zajedno s drugima', 'U džamiji'], answer: 'Zajedno s drugima', explanation: 'Džemat znači zajednički namaz.'},
+            {question: 'Šta se radi na kraju namaza?', options: ['Ruku', 'Sedžda', 'Selam', 'Kijam'], answer: 'Selam', explanation: 'Namaz se završava selamom.'},
+            {question: 'Koji namaz se klanja petkom umjesto podne?', options: ['Bajram', 'Teravija', 'Džuma', 'Vitr'], answer: 'Džuma', explanation: 'Džuma zamjenjuje podne-namaz.'},
+            {question: 'Zašto je namaz važan?', options: ['Zbog reda', 'Zbog navike', 'Zbog veze s Allahom', 'Zbog zajednice'], answer: 'Zbog veze s Allahom', explanation: 'Namaz je direktna veza roba s Allahom.'},
+            {question: 'Koji namaz ima tri rekata farza?', options: ['Sabah', 'Podne', 'Akšam', 'Jacija'], answer: 'Akšam', explanation: 'Akšam-namaz ima tri farz-rekata.'},
+            {question: 'Koji namaz se klanja kada sunce zađe?', options: ['Podne', 'Ikindija', 'Akšam', 'Jacija'], answer: 'Akšam', explanation: 'Akšam nastupa zalaskom sunca.'},
+            {question: 'Koliko farz-rekata ima sabah-namaz?', options: ['2', '3', '4', '5'], answer: '2', explanation: 'Sabah ima dva rekata farza.'},
+            {question: 'Koji namaz se klanja noću?', options: ['Sabah', 'Akšam', 'Jacija', 'Podne'], answer: 'Jacija', explanation: 'Jacija se klanja nakon što potpuno padne noć.'},
+            {question: 'Šta znači sunnet?', options: ['Stroga obaveza', 'Zabranjena radnja', 'Preporučena radnja', 'Zamjena za farz'], answer: 'Preporučena radnja', explanation: 'Sunnet je ono što je Poslanik, a.s., praktikovao.'},
+            {question: 'Šta se dešava ako se farz namjerno ostavi?', options: ['Ništa', 'Gubi se sevap sunneta', 'Čini se veliki grijeh', 'Mora se dati sadaka'], answer: 'Čini se veliki grijeh', explanation: 'Farz je obaveza i njegovo ostavljanje je veliki grijeh.'},
+            {question: 'Šta znači okrenuti se prema kibli?', options: ['Okrenuti se prema Mekki', 'Okrenuti se prema džamiji', 'Okrenuti se prema istoku', 'Okrenuti se prema suncu'], answer: 'Okrenuti se prema Mekki', explanation: 'Kibla je pravac Kabe u Mekki.'},
+            {question: 'Koja radnja u namazu se obavlja spuštanjem čela na tlo?', options: ['Kijam', 'Ruku', 'Sedžda', 'Ka\'de-i ehire'], answer: 'Sedžda', explanation: 'Sedžda je najponizniji položaj u namazu.'},
+            {question: 'Koliko sedždi ima jedan rekat?', options: ['Jednu', 'Dvije', 'Tri', 'Četiri'], answer: 'Dvije', explanation: 'Svaki rekat ima dvije sedžde.'},
+            {question: 'Koja se riječ dodaje nijetu za sabah-namaz?', options: ['Zuhri', 'Fedžri', 'Asri', 'Magribi'], answer: 'Fedžri', explanation: 'Prije početka namaza lijepo je proučiti nijet riječima: Nevejtu en...'},
+            {question: 'Kako se zove osoba koja predvodi namaz u džematu?', options: ['Mujezin', 'Imam', 'Hatib', 'Muallim'], answer: 'Imam', explanation: 'Imam predvodi zajednički namaz.'},
+            {question: 'Kako se zove osoba koja klanja iza imama?', options: ['Mujezin', 'Muktedija', 'Hatib', 'Muallim'], answer: 'Muktedija', explanation: 'Muktedija slijedi imama u namazu.'},
+            {question: 'Šta se uči na sjedenju u namazu?', options: ['Fatiha', 'Ettehijjatu', 'Subhaneke', 'Ihlas'], answer: 'Ettehijjatu', explanation: 'Ettehijjatu se uči na sjedenju.'},
+            {question: 'Šta se uči na ruku\'u?', options: ['Semi\'allahu limen hamideh', 'Subhane rabbijel-\'azim', 'Bismillahi', 'Subhane rabbijel-e\'ala'], answer: 'Subhane rabbijel-\'azim', explanation: 'Subhane rabbijel-\'azim se uči najmanje 3x.'},
+            {question: 'Koliko rekata ima bajram-namaz?', options: ['2', '3', '4', '5'], answer: '2', explanation: 'Bajram-namaz ima dva rekata.'},
+            {question: 'Kako se NE čestita bajram?', options: ['Bajram mubarek olsun', 'Eid Mubarek', 'Sretan bajram', 'Bajram šerif mubarek olsun'], answer: 'Sretan bajram', explanation: 'Sretan bajram - nije uobičajen način čestitanja bajrama.'},
+            {question: 'Šta se obilježava Kurban-bajramom?', options: ['Post', 'Hidžra', 'Žrtva i pokornost Allahu', 'Objavljivanje Kur\'ana'], answer: 'Žrtva i pokornost Allahu', explanation: 'Kurban simbolizira pokornost Allahu.'},
+            {question: 'Kako se ulazi u džamiju?', options: ['Ulazi se lijevom nogom', 'Ulazi se bez abdesta', 'Ulazi se desnom nogom', 'Ne treba ići u džamiju'], answer: 'Ulazi se desnom nogom', explanation: 'U džamiju se ulazi desnom nogom.'},
+            {question: 'Kako se ponaša u džamiji?', options: ['Glasno se priča', 'Trči se', 'Čuva se mir i poštovanje', 'Jede se'], answer: 'Čuva se mir i poštovanje', explanation: 'Džamija je mjesto ibadeta i smirenosti.'},
+            {question: 'Zašto musliman klanja namaz svaki dan?', options: ['Zbog treninga', 'Zato što hoće', 'Zbog Allahove naredbe', 'Zbog discipline'], answer: 'Zbog Allahove naredbe', explanation: 'Namaz je Allahova obavezujuća naredba.'},
+            {question: 'Šta znači da je namaz "stub vjere"?', options: ['Da je preporučen', 'Da je najvažniji ibadet', 'Da je samo za stare ljude', 'Da je samo u džamiji'], answer: 'Da je najvažniji ibadet', explanation: 'Namaz je temelj praktičnog islama kod svih muslimana.'},
+            {question: 'Kada dijete postaje obavezno klanjati namaz?', options: ['Od rođenja', 'Kada krene u mekteb', 'Kada postane punoljetno', 'Kada nauči Fatihu'], answer: 'Kada postane punoljetno', explanation: 'Namaz postaje obaveza punoljetstvom.'},
+            {question: 'Kako se zove poseban tekbir u danima Kurban-bajrama?', options: ['Iftitahi tekbir', 'Allahu ekber', 'Tekbiri-tešrik', 'Bajramski tekbir'], answer: 'Tekbiri-tešrik', explanation: 'Allahu ekber, Allahu ekber, La ilahe illallahu vallahu ekber, Allahu ekber ve lillahil-hamd.'},
+            {question: 'Kurbansko meso se NE dijeli?', options: ['Rođacima', 'Komšijama', 'Svojoj porodici', 'Mesnicama da prodaju'], answer: 'Mesnicama da prodaju', explanation: 'Kurbansko meso se ne prodaje.'},
+            {question: 'Koji namaz je prije izlasku sunca?', options: ['Podne', 'Sabah', 'Ikindija', 'Akšam'], answer: 'Sabah', explanation: 'Sabah se klanja prije izlaska sunca.'},
+            {question: 'Šta musliman kaže kada završi namaz?', options: ['Allahumme entes-selamu...', 'La ilahe ilallah', 'Elhamdulillah', 'Bismillah'], answer: 'Allahumme entes-selamu...', explanation: 'Kada završi namaz, kaže se: Allahumme enses-selamu ve minkes-selam. Tebarekte ja zel-dželali vel-ikram.'},
+            {question: 'Šta se NE uči na zadnjem sjedenju?', options: ['Ettehijjatu', 'Subhaneke', 'Salavati', 'Dova'], answer: 'Subhaneke', explanation: 'Subhaneke se uči na početku prvog rekata.'},
+            {question: 'Koliko se puta prouči Fatiha tokom sabah-namaza?', options: ['2', '3', '4', '6'], answer: '4', explanation: 'Sabah ima četiri rekata i na svakom se uči Fatiha jedanput.'},
+            {question: 'Šta znači klanjati iskreno?', options: ['Brzo klanjati', 'Glasno klanjati', 'Klanjati radi Allaha', 'Klanjati u džamiji'], answer: 'Klanjati radi Allaha', explanation: 'Iskreno klanjati znači klanjati samo radi Allaha.'},
+            {question: 'Šta musliman uči nakon namaza?', options: ['Fatihu', 'Ništa', 'Zikr i dovu', 'Ezan'], answer: 'Zikr i dovu', explanation: 'Nakon namaza sunnet je učiti zikr.'},
+            {question: 'Šta se uči na sedždi?', options: ['Semi\'allahu limen hamideh', 'Subhane rabbijel-\'azim', 'Bismillahi', 'Subhane rabbijel-e\'ala'], answer: 'Subhane rabbijel-e\'ala', explanation: 'Subhane rabbijel-e\'ala se uči najmanje 3x.'}
+        ];
+
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        const QUESTIONS_TO_SHOW = 25;
+        
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function shuffleQuestionOptions(question) {
+            return { ...question, options: shuffleArray(question.options) };
+        }
+        
+        function startQuiz() {
+            let shuffledAll = shuffleArray(allQuestions);
+            let selectedQuestions = shuffledAll.slice(0, QUESTIONS_TO_SHOW);
+            questions = selectedQuestions.map(q => shuffleQuestionOptions(q));
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('quizScreen').classList.add('active');
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            const total = questions.length;
+            
+            document.getElementById('questionCount').textContent = `Pitanje ${currentQuestion + 1} / ${total}`;
+            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / total) * 100}%`;
+            document.getElementById('questionText').textContent = q.question;
+            
+            const answersGrid = document.getElementById('answersGrid');
+            answersGrid.innerHTML = '';
+            
+            q.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option);
+                answersGrid.appendChild(btn);
+            });
+            
+            document.getElementById('explanationBox').classList.remove('show');
+        }
+        
+        function checkAnswer(userAnswer) {
+            const q = questions[currentQuestion];
+            const isCorrect = userAnswer === q.answer;
+            
+            if (isCorrect) score++;
+            
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                
+                if (btn.textContent === userAnswer) {
+                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                } else if (btn.textContent === q.answer) {
+                    btn.classList.add('show-correct');
+                } else {
+                    btn.classList.add('faded');
+                }
+            });
+            
+            document.getElementById('explanationIcon').textContent = isCorrect ? '✅' : '❌';
+            document.getElementById('explanationTitle').textContent = isCorrect ? 'Tačno!' : 'Netačno!';
+            document.getElementById('explanationText').textContent = q.explanation;
+            document.getElementById('explanationBox').classList.add('show');
+            
+            const nextBtn = document.querySelector('.next-btn');
+            nextBtn.textContent = currentQuestion < questions.length - 1 ? 'Sljedeće pitanje' : 'Prikaži rezultate';
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        function showResults() {
+            const percentage = Math.round((score / questions.length) * 100);
+            let message, emoji;
+            
+            if (percentage >= 90) {
+                message = 'Izvrsno! Mashallah!';
+                emoji = '🌟';
+            } else if (percentage >= 70) {
+                message = 'Vrlo dobro!';
+                emoji = '✨';
+            } else if (percentage >= 50) {
+                message = 'Dobro! Nastavite učiti.';
+                emoji = '📚';
+            } else {
+                message = 'Potrebno je više učenja.';
+                emoji = '💪';
+            }
+            
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.add('active');
+            
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultScore').textContent = `${score}/${questions.length}`;
+            document.getElementById('resultPercentage').textContent = `${percentage}% tačnih odgovora`;
+        }
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arapski Izrazi i Običaji - Kviz 1C</title>
+    <title>1c - Arapski Izrazi</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
         
@@ -245,30 +245,27 @@
 </head>
 <body>
     <div class="container" id="welcomeScreen">
-        <a href="index.html" class="back-link">← Nazad na sve kvizove</a>
+        <a href="index.html" class="back-link">← Nazad na Home</a>
         
         <div class="quiz-header">
             <div class="quiz-icon">☪️</div>
-            <h1>Arapski Izrazi i Običaji</h1>
-            <p class="subtitle">Testovi znanja o arapskim izrazima i islamskim običajima - Kviz 1C</p>
+            <h1>1c - Arapski Izrazi</h1>
+            <p class="subtitle">Dove, izrazi, hidžra, bajramovi i kalendar</p>
         </div>
         
         <div class="quiz-info">
             <p style="font-size: 1.3rem; margin-bottom: 1rem;">
-                <strong>20</strong> pitanja
+                <strong>20</strong> pitanja iz <strong>60</strong> ukupno
             </p>
             <p style="color: #d1fae5; margin-bottom: 0.5rem;">
-                ⚡ Svaki put drugačiji raspored pitanja!
-            </p>
-            <p style="color: #d1fae5;">
-                Testirajte znanje o arapskim frazama, hidžri, mevludu i kalendaru
+                ⚡ Svaki put drugačija pitanja!
             </p>
             <button class="start-btn" onclick="startQuiz()">🎯 Započni kviz</button>
         </div>
     </div>
     
     <div class="container quiz-screen" id="quizScreen">
-        <a href="#" class="back-link" onclick="location.reload()">← Nazad na početak</a>
+        <a href="index.html" class="back-link">← Nazad na Home</a>
         
         <div class="progress-info">
             <div class="question-count" id="questionCount"></div>
@@ -303,138 +300,80 @@
                 <span>↻</span> Ponovi kviz
             </button>
             <a href="index.html" class="home-btn">
-                <span>🏠</span> Svi kvizovi
+                <span>🏠</span> Nazad na Home
             </a>
         </div>
     </div>
 
     <script>
+        // SVA PITANJA IZ 1C.PDF - 60 pitanja
         const allQuestions = [
-            {
-                question: '"Ako Bog da" se na arapskom kaže',
-                options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'],
-                answer: 'Inšallah',
-                explanation: 'Tačno! Inšallah (إن شاء الله) znači "Ako Bog da" ili "Ako Allah hoće".'
-            },
-            {
-                question: 'Kada se divimo kažemo',
-                options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'],
-                answer: 'Mašallah',
-                explanation: 'Tačno! Mašallah (ما شاء الله) znači "Ono što je Allah htio" - kažemo kada se divimo nečemu.'
-            },
-            {
-                question: '"Slava Allahu" se na arapskom kaže',
-                options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Jerhamukellah'],
-                answer: 'Subhanallah',
-                explanation: 'Tačno! Subhanallah (سبحان الله) znači "Slava Allahu" ili "Uzvišen neka je Allah".'
-            },
-            {
-                question: '"Oprosti mi Bože" se na arapskom kaže',
-                options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'],
-                answer: 'Estağfirullah',
-                explanation: 'Tačno! Estağfirullah (أستغفر الله) znači "Tražim oprost od Allaha".'
-            },
-            {
-                question: '"Allah ti se smilovao" se na arapskom kaže',
-                options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Jerhamukellah'],
-                answer: 'Jerhamukellah',
-                explanation: 'Tačno! Jerhamukellah (يرحمك الله) znači "Neka ti se Allah smiluje" - odgovor kada neko kihne.'
-            },
-            {
-                question: 'Kada se nadamo nečemu kažemo',
-                options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'],
-                answer: 'Inšallah',
-                explanation: 'Tačno! Inšallah kažemo kada se nadamo nečemu ili planiramo nešto.'
-            },
-            {
-                question: 'Kada se čudimo kažemo',
-                options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'],
-                answer: 'Subhanallah',
-                explanation: 'Tačno! Subhanallah kažemo kada se čudimo nečemu ili kada se divimo Allahovom stvaranju.'
-            },
-            {
-                question: 'Kada se kajemo za loše djelo kažemo',
-                options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'],
-                answer: 'Estağfirullah',
-                explanation: 'Tačno! Estağfirullah kažemo kada se kajemo i tražimo Allahov oprost.'
-            },
-            {
-                question: 'Preseljenje iz Mekke u Medinu',
-                options: ['Hidžra', 'Mevlud', 'Bajram', 'Akika'],
-                answer: 'Hidžra',
-                explanation: 'Tačno! Hidžra je preseljenje Poslanika, s.a.v.s., i muslimana iz Mekke u Medinu 622. godine.'
-            },
-            {
-                question: 'Hidžra se dogodila',
-                options: ['622. godine', '612. godine', '632. godine', '642. godine'],
-                answer: '622. godine',
-                explanation: 'Tačno! Hidžra se dogodila 622. godine po miladi - ova godina je početak islamskog kalendara.'
-            },
-            {
-                question: 'Muslimanski kalendar se naziva',
-                options: ['Hidžretski', 'Gregorijanski', 'Julijanski', 'Islamski'],
-                answer: 'Hidžretski',
-                explanation: 'Tačno! Hidžretski kalendar počinje od godine Hidžre (622. godine).'
-            },
-            {
-                question: 'Muslimanska nova godina nastupa',
-                options: ['1. muharrema', '1. ramazana', '1. ševala', '1. ša\'bana'],
-                answer: '1. muharrema',
-                explanation: 'Tačno! Nova hidžretska godina počinje 1. muharrema (prvog mjeseca).'
-            },
-            {
-                question: 'Mevlud - rođenje Muhammeda a.s. se obilježava',
-                options: ['12. rebiul-evela', '1. muharrema', '27. ramazana', '10. zul-hidžeta'],
-                answer: '12. rebiul-evela',
-                explanation: 'Tačno! Mevlud (rođenje Poslanika) se obilježava 12. rebiul-evela.'
-            },
-            {
-                question: 'Ono što je dozvoljeno zove se',
-                options: ['Halal', 'Haram', 'Hilal', 'Hurma'],
-                answer: 'Halal',
-                explanation: 'Tačno! Halal (حلال) znači dozvoljeno, čisto, dopušteno u islamu.'
-            },
-            {
-                question: 'Ono što je zabranjeno zove se',
-                options: ['Halal', 'Haram', 'Hilal', 'Hurma'],
-                answer: 'Haram',
-                explanation: 'Tačno! Haram (حرام) znači zabranjeno, nedozvoljeno u islamu.'
-            },
-            {
-                question: 'Obavezno vjersko kupanje',
-                options: ['Abdest', 'Gusul', 'Tejemmum', 'Mesh'],
-                answer: 'Gusul',
-                explanation: 'Tačno! Gusul je obavezno pranje cijelog tijela u određenim prilikama.'
-            },
-            {
-                question: 'Ispiranje usta i grla prilikom kupanja',
-                options: ['Gargara', 'Istinšak', 'Gusul', 'Mesh'],
-                answer: 'Gargara',
-                explanation: 'Tačno! Gargara je ispiranje usta i grla prilikom gusla.'
-            },
-            {
-                question: 'Ispiranje nosa prilikom kupanja',
-                options: ['Gargara', 'Istinšak', 'Gusul', 'Mesh'],
-                answer: 'Istinšak',
-                explanation: 'Tačno! Istinšak je uvlačenje vode u nos i ispiranje nosa.'
-            },
-            {
-                question: 'Čišćenje zemljom radi obavljanja namaza',
-                options: ['Abdest', 'Gusul', 'Tejemmum', 'Mesh'],
-                answer: 'Tejemmum',
-                explanation: 'Tačno! Tejemmum je čišćenje čistom zemljom ili prahom kada nema vode ili iz zdravstvenih razloga.'
-            },
-            {
-                question: 'Kada neko kihne kažemo',
-                options: ['Inšallah', 'Mašallah', 'Jerhamukellah', 'Estağfirullah'],
-                answer: 'Jerhamukellah',
-                explanation: 'Tačno! Kada neko kihne, kažemo "Jerhamukellah" (Neka ti se Allah smiluje).'
-            }
+            {question: '"Ako Bog da" se na arapskom kaže', options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'], answer: 'Inšallah', explanation: 'Inšallah znači "Ako Allah hoće".'},
+            {question: 'Kada se nadamo nečemu kažemo', options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'], answer: 'Inšallah', explanation: 'Inšallah kažemo u nadi.'},
+            {question: 'Kada se divimo kažemo', options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'], answer: 'Mašallah', explanation: 'Mašallah kažemo kada se divimo.'},
+            {question: '"Slava Allahu" se na arapskom kaže', options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Jerhamukellah'], answer: 'Subhanallah', explanation: 'Subhanallah znači "Slava Allahu".'},
+            {question: 'Kada se čudimo kažemo', options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'], answer: 'Subhanallah', explanation: 'Subhanallah u čuđenju.'},
+            {question: '"Oprosti mi Bože" se na arapskom kaže', options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'], answer: 'Estağfirullah', explanation: 'Estağfirullah - traženje oprosta.'},
+            {question: 'Kada se kajemo za loše djelo kažemo', options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Estağfirullah'], answer: 'Estağfirullah', explanation: 'Estağfirullah pri kajanju.'},
+            {question: '"Tražimo zaštitu od Allaha" se na arapskom kaže', options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Euzu billah'], answer: 'Euzu billah', explanation: 'Euzu billah - zaštita od Allaha.'},
+            {question: 'Kada ukazujemo na nešto ružno kažemo', options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Euzu billah'], answer: 'Euzu billah', explanation: 'Euzu billah od lošeg.'},
+            {question: '"Allah ti se smilovao" se na arapskom kaže', options: ['Inšallah', 'Mašallah', 'Subhanallah', 'Jerhamukellah'], answer: 'Jerhamukellah', explanation: 'Jerhamukellah nakon kihanja.'},
+            {question: 'Kada čujemo da neko je kihnuo kažemo', options: ['Inšallah', 'Mašallah', 'Jerhamukellah', 'Estağfirullah'], answer: 'Jerhamukellah', explanation: 'Jerhamukellah se kaže nakon kihanja.'},
+            {question: 'Prilikom izlaska iz toaleta izgovorimo', options: ['Gufraneke', 'Bismillah', 'Elhamdulillah', 'Subhanallah'], answer: 'Gufraneke', explanation: 'Gufraneke nakon izlaska iz WC-a.'},
+            {question: 'Preseljenje iz Mekke u Medinu', options: ['Hidžra', 'Mevlud', 'Bajram', 'Akika'], answer: 'Hidžra', explanation: 'Hidžra je preseljenje.'},
+            {question: 'Hidžra se dogodila', options: ['622. godine', '612. godine', '632. godine', '642. godine'], answer: '622. godine', explanation: 'Hidžra 622. godine.'},
+            {question: 'Muslimanski kalendar se naziva', options: ['Hidžretski', 'Gregorijanski', 'Julijanski', 'Islamski'], answer: 'Hidžretski', explanation: 'Hidžretski kalendar.'},
+            {question: 'Po hidžretskom kalendaru prvi dan u sedmici je', options: ['Petak', 'Subota', 'Nedjelja', 'Ponedjeljak'], answer: 'Petak', explanation: 'Petak je prvi dan.'},
+            {question: 'Po hidžretskom kalendaru dan počinje', options: ['Zalaskom sunca', 'Izlaskom sunca', 'U pola noći', 'Pojavom zore'], answer: 'Zalaskom sunca', explanation: 'Dan počinje zalaskom sunca.'},
+            {question: 'Hidžretska godina ima', options: ['354 dana', '355 dana', '365 dana', '366 dana'], answer: '354 dana', explanation: '354 ili 355 dana.'},
+            {question: 'Hidžretski kalendar ima', options: ['10 mjeseci', '11 mjeseci', '12 mjeseci', '13 mjeseci'], answer: '12 mjeseci', explanation: '12 hidžretskih mjeseci.'},
+            {question: 'Muslimanska nova godina nastupa', options: ['1. muharrema', '1. ramazana', '1. ševala', '1. ša\'bana'], answer: '1. muharrema', explanation: 'Nova godina 1. muharrema.'},
+            {question: 'Dan kada se obilježava rođenje Muhammeda a.s.', options: ['Hidžra', 'Mevlud', 'Bajram', 'Akika'], answer: 'Mevlud', explanation: 'Mevlud je rođenje Poslanika.'},
+            {question: 'Mevlud se obilježava', options: ['12. rebiul-evela', '1. muharrema', '27. ramazana', '10. zul-hidžeta'], answer: '12. rebiul-evela', explanation: 'Mevlud 12. rebiul-evela.'},
+            {question: 'Ono što je dozvoljeno zove se', options: ['Halal', 'Haram', 'Hilal', 'Hurma'], answer: 'Halal', explanation: 'Halal je dozvoljeno.'},
+            {question: 'Ono što je zabranjeno zove se', options: ['Halal', 'Haram', 'Hilal', 'Hurma'], answer: 'Haram', explanation: 'Haram je zabranjeno.'},
+            {question: 'Ramazanski bajram nastupa', options: ['1. ševvala', '10. zul-hidžeta', '1. ramazana', '1. ša\'bana'], answer: '1. ševvala', explanation: '1. ševvala je ramazanski bajram.'},
+            {question: 'Ramazanski bajram traje', options: ['1 dan', '2 dana', '3 dana', '10 dana'], answer: '3 dana', explanation: 'Ramazanski bajram traje 3 dana.'},
+            {question: 'Kurban-bajram nastupa', options: ['1. ševvala', '10. zul-hidžeta', '1. ramazana', '1. ša\'bana'], answer: '10. zul-hidžeta', explanation: '10. zul-hidžeta je kurban-bajram.'},
+            {question: 'Kurban-bajram traje', options: ['1 dan', '2 dana', '3 dana', '4 dana'], answer: '4 dana', explanation: 'Kurban-bajram traje 4 dana.'},
+            {question: 'Drugi naziv za ramazanski bajram', options: ['Hadžijski bajram', 'Ramazanski bajram', 'Mali bajram', 'Akika'], answer: 'Ramazanski bajram', explanation: 'Ramazanski bajram.'},
+            {question: 'Drugi naziv za kurban-bajram', options: ['Hadžijski bajram', 'Ramazanski bajram', 'Mali bajram', 'Akika'], answer: 'Hadžijski bajram', explanation: 'Hadžijski ili veliki bajram.'},
+            {question: 'Drugi dan ramazanskog bajrama je', options: ['Dan radosti', 'Dan vakifa', 'Dan džamija', 'Dan šehida'], answer: 'Dan džamija', explanation: 'Drugi dan je Dan džamija.'},
+            {question: 'Žrtvovanje govečeta ili ovce u ime Allaha dž.š.', options: ['Kurban', 'Tekbiri tešrik', 'Akika', 'Sadaka'], answer: 'Kurban', explanation: 'Kurban je žrtvovanje.'},
+            {question: 'Tekbiri tešrik se uči za vrijeme', options: ['Ramazanskog bajrama', 'Kurban-bajrama', 'Mevluda', 'Ramazana'], answer: 'Kurban-bajrama', explanation: 'Tekbiri tešrik za kurban-bajram.'},
+            {question: 'Pleme Muhammeda a.s. se zvalo', options: ['Benu Sad', 'Benu Hašim', 'Kurejš', 'Kurejza'], answer: 'Kurejš', explanation: 'Pleme Kurejš.'},
+            {question: 'Porodica Muhammeda a.s. se zvalo', options: ['Benu Sad', 'Benu Hašim', 'Kurejš', 'Kurejza'], answer: 'Benu Hašim', explanation: 'Porodica Benu Hašim.'},
+            {question: 'Namaz koji se klanja jedino u ramazanu', options: ['Teravija', 'Džuma', 'Dženaza', 'Bajram'], answer: 'Teravija', explanation: 'Teravija u ramazanu.'},
+            {question: 'Namaz koji se klanja sedmično petkom', options: ['Teravija', 'Džuma', 'Dženaza', 'Bajram'], answer: 'Džuma', explanation: 'Džuma petkom.'},
+            {question: 'Sabah-namaz ima ukupno', options: ['2 rekata', '3 rekata', '4 rekata', '8 rekata'], answer: '4 rekata', explanation: '2 sunneta + 2 farza.'},
+            {question: 'Akšam-namaz ima ukupno', options: ['3 rekata', '5 rekata', '6 rekata', '8 rekata'], answer: '5 rekata', explanation: '3 farza + 2 sunneta.'},
+            {question: 'Ettehijjatu se uči', options: ['Prije namaza', 'Nakon salavata', 'Nakon ettehijjatu', 'Nakon selama'], answer: 'Nakon ettehijjatu', explanation: 'Ettehijjatu na sjedenju.'},
+            {question: 'Salavate učimo u namazu', options: ['Na sjedenju', 'Na stajanju', 'Na ruku\'u', 'Na sedždi'], answer: 'Na sjedenju', explanation: 'Salavate na sjedenju.'},
+            {question: 'Dove učimo u namazu', options: ['Prije ettehijjatu', 'Nakon salavata', 'Nakon ruku\'a', 'Prije selama'], answer: 'Nakon salavata', explanation: 'Dove nakon salavata.'},
+            {question: 'Rekao je Muhammed a.s.: "I znajte da je najbolje vaše djelo..."', options: ['Namaz', 'Post', 'Zekat', 'Hadž'], answer: 'Namaz', explanation: 'Namaz je najbolje djelo.'},
+            {question: 'Muslimanska prostirka za namaz zove se', options: ['Sedžada', 'Tespih', 'Mahrama', 'Levha'], answer: 'Sedžada', explanation: 'Sedžada za namaz.'},
+            {question: 'Šest namaskih šarta prije namaza zovemo', options: ['Namaski uvjeti', 'Pripreme za namaz', 'Namaski ruknovi', 'Sastavni dijelovi'], answer: 'Namaski uvjeti', explanation: 'Šest uvjeta prije namaza.'},
+            {question: 'Šest namaskih šarta u toku namaza zovemo', options: ['Namaski uvjeti', 'Pripreme', 'Namaski ruknovi', 'Sastavni dijelovi'], answer: 'Namaski ruknovi', explanation: 'Ruknovi tokom namaza.'},
+            {question: 'Prvi šart/uvjet za namaza je', options: ['Da bude čisto tijelo', 'Abdest', 'Biti obučen', 'Na vrijeme'], answer: 'Da bude čisto tijelo', explanation: 'Prvo čistoća tijela.'},
+            {question: 'Drugi šart/uvjet za namaza je', options: ['Biti obučen', 'Abdest uzeti', 'Na vrijeme', 'Prema kibli'], answer: 'Abdest uzeti', explanation: 'Drugi je abdest.'},
+            {question: 'Treći šart/uvjet za namaza je', options: ['Biti obučen', 'Abdest', 'Čisto tijelo', 'Na vrijeme'], answer: 'Biti obučen', explanation: 'Treći je biti propisno obučen.'},
+            {question: 'Četvrti šart/uvjet za namaza je', options: ['Biti obučen', 'Na vrijeme klanjati', 'Prema kibli', 'Zanijetiti'], answer: 'Na vrijeme klanjati', explanation: 'Četvrti je vrijeme.'},
+            {question: 'Hadis: "Čistoća je..."', options: ['Pola imana', 'Dio islama', 'Odlika', 'Blagodat'], answer: 'Pola imana', explanation: 'Čistoća je pola imana.'},
+            {question: 'Odredi velike nečistoće', options: ['Krv', 'Mokraća', 'Alkohol', 'Sve navedeno'], answer: 'Sve navedeno', explanation: 'Sve su velike nečistoće.'},
+            {question: 'Odredi radnje koje kvare abdest', options: ['Spavanje', 'Povraćanje', 'Nužda', 'Sve navedeno'], answer: 'Sve navedeno', explanation: 'Sve kvare abdest.'},
+            {question: 'Nakon uzimanja abdesta lijepo je proučiti', options: ['Kelime-i šehadet', 'Rabbi Jessir', 'Subhaneke', 'El-Fatihu'], answer: 'Kelime-i šehadet', explanation: 'Šehadet nakon abdesta.'},
+            {question: 'Odredi abdeske farzove', options: ['Umiti lice', 'Oprati ruke do iza laktova', 'Potrati četvrtinu glave', 'Sve navedeno'], answer: 'Sve navedeno', explanation: 'Svi su farzovi abdesta.'},
+            {question: 'Odredi gusulske farzove', options: ['Izaprati usta', 'Izaprati nos', 'Cijelo tijelo', 'Sve navedeno'], answer: 'Sve navedeno', explanation: 'Svi su farzovi gusula.'},
+            {question: 'Odredi namaske ruknove', options: ['Iftitahi tekbir', 'Kijam', 'Kiraet', 'Sve navedeno'], answer: 'Sve navedeno', explanation: 'Svi su ruknovi namaza.'},
+            {question: 'Odredi imanske šarte', options: ['Amentu billahi', 'Ve melaiketihi', 'Ve kutubihi', 'Sve navedeno'], answer: 'Sve navedeno', explanation: 'Svih šest imanskih šartova.'},
+            {question: 'Odredi islamske šarte', options: ['Kelime-i šehadet', 'Namaze klanjati', 'Zekat davati', 'Sve navedeno'], answer: 'Sve navedeno', explanation: 'Svih pet islamskih šartova.'},
+            {question: 'Najduži ajet u Kur\'anu je', options: ['Ajetul-kursi', 'Ajetud-dejn', 'El-Fatiha', 'Cijela sura'], answer: 'Ajetud-dejn', explanation: 'Ajetud-dejn o dugu.'}
         ];
 
         let questions = [];
         let currentQuestion = 0;
         let score = 0;
+        const QUESTIONS_TO_SHOW = 20;
         
         function shuffleArray(array) {
             const newArray = [...array];
@@ -450,8 +389,9 @@
         }
         
         function startQuiz() {
-            let shuffledQuestions = shuffleArray(allQuestions);
-            questions = shuffledQuestions.map(q => shuffleQuestionOptions(q));
+            let shuffledAll = shuffleArray(allQuestions);
+            let selectedQuestions = shuffledAll.slice(0, QUESTIONS_TO_SHOW);
+            questions = selectedQuestions.map(q => shuffleQuestionOptions(q));
             currentQuestion = 0;
             score = 0;
             document.getElementById('welcomeScreen').style.display = 'none';
@@ -469,7 +409,6 @@
             
             const answersGrid = document.getElementById('answersGrid');
             answersGrid.innerHTML = '';
-            answersGrid.className = 'answers-grid';
             
             q.options.forEach(option => {
                 const btn = document.createElement('button');

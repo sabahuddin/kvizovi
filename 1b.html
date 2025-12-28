@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Namaz i Ibadet - Kviz 1B</title>
+    <title>1b - Namaz i Ibadet</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
         
@@ -245,30 +245,27 @@
 </head>
 <body>
     <div class="container" id="welcomeScreen">
-        <a href="index.html" class="back-link">← Nazad na sve kvizove</a>
+        <a href="index.html" class="back-link">← Nazad na Home</a>
         
         <div class="quiz-header">
             <div class="quiz-icon">🕌</div>
-            <h1>Namaz i Ibadet</h1>
-            <p class="subtitle">Testovi znanja o namazu, abdesti i čistoći - Kviz 1B</p>
+            <h1>1b - Namaz i Ibadet</h1>
+            <p class="subtitle">Namaz, abdest, gusul, čistoća i džamija</p>
         </div>
         
         <div class="quiz-info">
             <p style="font-size: 1.3rem; margin-bottom: 1rem;">
-                <strong>20</strong> pitanja
+                <strong>20</strong> pitanja iz <strong>65</strong> ukupno
             </p>
             <p style="color: #d1fae5; margin-bottom: 0.5rem;">
-                ⚡ Svaki put drugačiji raspored pitanja!
-            </p>
-            <p style="color: #d1fae5;">
-                Testirajte znanje o namazu, abdesti, tijemmumu i hadžu
+                ⚡ Svaki put drugačija pitanja!
             </p>
             <button class="start-btn" onclick="startQuiz()">🎯 Započni kviz</button>
         </div>
     </div>
     
     <div class="container quiz-screen" id="quizScreen">
-        <a href="#" class="back-link" onclick="location.reload()">← Nazad na početak</a>
+        <a href="index.html" class="back-link">← Nazad na Home</a>
         
         <div class="progress-info">
             <div class="question-count" id="questionCount"></div>
@@ -303,138 +300,86 @@
                 <span>↻</span> Ponovi kviz
             </button>
             <a href="index.html" class="home-btn">
-                <span>🏠</span> Svi kvizovi
+                <span>🏠</span> Nazad na Home
             </a>
         </div>
     </div>
 
     <script>
+        // SVA PITANJA IZ 1B.PDF - 65 pitanja
         const allQuestions = [
-            {
-                question: 'Drugi islamski šart je',
-                options: ['Namaz', 'Post', 'Zekat', 'Hadž'],
-                answer: 'Namaz',
-                explanation: 'Tačno! Nakon kelime-i šehadeta, namaz je drugi islamski šart (stup islama).'
-            },
-            {
-                question: 'Glavni islamske dužnosti su poznate kao',
-                options: ['Imanski šarti', 'Islamski šarti', 'Namaski šarti', 'Uvjeti vjere'],
-                answer: 'Islamski šarti',
-                explanation: 'Tačno! Pet glavnih dužnosti u islamu zovu se islamski šarti (stubovi islama).'
-            },
-            {
-                question: 'Sura koja vrijedi kao trećina Kur\'ana',
-                options: ['El-Fatiha', 'El-Ihlas', 'El-Felek', 'En-Nas'],
-                answer: 'El-Ihlas',
-                explanation: 'Tačno! Sura El-Ihlas (Iskrenost) vrijedi kao trećina Kur\'ana.'
-            },
-            {
-                question: 'Prva sura u Kur\'anu je',
-                options: ['El-Ihlas', 'El-Fatiha', 'El-Felek', 'En-Nas'],
-                answer: 'El-Fatiha',
-                explanation: 'Tačno! El-Fatiha (Otvarač) je prva sura Kur\'ana i uči se u svakom rekatu.'
-            },
-            {
-                question: 'Namaz je Allah dž.š. naredio Poslaniku a.s. direktno',
-                options: ['Pored Ka\'be', 'U pećini Hira', 'Na nebesima', 'U Medini'],
-                answer: 'Na nebesima',
-                explanation: 'Tačno! Namaz je naredio direktno tokom Mi\'radža (putovanja na nebesa).'
-            },
-            {
-                question: 'Dnevnih namaza ima',
-                options: ['3', '4', '5', '6'],
-                answer: '5',
-                explanation: 'Tačno! Pet dnevnih namaza: sabah, podne, ikindija, akšam i jacija.'
-            },
-            {
-                question: 'Jutarnji namaz',
-                options: ['Sabah', 'Podne', 'Akšam', 'Jacija'],
-                answer: 'Sabah',
-                explanation: 'Tačno! Sabah je jutarnji namaz (zora).'
-            },
-            {
-                question: 'Večernji namaz',
-                options: ['Sabah', 'Podne', 'Akšam', 'Jacija'],
-                answer: 'Akšam',
-                explanation: 'Tačno! Akšam je večernji namaz (nakon zalaska sunca).'
-            },
-            {
-                question: 'Noćni namaz',
-                options: ['Sabah', 'Podne', 'Akšam', 'Jacija'],
-                answer: 'Jacija',
-                explanation: 'Tačno! Jacija je noćni namaz.'
-            },
-            {
-                question: 'Hadis: "Čistoća je..."',
-                options: ['Pola imana', 'Dio islama', 'Odlika muslimana', 'Velika blagodat'],
-                answer: 'Pola imana',
-                explanation: 'Tačno! Poslanik, s.a.v.s., je rekao: "Čistoća je pola imana."'
-            },
-            {
-                question: 'Obavezno vjersko kupanje',
-                options: ['Abdest', 'Gusul', 'Tejemmum', 'Mesh'],
-                answer: 'Gusul',
-                explanation: 'Tačno! Gusul je obavezno vjersko kupanje cijelog tijela.'
-            },
-            {
-                question: 'Simbolično čišćenje zemljom radi obavljanja namaza',
-                options: ['Abdest', 'Gusul', 'Tejemmum', 'Mesh'],
-                answer: 'Tejemmum',
-                explanation: 'Tačno! Tejemmum je simbolično čišćenje zemljom kada nema vode ili iz zdravstvenih razloga.'
-            },
-            {
-                question: 'Potiranje mokrom rukom dio glave',
-                options: ['Abdest', 'Tejemmum', 'Gusul', 'Mesh'],
-                answer: 'Mesh',
-                explanation: 'Tačno! Mesh je potiranje mokrom rukom dijela glave umjesto pranja.'
-            },
-            {
-                question: 'Prva i najvrijednija džamija',
-                options: ['Ka\'ba', 'Mesdžidul-aksa', 'Poslanikova džamija', 'Kuba'],
-                answer: 'Ka\'ba',
-                explanation: 'Tačno! Ka\'ba u Mekki je prva džamija na Zemlji, izgrađena od strane Ibrahima, a.s.'
-            },
-            {
-                question: 'Smjer prema Ka\'bi zove se',
-                options: ['Kibla', 'Mukabela', 'Tawaf', 'Kubbe'],
-                answer: 'Kibla',
-                explanation: 'Tačno! Kibla je smjer prema Ka\'bi u Mekki - smjer prema kojem se klanja namaz.'
-            },
-            {
-                question: 'Obilazak Ka\'be',
-                options: ['Kibla', 'Mukabela', 'Tawaf', 'Kubbe'],
-                answer: 'Tawaf',
-                explanation: 'Tačno! Tawaf je obilazak Ka\'be sedam puta tokom hadža ili umre.'
-            },
-            {
-                question: 'Hadžerul-esved znači',
-                options: ['Crni kamen', 'Bijeli biser', 'Zlatna vrata', 'Srebr na kupola'],
-                answer: 'Crni kamen',
-                explanation: 'Tačno! Hadžerul-esved (Crni kamen) je blagoslovljeni kamen u uglu Ka\'be.'
-            },
-            {
-                question: 'Osoba koja uči ezan i ikamet',
-                options: ['Mujezin', 'Hodža', 'Imam', 'Mutevellija'],
-                answer: 'Mujezin',
-                explanation: 'Tačno! Mujezin (zove se i muezzin) je osoba koja poziva na namaz ezanom.'
-            },
-            {
-                question: 'Na početku namazskog vremena uči se',
-                options: ['Ikamet', 'Ezan', 'Salavat', 'Salat'],
-                answer: 'Ezan',
-                explanation: 'Tačno! Ezan se uči na početku namaskog vremena da pozove vjernike na namaz.'
-            },
-            {
-                question: 'Muškarci uče neposredno prije farza',
-                options: ['Ezan', 'Ikamet', 'Salavat', 'Tekbir'],
-                answer: 'Ikamet',
-                explanation: 'Tačno! Ikamet se uči neposredno prije početka farz-namaza u džematu.'
-            }
+            {question: 'Prvi islamski šart je', options: ['Namaz', 'Post', 'Zekat', 'Hadž'], answer: 'Namaz', explanation: 'Nakon kelime-i šehadeta, namaz je najvažniji.'},
+            {question: 'Sura koja vrijedi kao trećina Kur\'ana', options: ['El-Fatiha', 'El-Ihlas', 'El-Felek', 'En-Nas'], answer: 'El-Ihlas', explanation: 'Sura El-Ihlas govori o tevhidu.'},
+            {question: 'Prva sura u Kur\'anu je', options: ['El-Ihlas', 'El-Fatiha', 'El-Felek', 'En-Nas'], answer: 'El-Fatiha', explanation: 'El-Fatiha je majka Kur\'ana.'},
+            {question: 'Suru koju učimo na svakom rekatu namaza', options: ['El-Ihlas', 'El-Fatiha', 'Subhaneke', 'Ettehijjatu'], answer: 'El-Fatiha', explanation: 'Fatiha je obavezna na svakom rekatu.'},
+            {question: 'Namaz je Allah dž.š. naredio direktno na', options: ['Pored Ka\'be', 'U pećini Hira', 'Na nebesima', 'U Medini'], answer: 'Na nebesima', explanation: 'Tokom Miradža naredio je namaz.'},
+            {question: 'Namaz je spomenut u Kur\'anu više od', options: ['10 mjesta', '20 mjesta', '100 mjesta', '30 mjesta'], answer: '100 mjesta', explanation: 'Namaz se spominje više od 100 puta.'},
+            {question: 'Dnevnih namaza ima', options: ['3', '4', '5', '6'], answer: '5', explanation: 'Pet dnevnih namaza je obaveza.'},
+            {question: 'Jutarnji namaz', options: ['Sabah', 'Podne', 'Akšam', 'Jacija'], answer: 'Sabah', explanation: 'Sabah je jutarnji namaz.'},
+            {question: 'Podnevni namaz', options: ['Sabah', 'Podne', 'Ikindija', 'Akšam'], answer: 'Podne', explanation: 'Podne se klanja u podne.'},
+            {question: 'Poslijepodnevni namaz', options: ['Sabah', 'Podne', 'Ikindija', 'Akšam'], answer: 'Ikindija', explanation: 'Ikindija je poslijepodne.'},
+            {question: 'Večernji namaz', options: ['Sabah', 'Podne', 'Akšam', 'Jacija'], answer: 'Akšam', explanation: 'Akšam je večernji namaz.'},
+            {question: 'Noćni namaz', options: ['Sabah', 'Podne', 'Akšam', 'Jacija'], answer: 'Jacija', explanation: 'Jacija je noćni namaz.'},
+            {question: 'Dva namaza koji se klanjaju po danu', options: ['Sabah i podne', 'Podne i ikindija', 'Akšam i jacija', 'Sabah i akšam'], answer: 'Podne i ikindija', explanation: 'Dva dnevna namaza.'},
+            {question: 'Hadis: "Čistoća je..."', options: ['Pola imana', 'Dio islama', 'Odlika muslimana', 'Velika blagodat'], answer: 'Pola imana', explanation: 'Čistoća je pola imana.'},
+            {question: 'Obavezno vjersko pranje', options: ['Abdest', 'Gusul', 'Tejemmum', 'Mesh'], answer: 'Abdest', explanation: 'Abdest je prije namaza.'},
+            {question: 'Obavezno vjersko kupanje', options: ['Abdest', 'Gusul', 'Tejemmum', 'Mesh'], answer: 'Gusul', explanation: 'Gusul je kupanje cijelog tijela.'},
+            {question: 'Čišćenje zemljom radi namaza', options: ['Abdest', 'Gusul', 'Tejemmum', 'Mesh'], answer: 'Tejemmum', explanation: 'Tejemmum kada nema vode.'},
+            {question: 'Nakon uzimanja abdesta lijepo je proučiti', options: ['Kelime-i šehadet', 'Rabbi Jessir', 'Subhaneke', 'El-Fatiha'], answer: 'Kelime-i šehadet', explanation: 'Šehadet nakon abdesta.'},
+            {question: 'Potiranje mokrom rukom dio glave', options: ['Abdest', 'Tejemmum', 'Gusul', 'Mesh'], answer: 'Mesh', explanation: 'Mesh je potiranje.'},
+            {question: 'Ispiranje usta i grla prilikom kupanja', options: ['Gargara', 'Istinšak', 'Gusul', 'Mesh'], answer: 'Gargara', explanation: 'Gargara je ispiranje usta.'},
+            {question: 'Ispiranje nosa prilikom kupanja', options: ['Gargara', 'Istinšak', 'Gusul', 'Mesh'], answer: 'Istinšak', explanation: 'Istinšak je ispiranje nosa.'},
+            {question: 'Pranje cijelog tijela prilikom kupanja', options: ['Gargara', 'Istinšak', 'Gaslu vudžud', 'Mesh'], answer: 'Gaslu vudžud', explanation: 'Cijelo tijelo se pere.'},
+            {question: 'Nečista osoba koja se mora okupati', options: ['Žunub', 'Džunud', 'Muhrim', 'Mudrik'], answer: 'Žunub', explanation: 'Džunub zahtijeva gusul.'},
+            {question: 'U kojima je nijet/odluka šart', options: ['Abdest i gusul', 'Samo abdest', 'Samo namaz', 'Namaz i post'], answer: 'Abdest i gusul', explanation: 'Nijet je potreban za abdest, gusul i namaz.'},
+            {question: 'Tejemmum se uzima umjesto', options: ['Abdesta', 'Gusula', 'Abdesta i gusula', 'Namaza'], answer: 'Abdesta i gusula', explanation: 'Tejemmum je zamjena za oba.'},
+            {question: 'Farzovi tejemmuma su', options: ['Nijet i potiranje lica', 'Samo nijet', 'Potiranje ruku', 'Potiranje glave'], answer: 'Nijet i potiranje lica', explanation: 'Dva farza tejemmuma.'},
+            {question: 'Odredi nečistoće', options: ['Krv', 'Znoj', 'Suza', 'Prašina'], answer: 'Krv', explanation: 'Krv je nečistoća.'},
+            {question: 'Odredi što kvari abdest', options: ['Spavanje', 'Znojenje', 'Smijanje', 'Plakanje'], answer: 'Spavanje', explanation: 'Spavanje kvari abdest.'},
+            {question: 'Prva i najvrijednija džamija', options: ['Ka\'ba', 'Mesdžidul-aksa', 'Poslanikova džamija', 'Kuba'], answer: 'Ka\'ba', explanation: 'Ka\'ba je prva džamija.'},
+            {question: 'Smjer prema Ka\'bi zove se', options: ['Kibla', 'Mukabela', 'Tawaf', 'Kubbe'], answer: 'Kibla', explanation: 'Kibla je smjer molitve.'},
+            {question: 'Ka\'ba se u odnosu na našu zemlju nalazi na', options: ['Jugoistoku', 'Jugozapadu', 'Sjeveroist oku', 'Sjeverozapadu'], answer: 'Jugoistoku', explanation: 'Ka\'ba je na jugoistoku od BiH.'},
+            {question: 'Riječ "odluka" na arapskom se kaže', options: ['Nijet', 'Tekbir', 'Tespih', 'Levha'], answer: 'Nijet', explanation: 'Nijet znači odluka.'},
+            {question: 'Peti šart/uvjet za namaza je', options: ['Zanijetiti namaz', 'Biti propisno obučen', 'Na vrijeme klanjati', 'Prema kibli okrenuti'], answer: 'Zanijetiti namaz', explanation: 'Nijet je peti šart.'},
+            {question: 'Šesti šart/uvjet za namaza je', options: ['Zanijetiti', 'Biti obučen', 'Na vrijeme', 'Prema kibli'], answer: 'Prema kibli', explanation: 'Kibla je šesti šart.'},
+            {question: 'Obilazak Ka\'be', options: ['Kibla', 'Mukabela', 'Tawaf', 'Kubbe'], answer: 'Tawaf', explanation: 'Tawaf je obilazak Ka\'be.'},
+            {question: 'Hadžerul-esved znači', options: ['Crni kamen', 'Bijeli biser', 'Zlatna vrata', 'Srebrna kupola'], answer: 'Crni kamen', explanation: 'Crni kamen u Ka\'bi.'},
+            {question: 'Odjeća muslimana ne smije biti', options: ['Tijesna', 'Providna', 'Poderana', 'Sve navedeno'], answer: 'Sve navedeno', explanation: 'Odjeća mora biti pristojna.'},
+            {question: 'Dvije sure poznate kao zaštitnice', options: ['El-Felek i En-Nas', 'El-Ihlas i El-Fatiha', 'El-Fatiha i En-Nas', 'El-Felek i El-Ihlas'], answer: 'El-Felek i En-Nas', explanation: 'Ove dvije sure su zaštitnice.'},
+            {question: 'Treća i posljednja sura u Kur\'anu je', options: ['El-Felek', 'El-Ihlas', 'El-Fatiha', 'En-Nas'], answer: 'En-Nas', explanation: 'En-Nas je posljednja sura.'},
+            {question: 'Na početku namazskog vremena uči se', options: ['Ikamet', 'Ezan', 'Salavat', 'Salat'], answer: 'Ezan', explanation: 'Ezan poziva na namaz.'},
+            {question: 'Muškarci uče neposredno prije farza', options: ['Ezan', 'Ikamet', 'Salavat', 'Tekbir'], answer: 'Ikamet', explanation: 'Ikamet je prije početka.'},
+            {question: 'Osoba koja uči ezan i ikamet', options: ['Mujezin', 'Hodža', 'Imam', 'Mutevellija'], answer: 'Mujezin', explanation: 'Mujezin poziva na namaz.'},
+            {question: 'Poslanikov a.s. mujezin zvao se', options: ['Bilal', 'Muaz', 'Zejd', 'Osman'], answer: 'Bilal', explanation: 'Bilal je bio prvi mujezin.'},
+            {question: 'Poslanikov a.s. drug koji je sanjao ezan', options: ['Abdullah', 'Bilal', 'Omer', 'Alija'], answer: 'Abdullah', explanation: 'Abdullah je sanjao ezan.'},
+            {question: 'U odnosu na ezan ikamet se uči', options: ['Brže', 'Sporije', 'Jednako', 'Tiše'], answer: 'Brže', explanation: 'Ikamet je brži od ezana.'},
+            {question: 'Vrijeme kad se namaz ne može klanjati', options: ['Kad sunce izlazi', 'Kad sunce zalazi', 'Kad je sunce na sredini neba', 'Sve navedeno'], answer: 'Sve navedeno', explanation: 'Tri vremena zabrane.'},
+            {question: 'Početni tekbir', options: ['Iftitahi tekbir', 'Kijam', 'Kiraet', 'Ruku'], answer: 'Iftitahi tekbir', explanation: 'Prvi tekbir u namazu.'},
+            {question: 'Mirno stajanje u namazu', options: ['Iftitahi tekbir', 'Kijam', 'Kiraet', 'Ruku'], answer: 'Kijam', explanation: 'Kijam je stajanje.'},
+            {question: 'Učenje Kur\'ana u namazu', options: ['Kijam', 'Kiraet', 'Ruku', 'Sedžda'], answer: 'Kiraet', explanation: 'Kiraet je učenje Kur\'ana.'},
+            {question: 'Pregibanje u namazu', options: ['Kijam', 'Kiraet', 'Ruku', 'Sedžda'], answer: 'Ruku', explanation: 'Ruku je pregibanje.'},
+            {question: 'Spuštanje lica na tlo', options: ['Kijam', 'Ruku', 'Sedžda', 'Ka\'dei ehire'], answer: 'Sedžda', explanation: 'Sedžda je najviši čin poniznosti.'},
+            {question: 'Posljednje sjedenje u namazu', options: ['Kijam', 'Ruku', 'Sedžda', 'Ka\'dei ehire'], answer: 'Ka\'dei ehire', explanation: 'Zadnje sjedenje u namazu.'},
+            {question: 'Sabahski sunneti imaju', options: ['2 rekata', '4 rekata', '6 rekata', '8 rekata'], answer: '2 rekata', explanation: 'Dva sunnet rekata.'},
+            {question: 'Sabahski farzi imaju', options: ['2 rekata', '4 rekata', '6 rekata', '8 rekata'], answer: '2 rekata', explanation: 'Dva farz rekata.'},
+            {question: 'Kod sabah-namaza prvo se klanjaju', options: ['Farzi', 'Sunneti', 'Nema sunneta', 'Vitr'], answer: 'Sunneti', explanation: 'Prvi sunneti pa farzi.'},
+            {question: 'Akšamski farzi imaju', options: ['2 rekata', '3 rekata', '4 rekata', '6 rekata'], answer: '3 rekata', explanation: 'Tri farz rekata.'},
+            {question: 'Akšamski sunneti imaju', options: ['2 rekata', '3 rekata', '4 rekata', '6 rekata'], answer: '2 rekata', explanation: 'Dva sunnet rekata.'},
+            {question: 'Kod akšam-namaza prvo se klanjaju', options: ['Farzi', 'Sunneti', 'Nema sunneta', 'Vitr'], answer: 'Farzi', explanation: 'Prvi farzi pa sunneti.'},
+            {question: 'Sve što nam je Allah naredio da radimo', options: ['Farz', 'Sunnet', 'Mendub', 'Mubah'], answer: 'Farz', explanation: 'Farz je obaveza.'},
+            {question: 'Sve što nam Muhammed a.s. preporučio', options: ['Farz', 'Sunnet', 'Mendub', 'Haram'], answer: 'Sunnet', explanation: 'Sunnet je preporuka.'},
+            {question: 'Spomenji je Allah dž.š. po imenu', options: ['Zikr', 'Ders', 'Tešrik', 'Salavat'], answer: 'Zikr', explanation: 'Zikr je spominjanje Allaha.'},
+            {question: 'Najduži ajet u Kur\'anu je', options: ['Ajetul-kursi', 'Ajetud-dejn', 'El-Fatiha', 'El-Ihlas'], answer: 'Ajetud-dejn', explanation: 'Ajetud-dejn je najduži ajet.'},
+            {question: 'Desnom nogom ulazimo u', options: ['Kuću', 'Mekteb', 'Džamiju', 'WC'], answer: 'Džamiju', explanation: 'Desnom nogom u džamiju.'},
+            {question: 'Lijevom nogom ulazimo u', options: ['Stan', 'Mekteb', 'Kupatilo', 'Džamiju'], answer: 'Kupatilo', explanation: 'Lijevom nogom u WC.'},
+            {question: 'Desnom nogom izlazimo iz', options: ['Stana', 'Mekteba', 'Kupatila', 'WC-a'], answer: 'WC-a', explanation: 'Desnom nogom izlazimo iz WC-a.'},
+            {question: 'Lijevom nogom izlazimo iz', options: ['Stana', 'Džamije', 'Oba navedena', 'Nijedno'], answer: 'Oba navedena', explanation: 'Lijevom iz kuće i džamije.'}
         ];
 
         let questions = [];
         let currentQuestion = 0;
         let score = 0;
+        const QUESTIONS_TO_SHOW = 20;
         
         function shuffleArray(array) {
             const newArray = [...array];
@@ -450,8 +395,9 @@
         }
         
         function startQuiz() {
-            let shuffledQuestions = shuffleArray(allQuestions);
-            questions = shuffledQuestions.map(q => shuffleQuestionOptions(q));
+            let shuffledAll = shuffleArray(allQuestions);
+            let selectedQuestions = shuffledAll.slice(0, QUESTIONS_TO_SHOW);
+            questions = selectedQuestions.map(q => shuffleQuestionOptions(q));
             currentQuestion = 0;
             score = 0;
             document.getElementById('welcomeScreen').style.display = 'none';
@@ -469,7 +415,6 @@
             
             const answersGrid = document.getElementById('answersGrid');
             answersGrid.innerHTML = '';
-            answersGrid.className = 'answers-grid';
             
             q.options.forEach(option => {
                 const btn = document.createElement('button');

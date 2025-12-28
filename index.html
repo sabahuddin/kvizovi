@@ -3,32 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Islamski Kvizovi - Glavni Meni</title>
+    <title>Mektebska Pouka - Kvizovi</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
         
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
         body {
             font-family: 'Lora', serif;
             background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #065f46 100%);
             min-height: 100vh;
-            color: white;
             padding: 2rem;
+            color: white;
         }
         
-        .container { max-width: 1200px; margin: 0 auto; }
-        
-        .header { text-align: center; margin-bottom: 4rem; animation: fadeIn 1s; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
-        .book-icon {
-            font-size: 5rem;
-            margin-bottom: 1rem;
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 1.5rem;
             animation: float 3s ease-in-out infinite;
         }
         
@@ -39,34 +45,36 @@
         
         h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
         }
         
-        .divider {
-            width: 8rem;
-            height: 2px;
-            background: linear-gradient(to right, transparent, #fbbf24, transparent);
-            margin: 1.5rem auto;
+        .subtitle {
+            font-size: 1.8rem;
+            color: #d1fae5;
+            margin-bottom: 0.5rem;
         }
         
-        .subtitle { font-size: 1.5rem; color: #d1fae5; }
-        .category { margin-bottom: 3rem; }
+        .level {
+            font-size: 1.3rem;
+            color: #fbbf24;
+            font-weight: 600;
+        }
         
-        .category-title {
+        .section-title {
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            margin: 3rem 0 1.5rem 0;
+            text-align: center;
+            color: #fbbf24;
         }
         
         .quiz-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
         }
         
         .quiz-card {
@@ -77,130 +85,134 @@
             padding: 2rem;
             text-decoration: none;
             color: white;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
         
         .quiz-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             border-color: rgba(251, 191, 36, 0.6);
-            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
-            background: rgba(255, 255, 255, 0.15);
         }
         
-        .quiz-card-icon { font-size: 3.5rem; }
-        .quiz-card-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: bold; }
-        .quiz-card-desc { color: #d1fae5; font-size: 1rem; line-height: 1.5; }
-        
-        .quiz-card-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            color: #a7f3d0;
-            margin-top: auto;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        .quiz-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
         }
         
-        .badge {
+        .quiz-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quiz-description {
+            color: #d1fae5;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .quiz-badge {
+            display: inline-block;
             background: rgba(251, 191, 36, 0.2);
             border: 1px solid rgba(251, 191, 36, 0.5);
-            padding: 0.3rem 0.8rem;
+            padding: 0.5rem 1rem;
             border-radius: 1rem;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .random-badge {
+            display: block;
+            margin-top: 0.5rem;
+            color: #fbbf24;
             font-size: 0.85rem;
-            font-weight: 600;
         }
         
         .footer {
             text-align: center;
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 3rem;
+            padding: 2rem;
             color: #d1fae5;
+            font-size: 1.1rem;
         }
         
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; }
-            .subtitle { font-size: 1.2rem; }
+            .subtitle { font-size: 1.4rem; }
             .quiz-grid { grid-template-columns: 1fr; }
+            .logo { width: 150px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="book-icon">📖</div>
-            <h1>Islamski Kvizovi</h1>
-            <div class="divider"></div>
-            <p class="subtitle">Testirajte i unaprijedite svoje znanje o islamu i Časnom Kur'anu</p>
+            <img src="mekteb-logo.jpg" alt="Mekteb Logo" class="logo">
+            <h1>Mektebska Pouka</h1>
+            <p class="subtitle">Kvizovi</p>
+            <p class="level">1. nivo</p>
         </div>
-
-        <div class="category">
-            <h2 class="category-title">📚 Osnove Islama</h2>
-            <div class="quiz-grid">
-                <a href="1a.html" class="quiz-card">
-                    <div class="quiz-card-icon">📚</div>
-                    <div class="quiz-card-title">Osnove Islama</div>
-                    <div class="quiz-card-desc">Testovi o vjeri, poslaniku, knjizi i temeljima islama</div>
-                    <div class="quiz-card-info">
-                        <span class="badge">20 pitanja</span>
-                        <span>🔀 Randomizacija</span>
-                    </div>
-                </a>
-                
-                <a href="1b.html" class="quiz-card">
-                    <div class="quiz-card-icon">🕌</div>
-                    <div class="quiz-card-title">Namaz i Ibadet</div>
-                    <div class="quiz-card-desc">Pitanja o namazu, abdesti, guslu, tawaf-u i hadžu</div>
-                    <div class="quiz-card-info">
-                        <span class="badge">20 pitanja</span>
-                        <span>🔀 Randomizacija</span>
-                    </div>
-                </a>
-                
-                <a href="1c.html" class="quiz-card">
-                    <div class="quiz-card-icon">☪️</div>
-                    <div class="quiz-card-title">Arapski Izrazi</div>
-                    <div class="quiz-card-desc">Inšallah, Mašallah, Hidžra, Mevlud i islamski kalendar</div>
-                    <div class="quiz-card-info">
-                        <span class="badge">20 pitanja</span>
-                        <span>🔀 Randomizacija</span>
-                    </div>
-                </a>
-            </div>
+        
+        <div class="quiz-grid">
+            <a href="1a.html" class="quiz-card">
+                <span class="quiz-icon">📚</span>
+                <h2 class="quiz-title">1a - Osnove Vjere</h2>
+                <p class="quiz-description">Iman, Islam, Poslanik i temelji vjere</p>
+                <div class="quiz-badge">20 od 63 pitanja</div>
+                <span class="random-badge">🔀 Svaki put drugačije</span>
+            </a>
+            
+            <a href="1b.html" class="quiz-card">
+                <span class="quiz-icon">🕌</span>
+                <h2 class="quiz-title">1b - Namaz i Ibadet</h2>
+                <p class="quiz-description">Namaz, abdest, gusul, čistoća i džamija</p>
+                <div class="quiz-badge">20 od 65 pitanja</div>
+                <span class="random-badge">🔀 Svaki put drugačije</span>
+            </a>
+            
+            <a href="1c.html" class="quiz-card">
+                <span class="quiz-icon">☪️</span>
+                <h2 class="quiz-title">1c - Arapski Izrazi</h2>
+                <p class="quiz-description">Dove, izrazi, hidžra, bajramovi i kalendar</p>
+                <div class="quiz-badge">20 od 60 pitanja</div>
+                <span class="random-badge">🔀 Svaki put drugačije</span>
+            </a>
+            
+            <a href="zavrsni-nivo1.html" class="quiz-card">
+                <span class="quiz-icon">🏆</span>
+                <h2 class="quiz-title">Završni Kviz - NIVO 1</h2>
+                <p class="quiz-description">Kompletno znanje osnova islama</p>
+                <div class="quiz-badge">25 od 71 pitanja</div>
+                <span class="random-badge">🔀 Svaki put drugačije</span>
+            </a>
         </div>
-
-        <div class="category">
-            <h2 class="category-title">🌿 Priroda u Kur'anu</h2>
-            <div class="quiz-grid">
-                <a href="zivotinje.html" class="quiz-card">
-                    <div class="quiz-card-icon">🦁</div>
-                    <div class="quiz-card-title">Životinje u Kur'anu</div>
-                    <div class="quiz-card-desc">Pčela, mrav, pupavac, kit, slon i druge životinje sa referencama</div>
-                    <div class="quiz-card-info">
-                        <span class="badge">25 pitanja</span>
-                        <span>🔀 Randomizacija</span>
-                    </div>
-                </a>
-                
-                <a href="biljke.html" class="quiz-card">
-                    <div class="quiz-card-icon">🌿</div>
-                    <div class="quiz-card-title">Biljke u Kur'anu</div>
-                    <div class="quiz-card-desc">Hurma, maslina, smokva, grožđe, zekkum i druge biljke</div>
-                    <div class="quiz-card-info">
-                        <span class="badge">25 pitanja</span>
-                        <span>🔀 Randomizacija</span>
-                    </div>
-                </a>
-            </div>
+        
+        <h2 class="section-title">Ostali Kvizovi</h2>
+        
+        <div class="quiz-grid">
+            <a href="zivotinje.html" class="quiz-card">
+                <span class="quiz-icon">🦁</span>
+                <h2 class="quiz-title">Životinje u Kur'anu</h2>
+                <p class="quiz-description">Sve životinje spomenute u Časnom Kur'anu</p>
+                <div class="quiz-badge">25 pitanja</div>
+            </a>
+            
+            <a href="biljke.html" class="quiz-card">
+                <span class="quiz-icon">🌿</span>
+                <h2 class="quiz-title">Biljke u Kur'anu</h2>
+                <p class="quiz-description">Sve biljke i drveće spomenuto u Časnom Kur'anu</p>
+                <div class="quiz-badge">25 pitanja</div>
+            </a>
         </div>
-
+        
         <div class="footer">
-            <p><strong>Ukupno 5 kvizova • 110 pitanja</strong></p>
-            <p style="margin-top: 0.5rem; font-size: 0.9rem;">Učite, testirajte se i unaprijedite svoje znanje!</p>
+            <p>📖 Ukupno 6 kvizova • 243+ pitanja</p>
+            <p style="margin-top: 1rem; font-size: 0.95rem;">
+                Učite o islamu kroz interaktivne kvizove
+            </p>
         </div>
     </div>
 </body>
