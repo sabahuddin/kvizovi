@@ -83,18 +83,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
         
         .question-count { font-size: 1.3rem; color: #fed7aa; }
         
         .progress-bar {
             width: 100%;
-            height: 0.75rem;
+            height: 0.6rem;
             background: rgba(251, 191, 36, 0.3);
             border-radius: 1rem;
             overflow: hidden;
-            margin-bottom: 2rem;
+            margin-bottom: 1.2rem;
         }
         
         .progress-fill {
@@ -108,14 +108,14 @@
             backdrop-filter: blur(10px);
             border: 2px solid rgba(251, 191, 36, 0.3);
             border-radius: 1.5rem;
-            padding: 3rem;
-            margin-bottom: 2rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         .question-text {
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-            line-height: 1.6;
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
         }
         
         .answers-grid { display: grid; gap: 1rem; }
@@ -238,8 +238,14 @@
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             .subtitle { font-size: 1.1rem; }
-            .question-text { font-size: 1.4rem; }
-            .answer-btn { font-size: 1.1rem; padding: 1.2rem; }
+            .container { padding: 1rem; }
+            .question-card { padding: 1.3rem; margin-bottom: 1rem; }
+            .question-text { font-size: 1.3rem; margin-bottom: 1.2rem; }
+            .answer-btn { font-size: 1rem; padding: 1rem; }
+            .back-link { font-size: 0.95rem; margin-bottom: 0; }
+            .question-count { font-size: 1.1rem; }
+            .explanation-box { padding: 1.3rem; margin-top: 1.2rem; }
+            .explanation-text { font-size: 1rem; }
         }
     </style>
 </head>
@@ -268,9 +274,8 @@
     </div>
     
     <div class="container quiz-screen" id="quizScreen">
-        <a href="index.html" class="back-link">← Nazad na Home</a>
-        
         <div class="progress-info">
+            <a href="index.html" class="back-link">← Nazad</a>
             <div class="question-count" id="questionCount"></div>
         </div>
         

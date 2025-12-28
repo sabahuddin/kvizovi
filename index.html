@@ -72,7 +72,6 @@
         
         .quiz-grid {
             display: grid;
-            justify-content: center; /* horizontalno */
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin-bottom: 3rem;
@@ -88,7 +87,7 @@
             color: white;
             transition: all 0.3s ease;
             cursor: pointer;
-            justify-content: center; /* horizontalno */
+            text-align: center;
         }
         
         .quiz-card:hover {
@@ -98,8 +97,9 @@
         }
         
         .quiz-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
+            width: 120px;
+            height: auto;
+            margin: 0 auto 1rem auto;
             display: block;
         }
         
@@ -146,48 +146,49 @@
             .subtitle { font-size: 1.4rem; }
             .quiz-grid { grid-template-columns: 1fr; }
             .logo { width: 150px; }
+            .quiz-icon { width: 90px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <img src="mekteb-logo.png" alt="Mekteb Logo" class="logo">
-            <h1>Mektebska pouka</h1>
+            <img src="mekteb-logo.jpg" alt="Mekteb Logo" class="logo">
+            <h1>Mektebska Pouka</h1>
             <p class="subtitle">Kvizovi</p>
             <p class="level">1. nivo</p>
         </div>
         
         <div class="quiz-grid">
             <a href="1a.html" class="quiz-card">
-                <span class="quiz-icon">📚</span>
-                <h2 class="quiz-title">Prvi dio</h2>
-                <p class="quiz-description">Iman, islam, poslanik i temelji vjere</p>
-                <div class="quiz-badge">20 pitanja</div>
+                <img src="star_1.png" alt="1 zvjezdica" class="quiz-icon">
+                <h2 class="quiz-title">1a - Osnove Vjere</h2>
+                <p class="quiz-description">Iman, Islam, Poslanik i temelji vjere</p>
+                <div class="quiz-badge">20 od 63 pitanja</div>
                 <span class="random-badge">🔀 Svaki put drugačije</span>
             </a>
             
             <a href="1b.html" class="quiz-card">
-                <span class="quiz-icon">🕌</span>
-                <h2 class="quiz-title">Drugi dio</h2>
+                <img src="star_2.png" alt="2 zvjezdice" class="quiz-icon">
+                <h2 class="quiz-title">1b - Namaz i Ibadet</h2>
                 <p class="quiz-description">Namaz, abdest, gusul, čistoća i džamija</p>
-                <div class="quiz-badge">20 od 60 pitanja</div>
+                <div class="quiz-badge">20 od 65 pitanja</div>
                 <span class="random-badge">🔀 Svaki put drugačije</span>
             </a>
             
             <a href="1c.html" class="quiz-card">
-                <span class="quiz-icon">☪️</span>
-                <h2 class="quiz-title">Treći dio</h2>
-                <p class="quiz-description">Dove, izrazi, hidžra, bajrami i kalendar</p>
+                <img src="star_3.png" alt="3 zvjezdice" class="quiz-icon">
+                <h2 class="quiz-title">1c - Arapski Izrazi</h2>
+                <p class="quiz-description">Dove, izrazi, hidžra, bajramovi i kalendar</p>
                 <div class="quiz-badge">20 od 60 pitanja</div>
                 <span class="random-badge">🔀 Svaki put drugačije</span>
             </a>
             
             <a href="zavrsni-nivo1.html" class="quiz-card">
-                <span class="quiz-icon">🏆</span>
+                <img src="star_4.png" alt="4 zvjezdice" class="quiz-icon">
                 <h2 class="quiz-title">Završni Kviz - NIVO 1</h2>
                 <p class="quiz-description">Kompletno znanje osnova islama</p>
-                <div class="quiz-badge">25 od 75 pitanja</div>
+                <div class="quiz-badge">25 od 71 pitanja</div>
                 <span class="random-badge">🔀 Svaki put drugačije</span>
             </a>
         </div>
@@ -196,14 +197,14 @@
         
         <div class="quiz-grid">
             <a href="zivotinje.html" class="quiz-card">
-                <span class="quiz-icon">🦁</span>
+                <span style="font-size: 4rem; margin-bottom: 1rem; display: block;">🦁</span>
                 <h2 class="quiz-title">Životinje u Kur'anu</h2>
                 <p class="quiz-description">Sve životinje spomenute u Časnom Kur'anu</p>
                 <div class="quiz-badge">25 pitanja</div>
             </a>
             
             <a href="biljke.html" class="quiz-card">
-                <span class="quiz-icon">🌿</span>
+                <span style="font-size: 4rem; margin-bottom: 1rem; display: block;">🌿</span>
                 <h2 class="quiz-title">Biljke u Kur'anu</h2>
                 <p class="quiz-description">Sve biljke i drveće spomenuto u Časnom Kur'anu</p>
                 <div class="quiz-badge">25 pitanja</div>
