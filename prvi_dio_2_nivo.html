@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2a - Imanski Šarti</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Lora', serif;
+            background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #065f46 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        
+        .quiz-header { text-align: center; margin-bottom: 3rem; }
+        
+        .quiz-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle { font-size: 1.3rem; color: #d1fae5; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #fbbf24;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        .back-link:hover { color: #f59e0b; transform: translateX(-5px); }
+        
+        .quiz-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .start-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        .start-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.05);
+        }
+        
+        .quiz-screen { display: none; }
+        .quiz-screen.active { display: block; }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        
+        .question-count { font-size: 1.3rem; color: #d1fae5; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 0.6rem;
+            background: rgba(16, 185, 129, 0.3);
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-bottom: 1.2rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transition: width 0.5s;
+        }
+        
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .question-text {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        
+        .answers-grid { display: grid; gap: 1rem; }
+        
+        .answer-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(110, 231, 183, 0.5);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        .answer-btn:hover:not(:disabled) {
+            background: rgba(16, 185, 129, 0.5);
+            transform: scale(1.02);
+        }
+        .answer-btn:disabled { cursor: not-allowed; }
+        .answer-btn.correct { background: #10b981; border-color: #34d399; }
+        .answer-btn.incorrect { background: #ef4444; border-color: #f87171; }
+        .answer-btn.show-correct { background: rgba(16, 185, 129, 0.3); border-color: #34d399; }
+        .answer-btn.faded {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .explanation-box {
+            background: rgba(251, 191, 36, 0.2);
+            border: 2px solid rgba(251, 191, 36, 0.5);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation-box.show { display: block; animation: fadeIn 0.5s; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .explanation-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .explanation-icon { font-size: 2.5rem; }
+        .explanation-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
+        .explanation-text { color: #fef3c7; font-size: 1.1rem; line-height: 1.6; }
+        
+        .next-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1.5rem;
+            transition: all 0.3s;
+        }
+        .next-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.02);
+        }
+        
+        .result-screen { display: none; text-align: center; padding: 3rem; }
+        .result-screen.active { display: block; }
+        
+        .result-emoji {
+            font-size: 6rem;
+            margin-bottom: 2rem;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .result-message { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 2rem; }
+        .result-score { font-size: 4rem; font-weight: bold; color: #fbbf24; margin-bottom: 1rem; }
+        .result-percentage { font-size: 2rem; color: #d1fae5; margin-bottom: 3rem; }
+        
+        .result-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .reset-btn, .home-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 2rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .reset-btn:hover, .home-btn:hover {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .subtitle { font-size: 1.1rem; }
+            .container { padding: 1rem; }
+            .question-card { padding: 1.3rem; margin-bottom: 1rem; }
+            .question-text { font-size: 1.3rem; margin-bottom: 1.2rem; }
+            .answer-btn { font-size: 1rem; padding: 1rem; }
+            .back-link { font-size: 0.95rem; margin-bottom: 0; }
+            .question-count { font-size: 1.1rem; }
+            .explanation-box { padding: 1.3rem; margin-top: 1.2rem; }
+            .explanation-text { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="welcomeScreen">
+        <a href="index.html" class="back-link">← Nazad na Home</a>
+        
+        <div class="quiz-header">
+            <div class="quiz-icon">☪️</div>
+            <h1>2a - Imanski Šarti</h1>
+            <p class="subtitle">Šest temelja islamskog vjerovanja</p>
+        </div>
+        
+        <div class="quiz-info">
+            <p style="font-size: 1.3rem; margin-bottom: 1rem;">
+                <strong>25</strong> pitanja iz <strong>100</strong> ukupno
+            </p>
+            <p style="color: #d1fae5; margin-bottom: 0.5rem;">
+                ⚡ Svaki put drugačija pitanja!
+            </p>
+            <button class="start-btn" onclick="startQuiz()">🎯 Započni kviz</button>
+        </div>
+    </div>
+    
+    <div class="container quiz-screen" id="quizScreen">
+        <div class="progress-info">
+            <a href="index.html" class="back-link">← Nazad</a>
+            <div class="question-count" id="questionCount"></div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-text" id="questionText"></div>
+            <div class="answers-grid" id="answersGrid"></div>
+        </div>
+        
+        <div class="explanation-box" id="explanationBox">
+            <div class="explanation-header">
+                <span class="explanation-icon" id="explanationIcon"></span>
+                <h3 class="explanation-title" id="explanationTitle"></h3>
+            </div>
+            <p class="explanation-text" id="explanationText"></p>
+            <button class="next-btn" onclick="nextQuestion()">Sljedeće pitanje</button>
+        </div>
+    </div>
+    
+    <div class="container result-screen" id="resultScreen">
+        <div class="result-emoji" id="resultEmoji"></div>
+        <h2 class="result-message" id="resultMessage"></h2>
+        <div class="result-score" id="resultScore"></div>
+        <p class="result-percentage" id="resultPercentage"></p>
+        <div class="result-buttons">
+            <button class="reset-btn" onclick="location.reload()">
+                <span>↻</span> Ponovi kviz
+            </button>
+            <a href="index.html" class="home-btn">
+                <span>🏠</span> Nazad na Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // SVA PITANJA - 100 ukupno (50 standardnih + 50 pametnih)
+        const allQuestions = [
+            // ===== STANDARDNA PITANJA (50) =====
+            // DA/NE (20)
+            {question: 'Adem, a.s., je stvoren od zemlje.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Allah je stvorio Adema, a.s., od zemlje (ilovače) u Džennetu.'},
+            {question: 'Iblis je odbio učiniti sedždu Ademu, a.s.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Iblis je iz oholosti odbio Allahovu naredbu.'},
+            {question: 'Čovjek se razvio iz majmuna prema islamskom učenju.', options: ['DA', 'NE'], answer: 'NE', explanation: 'Netačno! Islam ne prihvata teoriju evolucije. Adem, a.s., je stvoren direktno.'},
+            {question: 'Es-sifatuz-zatijje su svojstva Allahovog bića.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Es-sifatuz-zatijje su šest svojstava Allahovog bića.'},
+            {question: 'Svojstvo VAHDANIJJET znači da je Allah jedan.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Vahdanijjet znači da je Allah jedan - nema drugog Boga osim Allaha.'},
+            {question: 'Čovjekova svojstva su jednaka Allahovim svojstvima.', options: ['DA', 'NE'], answer: 'NE', explanation: 'Netačno! Allahova svojstva su savršena i neograničena, a ljudska ograničena.'},
+            {question: 'Meleki jedu, piju i spavaju.', options: ['DA', 'NE'], answer: 'NE', explanation: 'Netačno! Meleki su stvoreni od svjetlosti i nemaju tjelesne potrebe.'},
+            {question: 'Munkir i Nekir su meleki zaduženi za ispitivanje u kaburu.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Munkir i Nekir zajedno ispituju umrle osobe u kaburu.'},
+            {question: 'Kiramun-katibun pišu dobra i loša djela.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Kiramun-katibun su meleki pisari koji bilježe sva djela.'},
+            {question: 'Zebur je objavljen Davudu, a.s.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Zebur je jedna od četiri velike Allahove knjige objavljena Davudu, a.s.'},
+            {question: 'Kur\'an je podijeljen na 30 džuzova.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Kur\'an ima 30 džuzova, 114 sura i 6236 ajeta.'},
+            {question: 'Musa, a.s., i Harun, a.s., su bili braća.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Musa i Harun, a.s., su bili rođena braća i obojica poslanici.'},
+            {question: 'Davud, a.s., je bio otac Sulejmanu, a.s.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Davud i Sulejman, a.s., su bili otac i sin, obojica poslanici.'},
+            {question: 'Smrt je kraj života prema islamskom učenju.', options: ['DA', 'NE'], answer: 'NE', explanation: 'Netačno! Smrt je samo PROMJENA načina života - prelazak u vječni ahiret.'},
+            {question: 'U koga pretegnu dobra djela, mjesto mu je u Džennetu.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Na Sudnjem danu djela se vagaju i kome pretegnu dobra, čeka ga Džennet.'},
+            {question: 'Čovjek je odgovoran za vrijeme i mjesto rođenja.', options: ['DA', 'NE'], answer: 'NE', explanation: 'Netačno! Čovjek NIJE odgovoran za određeno, ali JESTE za svoja djela.'},
+            {question: 'Šta Allah hoće, to biva, a šta neće, to ne može biti.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Ovo je suština šestog imanskog šarta - vjerovanja u kader.'},
+            {question: 'Čovjek zna šta mu je naređeno, ali ne zna šta mu je određeno.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Naređeno su propisi koje poznajemo, a određeno je sudbina koju ne znamo.'},
+            {question: 'Adem, a.s., i Hava su se odmah pokajali nakon grijeha.', options: ['DA', 'NE'], answer: 'DA', explanation: 'Tačno! Odmah su rekli: "Gospodaru naš, sami smo sebi krivi..."'},
+            {question: 'Iblis je melek koji je odbio sedždu Ademu, a.s.', options: ['DA', 'NE'], answer: 'NE', explanation: 'Netačno! Iblis NIJE melek - on je DŽIN stvoren od vatre.'},
+            // VIŠESTRUKI IZBOR (30)
+            {question: 'Ko je prema Kur\'anu prvi čovjek i prvi vjerovjesnik?', options: ['Nuh, a.s.', 'Ibrahim, a.s.', 'Adem, a.s.', 'Musa, a.s.'], answer: 'Adem, a.s.', explanation: 'Adem, a.s., je prvi čovjek i prvi vjerovjesnik.'},
+            {question: 'Zašto je Iblis odbio sedždu Ademu, a.s.?', options: ['Nije čuo naredbu', 'Smatrao je da je bolji', 'Zaboravio je', 'Bio je zauzet'], answer: 'Smatrao je da je bolji', explanation: 'Iblis je iz oholosti odbio, smatrajući vatru boljom od zemlje.'},
+            {question: 'Kako glasi prvi imanski šart?', options: ['Ve melaiketihi', 'Amentu billahi', 'Ve kutubihi', 'Ve rusulihi'], answer: 'Amentu billahi', explanation: 'AMENTU BILLAHI znači "Ja vjerujem u Allaha".'},
+            {question: 'Koliko ima Allahovih lijepih imena?', options: ['50', '77', '99', '114'], answer: '99', explanation: 'Allah ima 99 lijepih imena (Esmaul-husna).'},
+            {question: 'Koliko ukupno ima Allahovih svojstava?', options: ['6', '8', '12', '14'], answer: '14', explanation: '14 svojstava: 6 es-sifatuz-zatijje + 8 es-sifatus-subutijje.'},
+            {question: 'Svojstvo TEKVIN znači da Allah:', options: ['Sve čuje', 'Sve vidi', 'Sve stvara i uzdržava', 'Govori'], answer: 'Sve stvara i uzdržava', explanation: 'TEKVIN - Allah sve stvara, uzdržava i rastvara.'},
+            {question: 'Koji melek donosi Božiju objavu?', options: ['Mikail', 'Israfil', 'Džibril', 'Azrail'], answer: 'Džibril', explanation: 'DŽIBRIL donosi Allahovu objavu poslanicima.'},
+            {question: 'Melek Israfil je zadužen za:', options: ['Čuvanje Dženneta', 'Puhanje u sur', 'Prirodne pojave', 'Uzimanje duša'], answer: 'Puhanje u sur', explanation: 'ISRAFIL puše u sur najavljujući Sudnji dan.'},
+            {question: 'Ridvan je zadužen za:', options: ['Čuvanje Dženneta', 'Čuvanje Džehennema', 'Ispitivanje u kaburu', 'Prirodne pojave'], answer: 'Čuvanje Dženneta', explanation: 'RIDVAN je melek čuvar Dženneta.'},
+            {question: 'Koliko ima velikih Allahovih knjiga?', options: ['2', '4', '6', '10'], answer: '4', explanation: 'Četiri kitaba: Tevrat, Zebur, Indžil i Kur\'an.'},
+            {question: 'Kur\'an sadrži:', options: ['100 sura', '114 sura', '120 sura', '130 sura'], answer: '114 sura', explanation: 'Kur\'an ima 114 sura i 6236 ajeta.'},
+            {question: 'Objava Kur\'ana trajala je:', options: ['10 godina', '15 godina', '23 godine', '30 godina'], answer: '23 godine', explanation: '13 godina u Mekki + 10 u Medini = 23 godine.'},
+            {question: 'Koliko se poslanika spominje u Kur\'anu?', options: ['20', '25', '30', '50'], answer: '25', explanation: 'U Kur\'anu se poimence spominje 25 poslanika.'},
+            {question: 'Ko NIJE među Ulul-\'azm poslanicima?', options: ['Nuh, a.s.', 'Jusuf, a.s.', 'Ibrahim, a.s.', 'Isa, a.s.'], answer: 'Jusuf, a.s.', explanation: 'Ulul-\'azm su: Nuh, Ibrahim, Musa, Isa i Muhammed, a.s.'},
+            {question: 'Muhammed, a.s., je postao poslanik u:', options: ['25. godini', '30. godini', '40. godini', '50. godini'], answer: '40. godini', explanation: 'Sa 40 godina primio je prvu objavu u pećini Hira.'},
+            {question: 'Hidžra je:', options: ['Objava Kur\'ana', 'Preseljenje u Medinu', 'Bitka na Bedru', 'Osvojenje Meke'], answer: 'Preseljenje u Medinu', explanation: 'HIDŽRA je preseljenje iz Meke u Medinu 622. godine.'},
+            {question: 'Berzah je:', options: ['Džennet', 'Zagrobni život', 'Džehennem', 'Sudnji dan'], answer: 'Zagrobni život', explanation: 'BERZAH je period između smrti i Sudnjeg dana.'},
+            {question: 'Ko puše u sur najavljujući Sudnji dan?', options: ['Džibril', 'Mikail', 'Israfil', 'Azrail'], answer: 'Israfil', explanation: 'ISRAFIL puše u sur dva puta - za uništenje i proživljenje.'},
+            {question: 'Levhi-mahfuz je:', options: ['Vrsta namaza', 'Ploča sa sudbinom', 'Allahovo ime', 'Vrsta ibadeta'], answer: 'Ploča sa sudbinom', explanation: 'LEVHI-MAHFUZ je ploča gdje je zapisana sudbina svega.'},
+            {question: 'Prvo boravište Adema, a.s., bilo je:', options: ['Zemlja', 'Džennet', 'Mekka', 'Medina'], answer: 'Džennet', explanation: 'Adem, a.s., je prvo živio u Džennetu sa Havom.'},
+            {question: 'Riječi kojim tražimo zaštitu od šejtana:', options: ['Bismilla', 'Elhamdulillah', 'Euzubilla', 'Subhanallah'], answer: 'Euzubilla', explanation: 'EUZUBILLA - Tražim Allahovu zaštitu od prokletog šejtana.'},
+            {question: 'Znak da je Allah oprostio Ademu i Havi bio je:', options: ['Objava', 'Ponovni susret', 'Povratak u Džennet', 'Dolazak meleka'], answer: 'Ponovni susret', explanation: 'Nakon razdvajanja, ponovni susret je bio znak oprosta.'},
+            {question: 'Svojstvo \'ILM znači:', options: ['Allah sve vidi', 'Allah sve čuje', 'Allah sve zna', 'Allah sve stvara'], answer: 'Allah sve zna', explanation: '\'ILM - Allahovo znanje je sveobuhvatno.'},
+            {question: 'Koji melek rastavlja dušu od tijela?', options: ['Ridvan', 'Malik', 'Azrail', 'Mikail'], answer: 'Azrail', explanation: 'AZRAIL (Melekul-mevt) uzima duše u času smrti.'},
+            {question: 'Indžil je objavljen:', options: ['Musau, a.s.', 'Ibrahimu, a.s.', 'Isau, a.s.', 'Jahjau, a.s.'], answer: 'Isau, a.s.', explanation: 'INDŽIL je objavljen Isau, a.s.'},
+            {question: 'Kur\'an je objavljen u mjesecu:', options: ['Ševvalu', 'Muharremu', 'Ramazanu', 'Redžebu'], answer: 'Ramazanu', explanation: 'Objava je počela u noći Lejletul-kadr u ramazanu.'},
+            {question: 'Ibrahim, a.s., je bio otac:', options: ['Musau i Harunu', 'Ismailu i Ishaku', 'Jakubu i Jusufu', 'Davudu i Sulejmanu'], answer: 'Ismailu i Ishaku', explanation: 'Ibrahim, a.s., je otac Ismailu i Ishaku, a.s.'},
+            {question: 'Muhammed, a.s., je u djetinjstvu bio:', options: ['Trgovac', 'Pastir', 'Tesar', 'Krojač'], answer: 'Pastir', explanation: 'U djetinjstvu je čuvao ovce, kasnije postao trgovac.'},
+            {question: 'Dunjaluk je prolazan, a ahiret je:', options: ['Također prolazan', 'Vječan', 'Nepoznat', 'Kratkotrajan'], answer: 'Vječan', explanation: 'Dunjaluk je prolazan, ahiret je VJEČAN.'},
+            {question: 'Čovjek je slobodan da bira:', options: ['Vrijeme smrti', 'Dobro ili zlo', 'Roditelje', 'Spol'], answer: 'Dobro ili zlo', explanation: 'Čovjek ima slobodnu volju za svoja DJELA.'},
+
+            // ===== PAMETNA PITANJA - PRVA GRUPA (25) =====
+            {question: 'Izbaci riječ koja NE pripada: Vudžud, Ilm, Beka, Kur\'an', options: ['Vudžud', 'Ilm', 'Beka', 'Kur\'an'], answer: 'Kur\'an', explanation: 'Vudžud, Ilm i Beka su Allahova SVOJSTVA, dok je Kur\'an Allahova KNJIGA.'},
+            {question: 'Izbaci riječ koja NE pripada: Hajat, Sem\', Besar, Kidem', options: ['Hajat', 'Sem\'', 'Besar', 'Kidem'], answer: 'Kidem', explanation: 'Hajat, Sem\' i Besar su es-sifatus-subutijje, a Kidem je es-sifatuz-zatijje.'},
+            {question: 'Izbaci riječ koja NE pripada: Nuh, Jusuf, Musa, Isa', options: ['Nuh, a.s.', 'Jusuf, a.s.', 'Musa, a.s.', 'Isa, a.s.'], answer: 'Jusuf, a.s.', explanation: 'Nuh, Musa i Isa su Ulul-\'azm poslanici, Jusuf, a.s., nije.'},
+            {question: 'Izbaci riječ koja NE pripada: Džibril, Mikail, Iblis, Israfil', options: ['Džibril', 'Mikail', 'Iblis', 'Israfil'], answer: 'Iblis', explanation: 'Džibril, Mikail i Israfil su MELEKI, a Iblis je DŽIN.'},
+            {question: 'Izbaci riječ koja NE pripada: Tevrat, Zebur, Suhuf, Indžil', options: ['Tevrat', 'Zebur', 'Suhuf', 'Indžil'], answer: 'Suhuf', explanation: 'Tevrat, Zebur i Indžil su KITABI (velike knjige), a Suhufi su mali listovi.'},
+            {question: 'Ime RIDVAN vas asocira na:', options: ['Mekku', 'Medinu', 'Džennet', 'Džehennem'], answer: 'Džennet', explanation: 'RIDVAN je melek čuvar Dženneta. Malik čuva Džehennem.'},
+            {question: 'Pojam LEVHI-MAHFUZ asocira na:', options: ['Vrstu namaza', 'Allahovo ime', 'Sudbinu i određenje', 'Vrstu posta'], answer: 'Sudbinu i određenje', explanation: 'U Levhi-mahfuzu je zapisana sudbina svega - šesti imanski šart.'},
+            {question: 'Broj 23 u kontekstu Kur\'ana asocira na:', options: ['Broj sura', 'Broj džuzova', 'Godine objavljivanja', 'Broj poslanika'], answer: 'Godine objavljivanja', explanation: 'Kur\'an je objavljivano 23 godine (13 u Mekki + 10 u Medini).'},
+            {question: 'Riječ BERZAH asocira na:', options: ['Vrijeme prije rođenja', 'Zagrobni život', 'Sudnji dan', 'Život u Džennetu'], answer: 'Zagrobni život', explanation: 'BERZAH je period između smrti i Sudnjeg dana.'},
+            {question: 'Pećina HIRA asocira na:', options: ['Hidžru', 'Početak objave Kur\'ana', 'Bitku na Bedru', 'Isru i Mi\'radž'], answer: 'Početak objave Kur\'ana', explanation: 'U pećini Hira je Muhammed, a.s., primio prvu objavu.'},
+            {question: 'Dopuni analogiju: Ridvan : Džennet = Malik : ?', options: ['Kabur', 'Sirat', 'Džehennem', 'Mizan'], answer: 'Džehennem', explanation: 'Ridvan čuva Džennet, Malik čuva Džehennem.'},
+            {question: 'Dopuni analogiju: Musa : Tevrat = Davud : ?', options: ['Kur\'an', 'Indžil', 'Zebur', 'Suhuf'], answer: 'Zebur', explanation: 'Musau je objavljen Tevrat, Davudu Zebur.'},
+            {question: 'Dopuni analogiju: Džibril : objava = Israfil : ?', options: ['Prirodne pojave', 'Smrt', 'Puhanje u sur', 'Pisanje djela'], answer: 'Puhanje u sur', explanation: 'Džibril donosi objavu, Israfil puše u sur.'},
+            {question: '"Pratim te i zapisujem svako djelo." Ko sam ja?', options: ['Munkir i Nekir', 'Kiramun-katibun', 'Džibril', 'Mikail'], answer: 'Kiramun-katibun', explanation: 'Kiramun-katibun su meleki pisari koji bilježe sva djela.'},
+            {question: '"U meni je zapisana sudbina svakog čovjeka." Šta sam ja?', options: ['Kur\'an', 'Levhi-mahfuz', 'Sirat', 'Mizan'], answer: 'Levhi-mahfuz', explanation: 'LEVHI-MAHFUZ - Pomno čuvana ploča sa sudbinom svega.'},
+            {question: '"Nisam melek, ali sam odbio sedždu iz oholosti." Ko sam?', options: ['Adem, a.s.', 'Džibril', 'Iblis', 'Mikail'], answer: 'Iblis', explanation: 'IBLIS je džin koji je iz oholosti odbio sedždu Ademu, a.s.'},
+            {question: 'Pronađi GREŠKU: "Kur\'an ima 114 ajeta i objavljen je u 23 godine."', options: ['Nije objavljen u 23 godine', 'Ima 114 SURA, ne ajeta', 'Objavljen je odjednom', 'Nema greške'], answer: 'Ima 114 SURA, ne ajeta', explanation: 'Kur\'an ima 114 SURA i 6236 ajeta.'},
+            {question: 'Pronađi GREŠKU: "Es-sifatuz-zatijje su svojstva savršenstva i ima ih 8."', options: ['Ima ih 6, ne 8', 'To su svojstva bića, ne savršenstva', 'Obje greške su tačne', 'Nema greške'], answer: 'Obje greške su tačne', explanation: 'Es-sifatuz-zatijje su svojstva BIĆA i ima ih ŠEST.'},
+            {question: 'Šta je ZAJEDNIČKO: Ibrahim-Ismail, Davud-Sulejman, Zekerija-Jahja?', options: ['Svi su Ulul-azm', 'Svi su odnos otac-sin', 'Svi su primili kitabe', 'Živjeli u isto vrijeme'], answer: 'Svi su odnos otac-sin', explanation: 'U sva tri para radi se o poslanicima u odnosu OTAC-SIN.'},
+            {question: 'Šta je ZAJEDNIČKO: Hajat, Ilm, Sem\', Besar, Iradet, Kudret, Kelam, Tekvin?', options: ['Es-sifatuz-zatijje', 'Es-sifatus-subutijje', 'Imena meleka', 'Nazivi knjiga'], answer: 'Es-sifatus-subutijje', explanation: 'Svih osam su ES-SIFATUS-SUBUTIJJE - svojstva Allahovog savršenstva.'},
+            {question: 'Dopuni niz: Vudžud, Vahdanijjet, Kidem, Beka, Muhalefetun lil-havadisi, ?', options: ['Hajat', 'Ilm', 'Kijamun bi nefsihi', 'Tekvin'], answer: 'Kijamun bi nefsihi', explanation: 'To je šest es-sifatuz-zatijje - šesto svojstvo je Kijamun bi nefsihi.'},
+            {question: 'Dopuni niz: Smrt → Berzah → Israfilovo puhanje → Proživljenje → ?', options: ['Povratak na dunjaluk', 'Sudnji dan', 'Ponovna smrt', 'Džennet'], answer: 'Sudnji dan', explanation: 'Nakon proživljenja slijedi Sudnji dan, pa tek onda Džennet ili Džehennem.'},
+            {question: 'Ahmed kaže: "Čovjek nije odgovoran jer je sve zapisano." Je li u pravu?', options: ['Da, potpuno', 'Ne, odgovoran je za djela', 'Djelimično', 'Ne zna se'], answer: 'Ne, odgovoran je za djela', explanation: 'Čovjek ima slobodnu volju i JESTE odgovoran za djela koja sam bira.'},
+            {question: 'Merjem uči da Allahovih svojstava ima 14. Je li u pravu?', options: ['Ne, ima manje', 'Da, ima tačno 14', 'Ne, ima više', 'Ne može se znati'], answer: 'Da, ima tačno 14', explanation: '14 svojstava: 6 es-sifatuz-zatijje + 8 es-sifatus-subutijje.'},
+            {question: 'Ako Džibril donosi objavu, a Mikail upravlja prirodom, Azrail je zadužen za:', options: ['Čuvanje Dženneta', 'Puhanje u sur', 'Uzimanje duša', 'Pisanje djela'], answer: 'Uzimanje duša', explanation: 'AZRAIL (Melekul-mevt) rastavlja dušu od tijela u času smrti.'},
+
+            // ===== PAMETNA PITANJA - TREĆA GRUPA (25) =====
+            {question: 'Šejtan je Ademu obećao tri stvari. Koja NIJE bila među njima?', options: ['Besmrtnost', 'Da postanu meleki', 'Vječna vlast', 'Veliko bogatstvo'], answer: 'Veliko bogatstvo', explanation: 'Šejtan je obećao besmrtnost, da postanu meleki i vlast - NE bogatstvo.'},
+            {question: 'Adem, a.s., ima tri uloge u islamu. Koja NIJE tačna?', options: ['Prvi čovjek', 'Prvi vjerovjesnik', 'Prvi melek', 'Praotac čovječanstva'], answer: 'Prvi melek', explanation: 'Adem je prvi čovjek, vjerovjesnik i praotac, ali NIJE melek.'},
+            {question: 'Od čega je Iblis stvoren?', options: ['Od svjetlosti', 'Od zemlje', 'Od vatre', 'Od vode'], answer: 'Od vatre', explanation: 'Iblis je DŽIN stvoren od vatre, zato je i mogao odbiti naredbu.'},
+            {question: 'Koja dva svojstva govore o Allahovom trajanju?', options: ['Vudžud i Vahdanijjet', 'Kidem i Beka', 'Hajat i Ilm', 'Sem\' i Besar'], answer: 'Kidem i Beka', explanation: 'KIDEM (oduvijek) i BEKA (zauvijek) govore o vječnom trajanju.'},
+            {question: 'Izbaci svojstvo koje NE pripada istoj grupi: Hajat, Kudret, Vahdanijjet, Tekvin', options: ['Hajat', 'Kudret', 'Vahdanijjet', 'Tekvin'], answer: 'Vahdanijjet', explanation: 'Hajat, Kudret i Tekvin su es-sifatus-subutijje, Vahdanijjet je es-sifatuz-zatijje.'},
+            {question: 'Dopuni analogiju: Sem\' : sluh = Besar : ?', options: ['Znanje', 'Vid', 'Govor', 'Moć'], answer: 'Vid', explanation: 'SEM\' je sluh, BESAR je vid - oba su svojstva savršenstva.'},
+            {question: '"Allah nikome ne sliči" - koje svojstvo ovo opisuje?', options: ['Kijamun bi nefsihi', 'Muhalefetun lil-havadisi', 'Vahdanijjet', 'Vudžud'], answer: 'Muhalefetun lil-havadisi', explanation: 'MUHALEFETUN LIL-HAVADISI - Allah nikome i ničemu ne sliči.'},
+            {question: 'Ljudska svojstva su ograničena, a Allahova su:', options: ['Također ograničena', 'Savršena i neograničena', 'Ista', 'Manja'], answer: 'Savršena i neograničena', explanation: 'Allahova svojstva su SAVRŠENA, ljudska su ograničena.'},
+            {question: 'Munkir i Nekir su par. Njihovo zajedničko zaduženje je:', options: ['Pisanje djela', 'Ispitivanje u kaburu', 'Čuvanje Dženneta', 'Donošenje objave'], answer: 'Ispitivanje u kaburu', explanation: 'Munkir i Nekir ZAJEDNO ispituju umrle u kaburu.'},
+            {question: 'Koja četiri meleka se smatraju najvećim?', options: ['Džibril, Mikail, Israfil, Azrail', 'Munkir, Nekir, Ridvan, Malik', 'Džibril, Ridvan, Malik, Israfil', 'Mikail, Azrail, Munkir, Nekir'], answer: 'Džibril, Mikail, Israfil, Azrail', explanation: 'Četiri najveća: Džibril (objava), Mikail (priroda), Israfil (sur), Azrail (smrt).'},
+            {question: '"Stvoreni od svjetlosti, ne jedemo, ne spavamo, ne griješimo." Ko smo?', options: ['Džini', 'Meleki', 'Šejtani', 'Ljudi'], answer: 'Meleki', explanation: 'MELEKI su stvoreni od svjetlosti i ne mogu griješiti.'},
+            {question: 'Šta je ZAJEDNIČKO za Ridvana i Malika?', options: ['Obojica čuvaju Džennet', 'Obojica ispituju u kaburu', 'Obojica su čuvari ahiretskih boravišta', 'Obojica pišu djela'], answer: 'Obojica su čuvari ahiretskih boravišta', explanation: 'Ridvan čuva Džennet, Malik čuva Džehennem - obojica ČUVARI.'},
+            {question: 'Poredaj kitabe od najstarijeg: Zebur, Tevrat, Indžil, Kur\'an', options: ['Zebur, Tevrat, Indžil, Kur\'an', 'Tevrat, Zebur, Indžil, Kur\'an', 'Indžil, Tevrat, Zebur, Kur\'an', 'Tevrat, Indžil, Zebur, Kur\'an'], answer: 'Tevrat, Zebur, Indžil, Kur\'an', explanation: 'Hronološki: Tevrat (Musa), Zebur (Davud), Indžil (Isa), Kur\'an (Muhammed).'},
+            {question: 'Kur\'an se razlikuje od prethodnih knjiga. Šta NIJE razlika?', options: ['Sačuvan u originalu', 'Za cijelo čovječanstvo', 'Objavljen odjednom', 'Posljednja objava'], answer: 'Objavljen odjednom', explanation: 'Kur\'an NIJE objavljen odjednom - objavljivanje je trajalo 23 godine.'},
+            {question: 'Izbaci pojam koji NE pripada: Harf, Ajet, Sura, Hadis', options: ['Harf', 'Ajet', 'Sura', 'Hadis'], answer: 'Hadis', explanation: 'Harf, Ajet i Sura su dijelovi KUR\'ANA, Hadis je izreka Poslanika.'},
+            {question: 'Koliko suhufa je UKUPNO objavljeno? Šit:50, Idris:30, Ibrahim:10, Musa:10', options: ['90', '100', '110', '120'], answer: '100', explanation: '50 + 30 + 10 + 10 = 100 suhufa ukupno.'},
+            {question: 'Trojica poslanika u nizu otac-sin-unuk:', options: ['Ibrahim-Ismail-Muhammed', 'Ibrahim-Ishak-Jakub', 'Davud-Sulejman-Isa', 'Zekerija-Jahja-Isa'], answer: 'Ibrahim-Ishak-Jakub', explanation: 'Ibrahim→Ishak→Jakub su tri generacije poslanika.'},
+            {question: 'Koji poslanik je bio TESAR (stolar)?', options: ['Davud, a.s.', 'Idris, a.s.', 'Isa, a.s.', 'Sulejman, a.s.'], answer: 'Isa, a.s.', explanation: 'ISA, a.s., je bio tesar. Davud je pravio pancire, Idris bio krojač.'},
+            {question: '"Ulul-\'azm" - odlučni poslanici. Koliko ih ima?', options: ['3', '4', '5', '6'], answer: '5', explanation: 'Pet Ulul-\'azm: Nuh, Ibrahim, Musa, Isa i Muhammed, a.s.'},
+            {question: 'Jahja, a.s., i Isa, a.s., su bili u srodstvu. Kakvo?', options: ['Braća', 'Otac i sin', 'Tetići', 'Amidžići'], answer: 'Tetići', explanation: 'Jahja i Isa, a.s., su bili TETIĆI - djeca sestara.'},
+            {question: 'Poredaj događaje ahireta: Smrt, Berzah, Proživljenje, Sudnji dan', options: ['Sudnji dan, Smrt, Berzah, Proživljenje', 'Smrt, Berzah, Proživljenje, Sudnji dan', 'Berzah, Smrt, Sudnji dan, Proživljenje', 'Smrt, Sudnji dan, Berzah, Proživljenje'], answer: 'Smrt, Berzah, Proživljenje, Sudnji dan', explanation: 'Redoslijed: Smrt → Berzah → Proživljenje → Sudnji dan.'},
+            {question: 'Primiti knjigu djela u DESNU ruku znači:', options: ['Pretegla loša djela', 'Pretegla dobra djela', 'Ide u Džehennem', 'Mora čekati'], answer: 'Pretegla dobra djela', explanation: 'DESNA ruka = dobra djela pretegla = Džennet.'},
+            {question: '"Smrt nije kraj, nego promjena načina života." Koji imanski šart?', options: ['Prvi', 'Treći', 'Peti', 'Šesti'], answer: 'Peti', explanation: 'PETI imanski šart - vjerovanje u Sudnji dan (vel-jevmil ahiri).'},
+            {question: 'Za šta čovjek NIJE odgovoran?', options: ['Laž koju izgovori', 'Namaz koji propusti', 'Spol s kojim je rođen', 'Krađu koju počini'], answer: 'Spol s kojim je rođen', explanation: 'Čovjek NIJE odgovoran za ODREĐENO (spol, roditelji), ali JESTE za DJELA.'},
+            {question: '"Trebamo slijediti propise, sudbinu prepustiti Allahu." Ovo objašnjava:', options: ['Ne trebamo izvršavati dužnosti', 'Znamo naređeno, ne znamo određeno', 'Sudbina ne postoji', 'Možemo promijeniti sudbinu'], answer: 'Znamo naređeno, ne znamo određeno', explanation: 'NAREĐENO su propisi, ODREĐENO je sudbina - slijedimo propise!'}
+        ];
+
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        const QUESTIONS_TO_SHOW = 25;
+        
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function shuffleQuestionOptions(question) {
+            return { ...question, options: shuffleArray(question.options) };
+        }
+        
+        function startQuiz() {
+            let shuffledAll = shuffleArray(allQuestions);
+            let selectedQuestions = shuffledAll.slice(0, QUESTIONS_TO_SHOW);
+            questions = selectedQuestions.map(q => shuffleQuestionOptions(q));
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('quizScreen').classList.add('active');
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            const total = questions.length;
+            
+            document.getElementById('questionCount').textContent = `Pitanje ${currentQuestion + 1} / ${total}`;
+            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / total) * 100}%`;
+            document.getElementById('questionText').textContent = q.question;
+            
+            const answersGrid = document.getElementById('answersGrid');
+            answersGrid.innerHTML = '';
+            
+            q.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option);
+                answersGrid.appendChild(btn);
+            });
+            
+            document.getElementById('explanationBox').classList.remove('show');
+        }
+        
+        function checkAnswer(userAnswer) {
+            const q = questions[currentQuestion];
+            const isCorrect = userAnswer === q.answer;
+            
+            if (isCorrect) score++;
+            
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                
+                if (btn.textContent === userAnswer) {
+                    btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                } else if (btn.textContent === q.answer) {
+                    btn.classList.add('show-correct');
+                } else {
+                    btn.classList.add('faded');
+                }
+            });
+            
+            document.getElementById('explanationIcon').textContent = isCorrect ? '✅' : '❌';
+            document.getElementById('explanationTitle').textContent = isCorrect ? 'Tačno!' : 'Netačno!';
+            document.getElementById('explanationText').textContent = q.explanation;
+            document.getElementById('explanationBox').classList.add('show');
+            
+            const nextBtn = document.querySelector('.next-btn');
+            nextBtn.textContent = currentQuestion < questions.length - 1 ? 'Sljedeće pitanje' : 'Prikaži rezultate';
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        function showResults() {
+            const percentage = Math.round((score / questions.length) * 100);
+            let message, emoji;
+            
+            if (percentage >= 90) {
+                message = 'Izvrsno! Mashallah!';
+                emoji = '🌟';
+            } else if (percentage >= 70) {
+                message = 'Vrlo dobro!';
+                emoji = '✨';
+            } else if (percentage >= 50) {
+                message = 'Dobro! Nastavite učiti.';
+                emoji = '📚';
+            } else {
+                message = 'Potrebno je više učenja.';
+                emoji = '💪';
+            }
+            
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.add('active');
+            
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultScore').textContent = `${score}/${questions.length}`;
+            document.getElementById('resultPercentage').textContent = `${percentage}% tačnih odgovora`;
+        }
+    </script>
+</body>
+</html>
