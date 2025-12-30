@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3a - Ibadet i Vjerovanje</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Lora', serif;
+            background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #065f46 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        
+        .quiz-header { text-align: center; margin-bottom: 2rem; }
+        
+        .quiz-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle { font-size: 1.2rem; color: #d1fae5; }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #fbbf24;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        .back-link:hover { color: #f59e0b; transform: translateX(-5px); }
+        
+        .quiz-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .start-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.3rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); }
+        
+        .screen { display: none; }
+        .screen.active { display: block; }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-bar-container {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin: 0 1rem;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .options { display: flex; flex-direction: column; gap: 0.8rem; }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1rem;
+            padding: 1rem 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+        }
+        .option:hover:not(.disabled) { 
+            background: rgba(110, 231, 183, 0.2); 
+            border-color: #10b981;
+        }
+        .option.correct { background: rgba(16, 185, 129, 0.4); border-color: #10b981; }
+        .option.incorrect { background: rgba(239, 68, 68, 0.4); border-color: #ef4444; }
+        .option.disabled { pointer-events: none; }
+
+        /* POPUP OVERLAY */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .popup-overlay.active { display: flex; }
+
+        .popup-content {
+            background: #fbbf24;
+            color: #1a1a1a;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: popupIn 0.3s ease;
+        }
+
+        @keyframes popupIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .popup-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #065f46;
+        }
+
+        .popup-explanation {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .popup-btn {
+            background: linear-gradient(to right, #065f46, #0f766e);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+        }
+        .popup-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(6, 95, 70, 0.4); }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .result-emoji { font-size: 5rem; margin-bottom: 1rem; }
+        .result-message { font-size: 1.8rem; margin-bottom: 1rem; font-family: 'Playfair Display', serif; }
+        .result-score { font-size: 3rem; color: #fbbf24; font-weight: bold; margin-bottom: 0.5rem; }
+        .result-percentage { font-size: 1.2rem; color: #d1fae5; margin-bottom: 2rem; }
+        
+        .btn-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        
+        .retry-btn, .home-btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .retry-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            border: none;
+        }
+        .home-btn {
+            background: transparent;
+            color: #fbbf24;
+            border: 2px solid #fbbf24;
+        }
+        .retry-btn:hover, .home-btn:hover { transform: translateY(-3px); }
+    </style>
+</head>
+<body>
+    <div class="container screen active" id="startScreen">
+        <a href="index.html" class="back-link">← Početna</a>
+        <div class="quiz-header">
+            <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
+            <h1>PRVI DIO</h1>
+            <p class="subtitle">Ibadet i Vjerovanje - Ilmihal 3</p>
+        </div>
+        <div class="quiz-info">
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">📚 Teme: Dužnosti prema Allahu, Imanski šarti, Namaz, Post, Zekat, Hadž</p>
+            <p style="margin-bottom: 2rem;">25 pitanja od 100 iz baze • Svaki put drugačija pitanja</p>
+            <button class="start-btn" onclick="startQuiz()">POKRENI KVIZ</button>
+        </div>
+    </div>
+
+    <div class="container screen" id="quizScreen">
+        <div class="quiz-header">
+            <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
+            <h1>PRVI DIO</h1>
+            <p class="subtitle">Ibadet i Vjerovanje</p>
+        </div>
+        <div class="progress-info">
+            <a href="index.html" class="back-link" style="margin:0;">← Početna</a>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <span id="questionCount">1/25</span>
+        </div>
+        <div class="question-card">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+        </div>
+    </div>
+
+    <!-- POPUP ZA OBJAŠNJENJE -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup-content">
+            <div class="popup-icon" id="popupIcon">✅</div>
+            <div class="popup-title" id="popupTitle">Tačno!</div>
+            <div class="popup-explanation" id="popupExplanation"></div>
+            <button class="popup-btn" onclick="nextQuestion()">Sljedeće pitanje →</button>
+        </div>
+    </div>
+
+    <div class="container screen" id="resultScreen">
+        <div class="quiz-header">
+            <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
+            <h1>REZULTAT</h1>
+        </div>
+        <div class="result-card">
+            <div class="result-emoji" id="resultEmoji">🌟</div>
+            <div class="result-message" id="resultMessage">Odličan rezultat!</div>
+            <div class="result-score" id="resultScore">20/25</div>
+            <div class="result-percentage" id="resultPercentage">80% tačnih odgovora</div>
+            <div class="btn-group">
+                <button class="retry-btn" onclick="startQuiz()">Pokušaj ponovo</button>
+                <a href="index.html" class="home-btn">Početna stranica</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            // DA/NE PITANJA (15)
+            {
+                question: "Pet islamskih dužnosti (šarti) su na stepenu farza.",
+                options: ["DA", "NE"],
+                correct: 0,
+                explanation: "Kelimei-šehadet, namaz, post, zekat i hadž su stroge islamske dužnosti na stepenu farza."
+            },
+            {
+                question: "Vitr-namaz je na stepenu farza.",
+                options: ["DA", "NE"],
+                correct: 1,
+                explanation: "Vitr-namaz je na stepenu vadžiba, ne farza. Vadžib-namazi nisu strogo naređeni kao farz."
+            },
+            {
+                question: "Vjerovanje u gajb (nevidljivo) je prva osobina vjernika spomenuta u Kur'anu.",
+                options: ["DA", "NE"],
+                correct: 0,
+                explanation: "U suri El-Bekare, prva osobina vjernika je vjerovanje u gajb - nevidljivi svijet."
+            },
+            {
+                question: "Kufr je lakši grijeh od širka.",
+                options: ["DA", "NE"],
+                correct: 1,
+                explanation: "I kufr i širk su najtežih grijeha. Širk je pripisivanje sudruga Allahu, a kufr je nevjerovanje u Allaha i temeljne istine vjere."
+            },
+            {
+                question: "Licemjeri (munafici) će biti na samom dnu Džehennema.",
+                options: ["DA", "NE"],
+                correct: 0,
+                explanation: "Kur'an kaže: 'Licemjeri će na samom dnu Džehennema biti.' (En-Nisa, 145)"
+            },
+            {
+                question: "Meleki su stvoreni od vatre.",
+                options: ["DA", "NE"],
+                correct: 1,
+                explanation: "Meleki su stvoreni od nura (svjetlosti), dok su džini stvoreni od vatre."
+            },
+            {
+                question: "Allah ima tačno 99 lijepih imena (el-esmaul-husna).",
+                options: ["DA", "NE"],
+                correct: 0,
+                explanation: "Poslanik, a.s., je rekao: 'Allah ima devedeset devet imena, jedno manje od stotinu.'"
+            },
+            {
+                question: "Dženaza-namaz je fardi-kifaje.",
+                options: ["DA", "NE"],
+                correct: 0,
+                explanation: "Dženaza-namaz je fardi-kifaje - obaveza zajednice koju moraju izvršiti njeni članovi."
+            },
+            {
+                question: "Zekat se daje na svu imovinu bez obzira na vrijednost.",
+                options: ["DA", "NE"],
+                correct: 1,
+                explanation: "Zekat se daje samo na imovinu koja dostiže vrijednost nisaba i bila u posjedu godinu dana."
+            },
+            {
+                question: "Sadekatul-fitr se može dati i nakon bajram-namaza.",
+                options: ["DA", "NE"],
+                correct: 1,
+                explanation: "Sadekatul-fitr dat nakon bajram-namaza smatra se običnom sadakom, ne sadekatul-fitrom."
+            },
+            {
+                question: "Hadž je obavezan svakom muslimanu bez obzira na materijalne mogućnosti.",
+                options: ["DA", "NE"],
+                correct: 1,
+                explanation: "Hadž je obavezan samo onima koji ispune uvjete: punoljetnost, zdravlje, materijalne mogućnosti i sigurnost puta."
+            },
+            {
+                question: "Ihram za žene je njihova uobičajena nošnja - hidžab.",
+                options: ["DA", "NE"],
+                correct: 0,
+                explanation: "Za muškarce ihrami su dva bijela nešivena platna, a za žene je ihram uobičajena nošnja - hidžab."
+            },
+            {
+                question: "Sura El-Ihlas govori o Allahovoj jednoći (tevhidu).",
+                options: ["DA", "NE"],
+                correct: 0,
+                explanation: "Cijela sura El-Ihlas govori o Božijoj jednoći - tevhidu. 'Reci: On je Allah - Jedan!'"
+            },
+            {
+                question: "Klanjamo ukupno 17 rekata farz-namaza dnevno.",
+                options: ["DA", "NE"],
+                correct: 0,
+                explanation: "Dnevno klanjamo 17 rekata farz-namaza: 2 sabah, 4 podne, 4 ikindija, 3 akšam i 4 jacija."
+            },
+            {
+                question: "Poslanik, a.s., je poznavao gajb (nevidljivo) u potpunosti.",
+                options: ["DA", "NE"],
+                correct: 1,
+                explanation: "Gajb nije bio poznat ni Muhammedu, a.s. On je o gajbu znao samo ono što mu je Allah objavio."
+            },
+            
+            // VIŠESTRUKI IZBOR (15)
+            {
+                question: "Koliko ima imanskih šartova (temelja islamskog vjerovanja)?",
+                options: ["Pet", "Šest", "Sedam", "Četiri"],
+                correct: 1,
+                explanation: "Šest imanskih šartova: vjerovanje u Allaha, meleke, knjige, poslanike, Sudnji dan i kader."
+            },
+            {
+                question: "Koji melek je zadužen za dostavljanje Allahovih objava poslanicima?",
+                options: ["Mikail", "Israfil", "Džibril", "Azrail"],
+                correct: 2,
+                explanation: "Džibril (Ruhul-emin, Ruhul-kudus) je donosio Allahove objave Njegovim poslanicima."
+            },
+            {
+                question: "Šta nas, prema Kur'anu, namaz odvraća?",
+                options: ["Od posla", "Od onoga što je loše", "Od druženja", "Od putovanja"],
+                correct: 1,
+                explanation: "Namaz nas odvraća od onoga što je loše, post nas čini bogobojaznijim, zekat darežljivijim."
+            },
+            {
+                question: "Koji je prvi postupak Muhammeda, a.s., po dolasku u Medinu?",
+                options: ["Gradnja kuće", "Gradnja džamije", "Sklapanje ugovora", "Organiziranje vojske"],
+                correct: 1,
+                explanation: "Prvi postupak Poslanika, a.s., u Medini bila je gradnja džamije koja je postala centar svih zbivanja."
+            },
+            {
+                question: "Koliko rekata ima vitr-namaz?",
+                options: ["2 rekata", "3 rekata", "4 rekata", "1 rekat"],
+                correct: 1,
+                explanation: "Vitr-namaz ima 3 rekata i klanja se zajedno s jacija-namazom. To je vadžib-namaz."
+            },
+            {
+                question: "Šta je nisab?",
+                options: ["Vrsta namaza", "Minimalna vrijednost imovine za obavezu zekata", "Vrsta posta", "Dio hadža"],
+                correct: 1,
+                explanation: "Nisab je minimalna vrijednost imovine koja mora biti u posjedu godinu dana da bi zekat bio obavezan."
+            },
+            {
+                question: "Koji melek će puhanjem u sur najaviti Sudnji dan?",
+                options: ["Džibril", "Mikail", "Israfil", "Azrail"],
+                correct: 2,
+                explanation: "Israfil će puhanjem u sur najaviti Smak svijeta i Sudnji dan."
+            },
+            {
+                question: "Kako se zove fond u koji se izdvaja zekat u Bosni i Hercegovini?",
+                options: ["Vakuf", "Bejtul-mal", "Sadaka", "Infak"],
+                correct: 1,
+                explanation: "Zekat se izdvaja u fond Bejtul-mal pri Islamskoj zajednici, odakle se dijeli potrebnim kategorijama."
+            },
+            {
+                question: "Koji dan je najvažniji dan hadža?",
+                options: ["Dan tavafa", "Dan Arefata", "Dan Mine", "Dan ihrama"],
+                correct: 1,
+                explanation: "Poslanik, a.s., je rekao: 'Hadž je Arefat...' Deveti dan zul-hidžeta je dan Arefata."
+            },
+            {
+                question: "Koliko tekbira ima dženaza-namaz?",
+                options: ["Dva", "Tri", "Četiri", "Pet"],
+                correct: 2,
+                explanation: "Dženaza-namaz ima četiri tekbira. Ruke se podižu samo kod prvog tekbira."
+            },
+            {
+                question: "Šta je tevhid?",
+                options: ["Vjerovanje u meleke", "Vjerovanje u Allahovu jednoću", "Vjerovanje u knjige", "Vjerovanje u Sudnji dan"],
+                correct: 1,
+                explanation: "Tevhid je vjerovanje u Allahovu jednoću - da je samo jedan Bog, Allah, i da Mu niko ravan nije."
+            },
+            {
+                question: "Koji od navedenih namaza NIJE vadžib?",
+                options: ["Vitr-namaz", "Bajram-namaz", "Sabah-namaz", "Svi navedeni su vadžib"],
+                correct: 2,
+                explanation: "Sabah-namaz je farz, ne vadžib. Vitr i bajram-namazi su vadžib-namazi."
+            },
+            {
+                question: "Koliko rekata sunneta-muekkedea klanjamo dnevno?",
+                options: ["8 rekata", "10 rekata", "12 rekata", "14 rekata"],
+                correct: 2,
+                explanation: "12 rekata pritvrđenih sunneta: 2 sabah, 6 podne (4 prije, 2 poslije), 2 akšam, 2 jacija."
+            },
+            {
+                question: "Šta znači rija' (mali širk)?",
+                options: ["Nevjerovanje", "Pretvaranje i neiskrenost u djelima", "Napuštanje islama", "Psovanje Allaha"],
+                correct: 1,
+                explanation: "Rija' je mali širk - pretvaranje ili neiskrenost, činjenje dobrih djela radi pokazivanja pred ljudima."
+            },
+            {
+                question: "Koja sura govori o propasti vlasnika slona koji su htjeli srušiti Kabu?",
+                options: ["El-Ihlas", "El-Fil", "El-Fatiha", "El-Kevser"],
+                correct: 1,
+                explanation: "Sura El-Fil govori o Ebrehi i njegovoj vojsci koju je Allah uništio pticama ebabil."
+            },
+            
+            // PAMETNA PITANJA (70)
+            {
+                question: "IZBACI ULJEZA: Koja dužnost NE spada u pet islamskih šartova?",
+                options: ["Namaz", "Hadž", "Vjerovanje u meleke", "Zekat"],
+                correct: 2,
+                explanation: "Vjerovanje u meleke je imanski šart, ne islamski. Pet islamskih šartova su: šehadet, namaz, post, zekat, hadž."
+            },
+            {
+                question: "KO SAM JA? Ja sam melek zadužen za uzimanje duše u času smrti.",
+                options: ["Džibril", "Mikail", "Israfil", "Azrail"],
+                correct: 3,
+                explanation: "Azrail (Melekul-mevt) je melek smrti koji uzima dušu iz tijela u času smrti."
+            },
+            {
+                question: "DOPUNI: Namaz : loša djela = Post : ___",
+                options: ["Darežljivost", "Bogobojaznost", "Moralnost", "Znanje"],
+                correct: 1,
+                explanation: "Namaz nas odvraća od lošeg, post nas čini bogobojaznijim, zekat darežljivijim, hadž moralnijim."
+            },
+            {
+                question: "ANALOGIJA: Džibril : objave = Mikail : ___",
+                options: ["Smrt", "Prirodne pojave", "Sur", "Džennet"],
+                correct: 1,
+                explanation: "Džibril donosi objave, a Mikail je zadužen za prirodne pojave: kišu, vjetar, rast bilja."
+            },
+            {
+                question: "ŠTA JE ZAJEDNIČKO? Kelimei-šehadet, namaz, post, zekat, hadž",
+                options: ["Imanski šarti", "Islamski šarti (farzovi)", "Vadžibi", "Sunneti"],
+                correct: 1,
+                explanation: "Ovo je pet islamskih šartova - temeljnih dužnosti islama koje su na stepenu farza."
+            },
+            {
+                question: "PRONAĐI GREŠKU: 'Dženaza-namaz ima tri tekbira i klanja se sa rukuom i sedždom.'",
+                options: ["Ima četiri tekbira", "Nema ruku' i sedždu", "Oboje je greška", "Nema greške"],
+                correct: 2,
+                explanation: "Dženaza-namaz ima ČETIRI tekbira i NEMA ruku' ni sedždu - obje tvrdnje su pogrešne."
+            },
+            {
+                question: "KO SAM JA? Ja sam čuvar Dženneta.",
+                options: ["Malik", "Ridvan", "Munkir", "Nekir"],
+                correct: 1,
+                explanation: "Ridvan je melek čuvar Dženneta, a Malik je čuvar Džehennema."
+            },
+            {
+                question: "SITUACIJA: Ahmed ima 10.000 KM već 8 mjeseci. Da li mora dati zekat?",
+                options: ["Da, odmah", "Ne, mora proći godina dana", "Da, ali samo 1%", "Ne, jer nije dovoljno"],
+                correct: 1,
+                explanation: "Za obavezu zekata, imovina mora biti u posjedu GODINU DANA (12 mjeseci), ne samo 8."
+            },
+            {
+                question: "IZBACI ULJEZA: Koji od navedenih NIJE melek?",
+                options: ["Munkir", "Nekir", "Iblis", "Ridvan"],
+                correct: 2,
+                explanation: "Iblis (šejtan) nije melek, on je džin koji je odbio učiniti sedždu Ademu, a.s."
+            },
+            {
+                question: "DOPUNI NIZ: Sabah, podne, ikindija, ___",
+                options: ["Džuma", "Akšam", "Vitr", "Teravih"],
+                correct: 1,
+                explanation: "Pet dnevnih namaza redom: sabah, podne, ikindija, AKŠAM, jacija."
+            },
+            {
+                question: "ANALOGIJA: Kufr : nevjerovanje = Nifak : ___",
+                options: ["Širk", "Licemjerstvo", "Zulum", "Haram"],
+                correct: 1,
+                explanation: "Kufr je nevjerovanje, a nifak je licemjerstvo - skrivanje nevjerovanja u srcu."
+            },
+            {
+                question: "ŠTA JE ZAJEDNIČKO? Vitr-namaz, ramazanski bajram-namaz, kurbanski bajram-namaz",
+                options: ["Farz-namazi", "Vadžib-namazi", "Sunnet-namazi", "Nafile"],
+                correct: 1,
+                explanation: "Svi navedeni su vadžib-namazi - propisani ali nisu na stepenu farza."
+            },
+            {
+                question: "KO SAM JA? Mi smo meleki koji prate ljude i zapisuju njihova djela.",
+                options: ["Munkir i Nekir", "Kiramen-katibin", "Harut i Marut", "Zebanije"],
+                correct: 1,
+                explanation: "Kiramen-katibin (časni pisari) prate ljude, pišu njihova djela i donose im dobre misli."
+            },
+            {
+                question: "PRONAĐI GREŠKU: 'Sadekatul-fitr se daje samo za odrasle članove porodice.'",
+                options: ["Daje se i za maloljetne", "Daje se samo za muškarce", "Nema greške", "Daje se samo za žene"],
+                correct: 0,
+                explanation: "Sadekatul-fitr se daje za svakog muslimana - i punoljetnog i maloljetnog."
+            },
+            {
+                question: "SITUACIJA: Amira želi ići na hadž. Njeni roditelji ne mogu ići s njom. Može li otići sama?",
+                options: ["Da, bez problema", "Ne, žena mora imati mahrema", "Da, ako ima dovoljno novca", "Samo ako je starija od 50 godina"],
+                correct: 1,
+                explanation: "Žena može putovati na hadž samo uz muža ili mahrema (oca, brata, djeda) ili u skupini žena."
+            },
+            {
+                question: "DOPUNI: Er-Rahman : Milostivi = El-Gaffar : ___",
+                options: ["Pravedni", "Onaj Koji mnogo prašta", "Stvoritelj", "Sveznajući"],
+                correct: 1,
+                explanation: "Er-Rahman znači Milostivi, a El-Gaffar znači Onaj Koji mnogo prašta."
+            },
+            {
+                question: "IZBACI ULJEZA: Koji pojam NE pripada istoj kategoriji?",
+                options: ["Kufr", "Širk", "Nifak", "Ihsan"],
+                correct: 3,
+                explanation: "Kufr, širk i nifak su grijesi/negativni pojmovi, a ihsan je savršenstvo u vjeri - pozitivan pojam."
+            },
+            {
+                question: "KO SAM JA? Mi smo meleki koji ispituju svakog čovjeka u kaburu.",
+                options: ["Kiramen-katibin", "Munkir i Nekir", "Harut i Marut", "Zebanije"],
+                correct: 1,
+                explanation: "Munkir i Nekir su meleki koji ispituju svakog čovjeka u mezaru (kaburu)."
+            },
+            {
+                question: "ANALOGIJA: Veliki širk : obožavanje drugog = Mali širk : ___",
+                options: ["Nevjerovanje", "Pretvaranje (rija')", "Napuštanje islama", "Psovanje"],
+                correct: 1,
+                explanation: "Veliki širk je obožavanje nekoga pored Allaha, a mali širk (rija') je pretvaranje u djelima."
+            },
+            {
+                question: "ŠTA JE ZAJEDNIČKO? 2 sabah, 6 podne, 2 akšam, 2 jacija",
+                options: ["Farz-namazi", "Vadžib-namazi", "Sunneti-muekkedea", "Sunneti gajri-muekkedea"],
+                correct: 2,
+                explanation: "Ovo su sunneti-muekkedea (pritvrđeni sunneti) koje je Poslanik, a.s., uvijek klanjao."
+            },
+            {
+                question: "PRONAĐI GREŠKU: 'Zekat se daje od 10% na svu imovinu.'",
+                options: ["Zekat je 2.5%, ne 10%", "Ne daje se na svu imovinu", "Oboje je greška", "Nema greške"],
+                correct: 2,
+                explanation: "Zekat je 2.5% (ne 10%) i daje se samo na imovinu koja dostiže nisab - oboje je pogrešno."
+            },
+            {
+                question: "SITUACIJA: Mustafa klanja farz bez abdesta, a zatim uzme abdest i klanja sunnete. Je li namaz ispravan?",
+                options: ["Da, sve je ispravno", "Ne, mora ponoviti samo farz", "Ne, mora ponoviti sve", "Da, ako je zaboravio"],
+                correct: 1,
+                explanation: "Abdest je uvjet za ispravnost namaza. Farz klanjan bez abdesta nije ispravan i mora se ponoviti."
+            },
+            {
+                question: "DOPUNI NIZ: Džibril, Mikail, Israfil, ___",
+                options: ["Ridvan", "Azrail", "Malik", "Munkir"],
+                correct: 1,
+                explanation: "Četiri najpoznatija meleka: Džibril, Mikail, Israfil i Azrail."
+            },
+            {
+                question: "KO SAM JA? Ja sam abesinski vladar koji je pokušao srušiti Kabu sa vojskom slonova.",
+                options: ["Faraon", "Ebreha", "Nemrud", "Karun"],
+                correct: 1,
+                explanation: "Ebreha je abesinski vladar čija je vojska uništena pticama ebabil kada je krenuo srušiti Kabu."
+            },
+            {
+                question: "IZBACI ULJEZA: Koja od navedenih stvari NE kvari ihrame?",
+                options: ["Šišanje", "Namaz", "Mirisanje", "Lov"],
+                correct: 1,
+                explanation: "Namaz ne kvari ihrame. Zabrane za muhrime su: šišanje, mirisanje, lov, spolni odnos..."
+            },
+            {
+                question: "ANALOGIJA: Džennet : Ridvan = Džehennem : ___",
+                options: ["Azrail", "Israfil", "Malik", "Munkir"],
+                correct: 2,
+                explanation: "Ridvan je čuvar Dženneta, a Malik je čuvar Džehennema."
+            },
+            {
+                question: "ŠTA JE ZAJEDNIČKO? Vudžud, Vahdanijet, Kidem, Beka",
+                options: ["Allahova imena", "Allahova svojstva (sifati)", "Vrste namaza", "Dijelovi hadža"],
+                correct: 1,
+                explanation: "Ovo su Allahova svojstva (sifati): Postojanje, Jednoća, Vječnost, Trajnost."
+            },
+            {
+                question: "PRONAĐI GREŠKU: 'Bajram-namaz se klanja u tri rekata.'",
+                options: ["Klanja se u dva rekata", "Klanja se u četiri rekata", "Nema greške", "Klanja se u jedan rekat"],
+                correct: 0,
+                explanation: "Bajram-namaz (i ramazanski i kurbanski) ima DVA rekata, ne tri."
+            },
+            {
+                question: "SITUACIJA: Hasan je zaboravio proučiti Fatihu u jednom rekatu. Šta treba učiniti?",
+                options: ["Namaz je ispravan", "Treba učiniti sehvi-sedždu", "Mora ponoviti cijeli namaz", "Treba ponoviti samo taj rekat"],
+                correct: 2,
+                explanation: "Učenje Fatihe je farz namaza. Ako se izostavi, namaz nije ispravan i mora se ponoviti."
+            },
+            {
+                question: "DOPUNI: Subhaneke : prvi tekbir = Salavati : ___",
+                options: ["Drugi tekbir", "Treći tekbir", "Četvrti tekbir", "Ruku'"],
+                correct: 0,
+                explanation: "U dženaza-namazu: nakon prvog tekbira uči se Subhaneke, nakon drugog salavati."
+            },
+            {
+                question: "KO SAM JA? Ja sam Allahovo svojstvo koje znači da je On Sveznajući.",
+                options: ["El-Halik", "El-Alim", "El-Aziz", "El-Kerim"],
+                correct: 1,
+                explanation: "El-Alim znači Sveznajući - Allah zna ono što ne znaju Njegova stvorenja."
+            },
+            {
+                question: "IZBACI ULJEZA: Koji pojam NE pripada kategoriji uvjeta za hadž?",
+                options: ["Punoljetnost", "Materijalne mogućnosti", "Brak", "Sigurnost puta"],
+                correct: 2,
+                explanation: "Brak nije uvjet za hadž. Uvjeti su: punoljetnost, zdravlje, materijalne mogućnosti, sigurnost puta."
+            },
+            {
+                question: "ANALOGIJA: Namaz : Kijam = Dženaza-namaz : ___",
+                options: ["Stajanje u safovima", "Ruku'", "Sedžda", "Sjedenje"],
+                correct: 0,
+                explanation: "U redovnom namazu kijam je stajanje, a u dženaza-namazu se stoji u safovima (farz)."
+            },
+            {
+                question: "ŠTA JE ZAJEDNIČKO? Tehijetul-mesdžid, hadže-namaz, istihara-namaz",
+                options: ["Farz-namazi", "Vadžib-namazi", "Sunneti gajri-muekkedea (nafile)", "Sunneti-muekkedea"],
+                correct: 2,
+                explanation: "Ovo su sunneti gajri-muekkedea (nepritvrđeni sunneti/nafile) koje je Poslanik povremeno klanjao."
+            },
+            {
+                question: "PRONAĐI GREŠKU: 'Telbija se uči nakon skidanja ihrama.'",
+                options: ["Uči se nakon oblačenja ihrama", "Uči se samo na Arefatu", "Nema greške", "Uči se samo žene"],
+                correct: 0,
+                explanation: "Telbija se uči NAKON OBLAČENJA ihrama i nastavlja se učiti tokom hadža."
+            },
+            {
+                question: "SITUACIJA: Fatima nije postila jedan dan ramazana zbog menstruacije. Šta treba učiniti?",
+                options: ["Dati fidju", "Napostiti taj dan nakon ramazana", "Ništa, automatski je oprošteno", "Klanjati kaza-namaz"],
+                correct: 1,
+                explanation: "Žena koja ne posti zbog menstruacije mora napostiti propuštene dane nakon ramazana."
+            },
+            {
+                question: "DOPUNI NIZ: Es-sifatuz-zatijje, es-sifatus-subutijje, ___",
+                options: ["Es-sifatul-fi'lijje", "El-esmaul-husna", "El-esmaul-dželal", "Es-sifatul-kamilijje"],
+                correct: 1,
+                explanation: "Allahova svojstva i imena: es-sifatuz-zatijje (svojstva bića), es-sifatus-subutijje (svojstva savršenstva), el-esmaul-husna (lijepa imena)."
+            },
+            {
+                question: "KO SAM JA? Ja sam vrsta namaza koja se klanja kada vjernik ima neku potrebu i traži uputu od Allaha.",
+                options: ["Hadže-namaz", "Istihara-namaz", "Tehijetul-mesdžid", "Duha-namaz"],
+                correct: 1,
+                explanation: "Istihara-namaz se klanja kada vjernik traži uputu od Allaha u donošenju neke odluke."
+            },
+            {
+                question: "IZBACI ULJEZA: Šta NE spada u zabrane za muhrime (osobe u ihramima)?",
+                options: ["Lov", "Učenje Kur'ana", "Šišanje", "Mirisanje"],
+                correct: 1,
+                explanation: "Učenje Kur'ana nije zabranjeno muhrimima. Zabrane su: lov, šišanje, mirisanje, spolni odnos..."
+            },
+            {
+                question: "ANALOGIJA: Islamski šarti : 5 = Imanski šarti : ___",
+                options: ["4", "5", "6", "7"],
+                correct: 2,
+                explanation: "Islamskih šartova ima 5 (šehadet, namaz, post, zekat, hadž), a imanskih šartova ima 6."
+            },
+            {
+                question: "ŠTA JE ZAJEDNIČKO? Arefat, Mina, Muzdelifa",
+                options: ["Dijelovi namaza", "Mjesta na hadžu", "Vrste posta", "Allahova imena"],
+                correct: 1,
+                explanation: "Arefat, Mina i Muzdelifa su sveta mjesta koja se posjećuju tokom obavljanja hadža."
+            },
+            {
+                question: "PRONAĐI GREŠKU: 'Džuma-namaz je obavezan svim muslimanima, uključujući i žene.'",
+                options: ["Nije obavezan ženama", "Nije obavezan nikome", "Nema greške", "Obavezan je samo imamu"],
+                correct: 0,
+                explanation: "Džuma-namaz je obavezan punoljetnim, zdravim muslimanima MUŠKARCIMA. Ženama nije farz."
+            },
+            {
+                question: "SITUACIJA: Selim je bogat, zdrav i punoljetan, ali se boji putovanja. Mora li obaviti hadž?",
+                options: ["Da, strah nije opravdanje", "Ne, ako postoji realna opasnost", "Da, ali može poslati zamjenu", "Ne, jer je još mlad"],
+                correct: 1,
+                explanation: "Sigurnost puta je jedan od uvjeta za obaveznost hadža. Ako postoji realna opasnost, hadž nije obavezan."
+            },
+            {
+                question: "DOPUNI: Innã lillãhi ve innã ilejhi rãdži'ũn : saučešće = Innallãhe me'as-sãbirĩn : ___",
+                options: ["Odgovor na saučešće", "Dova za umrlog", "Selam", "Zahvala"],
+                correct: 0,
+                explanation: "'Svi smo Allahovi i Njemu se vraćamo' je saučešće, a 'Allah je sa strpljivima' je odgovor na saučešće."
+            },
+            {
+                question: "KO SAM JA? Ja sam Allahovo ime koje znači Stvoritelj.",
+                options: ["El-Melik", "El-Halik", "El-Kuddus", "Es-Selam"],
+                correct: 1,
+                explanation: "El-Halik znači Tvorac/Stvoritelj - Allah koji je stvorio kosmos i sve što postoji."
+            },
+            {
+                question: "IZBACI ULJEZA: Šta NE spada u mudrost propisivanja zekata?",
+                options: ["Čisti dušu od škrtosti", "Čisti i povećava imetak", "Zamjenjuje namaz", "Sprečava nagomilavanje imetka"],
+                correct: 2,
+                explanation: "Zekat ne zamjenjuje namaz - to su dvije odvojene dužnosti. Zekat čisti dušu, imetak i uspostavlja dobro."
+            },
+            {
+                question: "ANALOGIJA: Farz : stroga obaveza = Vadžib : ___",
+                options: ["Zabrana", "Obaveza koja nije strogo naređena kao farz", "Preporuka", "Pokušaj"],
+                correct: 1,
+                explanation: "Farz je stroga obaveza, vadžib je obaveza koja nije strogo naređena kao farz."
+            },
+            {
+                question: "ŠTA JE ZAJEDNIČKO? La ilahe illallah, Allahu Ekber, Subhanallah",
+                options: ["Dove", "Zikrovi (spominjanje Allaha)", "Dijelovi namaza", "Sure"],
+                correct: 1,
+                explanation: "Ovo su zikrovi - različiti načini spominjanja i veličanja Allaha, dž.š."
+            },
+            {
+                question: "PRONAĐI GREŠKU: 'Münzir i Nekir su meleki čuvari Dženneta i Džehennema.'",
+                options: ["Oni ispituju u kaburu", "To su Ridvan i Malik", "Oboje je greška", "Nema greške"],
+                correct: 2,
+                explanation: "Munkir i Nekir ISPITUJU u kaburu. Čuvari Dženneta i Džehennema su RIDVAN i MALIK."
+            },
+            {
+                question: "SITUACIJA: Emir je kupio auto za 20.000 KM koji koristi za posao. Mora li dati zekat na auto?",
+                options: ["Da, na punu vrijednost", "Ne, jer ga koristi", "Da, ali samo 1%", "Da, ako ga ima godinu dana"],
+                correct: 1,
+                explanation: "Zekat se ne daje na predmete koji se koriste za lične potrebe (kuća, auto koji se koristi)."
+            },
+            {
+                question: "DOPUNI NIZ: Tekbir, kiraet (Fatiha i sura), ruku', ___",
+                options: ["Selam", "Sedžda", "Ka'de", "Ettehijjatu"],
+                correct: 1,
+                explanation: "Redoslijed u namazu: tekbir, kiraet, ruku', SEDŽDA, pa zatim drugi rekat..."
+            },
+            {
+                question: "KO SAM JA? Ja sam Allahovo svojstvo koje znači da On nema ni početka ni kraja.",
+                options: ["Vudžud", "Vahdanijet", "Kidem i Beka", "Kudret"],
+                correct: 2,
+                explanation: "Kidem (Vječnost - nema početka) i Beka (Trajnost - nema kraja) zajedno znače da Allah nema ni početka ni kraja."
+            },
+            {
+                question: "IZBACI ULJEZA: Šta NE pripada dijelovima hadža?",
+                options: ["Tavaf", "Sa'j", "I'tikaf", "Vakfa na Arefatu"],
+                correct: 2,
+                explanation: "I'tikaf je boravak u džamiji (obično u ramazanu), nije dio hadža. Tavaf, sa'j i vakfa jesu dijelovi hadža."
+            },
+            {
+                question: "ANALOGIJA: Sur : Israfil = Vahj (objava) : ___",
+                options: ["Mikail", "Azrail", "Džibril", "Malik"],
+                correct: 2,
+                explanation: "Israfil će puhnuti u sur, a Džibril je donosio vahj (objavu) poslanicima."
+            },
+            {
+                question: "ŠTA JE ZAJEDNIČKO? Safa, Merva, Hadžerul-esved, Kaba",
+                options: ["Dijelovi namaza", "Sveta mjesta u Mekki", "Allahova svojstva", "Vrste posta"],
+                correct: 1,
+                explanation: "Safa, Merva, Hadžerul-esved i Kaba su sveta mjesta u Mekki vezana za hadž."
+            },
+            {
+                question: "PRONAĐI GREŠKU: 'Sunneti-muekkedea su namazi koje je Poslanik, a.s., povremeno izostavljao.'",
+                options: ["Nikada ih nije izostavljao", "To su sunneti gajri-muekkedea", "Oboje je greška", "Nema greške"],
+                correct: 0,
+                explanation: "Sunneti-muekkedea (pritvrđeni sunneti) su namazi koje Poslanik, a.s., NIKADA nije izostavljao."
+            },
+            {
+                question: "SITUACIJA: Lejla želi dati sadekatul-fitr za svoje nerođeno dijete u stomaku. Je li to ispravno?",
+                options: ["Ne, samo za rođene", "Da, lijepo je dati i za nerođeno dijete", "Ne, to je zabranjeno", "Samo ako je muško"],
+                correct: 1,
+                explanation: "Lijepo je (mustehab) dati sadekatul-fitr i na nerođeno dijete u utrobi majke."
+            },
+            {
+                question: "DOPUNI: Fatiha : farz = Sura poslije Fatihe : ___",
+                options: ["Farz", "Vadžib", "Sunnet", "Mekruh"],
+                correct: 1,
+                explanation: "Učenje Fatihe je farz namaza, a učenje sure poslije Fatihe je vadžib."
+            },
+            {
+                question: "KO SAM JA? Ja sam dova koja se uči za umrlog nakon trećeg tekbira u dženaza-namazu.",
+                options: ["Subhaneke", "Salavati", "Dženaza-dova", "Kunut-dova"],
+                correct: 2,
+                explanation: "Redoslijed u dženaza-namazu: 1. tekbir - Subhaneke, 2. tekbir - salavati, 3. tekbir - dženaza-dova, 4. tekbir - selam."
+            },
+            {
+                question: "IZBACI ULJEZA: Koji pojam NE pripada osobinama munafika?",
+                options: ["Laže kada govori", "Ne ispunjava obećanja", "Čuva emanet", "Prelazi granice u svađi"],
+                correct: 2,
+                explanation: "Osobine munafika: laže, ne ispunjava obećanja, iznevjerava povjereno i prelazi granice. 'Čuva emanet' je suprotno - pozitivna osobina."
+            },
+            {
+                question: "ANALOGIJA: Ramazan : post = Zul-hidždže : ___",
+                options: ["Post", "Hadž", "Zekat", "Namaz"],
+                correct: 1,
+                explanation: "Ramazan je mjesec posta, a Zul-hidždže je mjesec hadža."
+            },
+            {
+                question: "ŠTA JE ZAJEDNIČKO? Kupanje (gusul), ćefini, stavljanje ispred džemata, okretanje prema Kibli",
+                options: ["Uvjeti za namaz", "Uvjeti za ispravnost dženaza-namaza", "Dijelovi hadža", "Uvjeti za post"],
+                correct: 1,
+                explanation: "Ovo su uvjeti za ispravnost dženaza-namaza: da je umrli musliman, okupan, u ćefinima, ispred džemata i okrenut prema Kibli."
+            },
+            {
+                question: "PRONAĐI GREŠKU: 'Zekat se daje osam kategorija osoba spomenutih u suri El-Bekare.'",
+                options: ["Spomenute su u suri Et-Tevbe", "Ima ih sedam kategorija", "Ima ih devet kategorija", "Nema greške"],
+                correct: 0,
+                explanation: "Kategorije kojima se daje zekat spomenute su u 60. ajetu sure ET-TEVBE, ne El-Bekare."
+            },
+            {
+                question: "SITUACIJA: Kemal je propustio podne-namaz bez opravdanja. Mora li ga naklanjati?",
+                options: ["Ne, propušteno je propušteno", "Da, mora naklanjati kaza-namaz", "Samo ako se sjeti", "Ne, jer je prošlo vrijeme"],
+                correct: 1,
+                explanation: "Propušteni farz-namaz se mora naklanjati (kaza), bez obzira na razlog propuštanja."
+            },
+            {
+                question: "DOPUNI NIZ: Esmaul-džemal, esmaul-dželal, ___",
+                options: ["Esmaul-kemal", "Esmaul-husna", "Esmaul-azim", "Esmaul-ilahi"],
+                correct: 0,
+                explanation: "Podjela Allahovih imena: esmaul-džemal (ljepote), esmaul-dželal (uzvišenosti), esmaul-kemal (savršenstva)."
+            },
+            {
+                question: "KO SAM JA? Ja sam mjesto između Arefata i Mine gdje hadžije klanjaju akšam i jaciju.",
+                options: ["Mina", "Safa", "Muzdelifa", "Merva"],
+                correct: 2,
+                explanation: "Muzdelifa je mjesto između Arefata i Mine gdje hadžije klanjaju akšam i jaciju spojeno."
+            },
+            {
+                question: "IZBACI ULJEZA: Šta NE spada u es-sifatuz-zatijje (svojstva Allahovog bića)?",
+                options: ["Vudžud (Postojanje)", "Kudret (Moć)", "Kidem (Vječnost)", "Vahdanijet (Jednoća)"],
+                correct: 1,
+                explanation: "Kudret (Moć) spada u es-sifatus-subutijje (svojstva savršenstva), ne u es-sifatuz-zatijje (svojstva bića)."
+            },
+            {
+                question: "ANALOGIJA: Haram : zabranjeno = Mekruh : ___",
+                options: ["Dozvoljeno", "Pokuđeno", "Naređeno", "Obavezno"],
+                correct: 1,
+                explanation: "Haram je zabranjeno, a mekruh je pokuđeno (nije zabranjeno, ali se ne preporučuje)."
+            },
+            {
+                question: "ŠTA JE ZAJEDNIČKO? 4 ikindija sunneta, 4 jacijska sunneta, tehijetul-mesdžid",
+                options: ["Sunneti-muekkedea", "Sunneti gajri-muekkedea", "Farzovi", "Vadžibi"],
+                correct: 1,
+                explanation: "Ovo su sunneti gajri-muekkedea (nepritvrđeni sunneti) koje je Poslanik, a.s., povremeno izostavljao."
+            },
+            {
+                question: "PRONAĐI GREŠKU: 'U vitr-namazu se uči Kunut-dova prije ruku'a u trećem rekatu.'",
+                options: ["Uči se poslije ruku'a", "Uči se u drugom rekatu", "Nema greške", "Ne uči se Kunut-dova"],
+                correct: 0,
+                explanation: "Kunut-dova se uči POSLIJE ruku'a u trećem rekatu vitr-namaza, ne prije."
+            },
+            {
+                question: "SITUACIJA: Porodica Smajlović želi dati sadekatul-fitr za 5 članova. Kome trebaju dati?",
+                options: ["Direktno siromahu", "U Bejtul-mal", "Džamiji", "Sve navedeno je ispravno"],
+                correct: 1,
+                explanation: "U BiH, sadekatul-fitr se daje u Bejtul-mal pri Islamskoj zajednici, odakle se distribuira potrebnima."
+            }
+        ];
+
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const TOTAL_QUESTIONS = 25;
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function startQuiz() {
+            currentQuestions = shuffleArray(allQuestions).slice(0, TOTAL_QUESTIONS);
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            document.getElementById('startScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.remove('active');
+            document.getElementById('quizScreen').classList.add('active');
+            
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('questionCount').textContent = `${currentQuestionIndex + 1}/${TOTAL_QUESTIONS}`;
+            document.getElementById('progressBar').style.width = `${((currentQuestionIndex) / TOTAL_QUESTIONS) * 100}%`;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            const shuffledOptions = question.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
+            if (question.options.length > 2) {
+                for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+                }
+            }
+            
+            shuffledOptions.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option';
+                button.textContent = option.text;
+                button.onclick = () => selectAnswer(index, option.originalIndex, question.correct, question.explanation);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function selectAnswer(selectedIndex, originalIndex, correctIndex, explanation) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.add('disabled'));
+            
+            const isCorrect = originalIndex === correctIndex;
+            
+            options.forEach((opt, idx) => {
+                const optionData = currentQuestions[currentQuestionIndex].options.map((o, i) => ({ text: o, originalIndex: i }));
+                if (currentQuestions[currentQuestionIndex].options.length > 2) {
+                    // Find which option this is
+                }
+            });
+            
+            if (isCorrect) {
+                score++;
+                options[selectedIndex].classList.add('correct');
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                // Find and highlight correct answer
+                options.forEach((opt) => {
+                    if (opt.textContent === currentQuestions[currentQuestionIndex].options[correctIndex]) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+            
+            // Show popup
+            showPopup(isCorrect, explanation);
+        }
+
+        function showPopup(isCorrect, explanation) {
+            const popup = document.getElementById('popupOverlay');
+            const icon = document.getElementById('popupIcon');
+            const title = document.getElementById('popupTitle');
+            const explanationEl = document.getElementById('popupExplanation');
+            
+            if (isCorrect) {
+                icon.textContent = '✅';
+                title.textContent = 'Tačno!';
+                title.style.color = '#065f46';
+            } else {
+                icon.textContent = '❌';
+                title.textContent = 'Netačno!';
+                title.style.color = '#dc2626';
+            }
+            
+            explanationEl.textContent = explanation;
+            popup.classList.add('active');
+        }
+
+        function nextQuestion() {
+            document.getElementById('popupOverlay').classList.remove('active');
+            
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex >= TOTAL_QUESTIONS) {
+                showResults();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function showResults() {
+            const percentage = Math.round((score / TOTAL_QUESTIONS) * 100);
+            let message, emoji;
+            
+            if (percentage >= 90) {
+                message = 'Izvanredno! Mashallah!';
+                emoji = '🌟';
+            } else if (percentage >= 70) {
+                message = 'Vrlo dobro!';
+                emoji = '✨';
+            } else if (percentage >= 50) {
+                message = 'Dobro! Nastavite učiti.';
+                emoji = '📚';
+            } else {
+                message = 'Potrebno je više učenja.';
+                emoji = '💪';
+            }
+            
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.add('active');
+            
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultScore').textContent = `${score}/${TOTAL_QUESTIONS}`;
+            document.getElementById('resultPercentage').textContent = `${percentage}% tačnih odgovora`;
+        }
+    </script>
+</body>
+</html>
