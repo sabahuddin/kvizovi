@@ -141,12 +141,46 @@
             font-size: 1.1rem;
         }
         
+        .support-section {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            margin-top: 2rem;
+        }
+        
+        .support-section p {
+            color: #d1fae5;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .support-section a {
+            color: #fbbf24;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .support-section a:hover {
+            color: #f59e0b;
+        }
+        
+        .qr-code {
+            width: 150px;
+            height: auto;
+            margin: 1rem auto;
+            display: block;
+            border-radius: 10px;
+        }
+        
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; }
             .subtitle { font-size: 1.4rem; }
             .quiz-grid { grid-template-columns: 1fr; }
             .logo { width: 150px; }
             .quiz-icon { width: 90px; }
+            .qr-code { width: 120px; }
         }
     </style>
 </head>
@@ -185,7 +219,7 @@
             </a>
 
             <a href="1e.html" class="quiz-card">
-                <img src="star_4.png" alt="3 zvjezdice" class="quiz-icon">
+                <img src="star_4.png" alt="4 zvjezdice" class="quiz-icon">
                 <h2 class="quiz-title">ČETVRTI DIO</h2>
                 <p class="quiz-description">Sure i dove</p>
                 <div class="quiz-badge">20 od 60 pitanja</div>
@@ -200,6 +234,7 @@
                 <span class="random-badge">🔀 Svaki put drugačija pitanja</span>
             </a>
         </div>
+        
         <h2 class="section-title">2. nivo</h2>
         
         <div class="quiz-grid">
@@ -224,7 +259,7 @@
                 <h2 class="quiz-title">TREĆI DIO</h2>
                 <p class="quiz-description">Ahlak, grijesi i tevba</p>
                 <div class="quiz-badge">25 od 100 pitanja</div>
-                <span class="random-badge">🔀 SSvaki put drugačija pitanja</span>
+                <span class="random-badge">🔀 Svaki put drugačija pitanja</span>
             </a>
             
             <a href="2d.html" class="quiz-card">
@@ -242,14 +277,16 @@
                 <div class="quiz-badge">25 od 100 pitanja</div>
                 <span class="random-badge">🔀 Svaki put drugačija pitanja</span>
             </a>
+            
             <a href="2f.html" class="quiz-card">
                 <img src="mekteb_logo.png" alt="logo mekteb" class="quiz-icon">
-                <h2 class="quiz-title">KVIZ PRVOG I DRUGOG NIVOA </h2>
+                <h2 class="quiz-title">KVIZ PRVOG I DRUGOG NIVOA</h2>
                 <p class="quiz-description">150 najboljih pitanja iz svih lekcija</p>
                 <div class="quiz-badge">30 od 150 pitanja</div>
                 <span class="random-badge">🔀 Svaki put drugačija pitanja</span>
             </a>
         </div>
+        
         <h2 class="section-title">Ostali Kvizovi</h2>
         
         <div class="quiz-grid">
@@ -276,7 +313,7 @@
         </div>
         
         <div class="support-section">
-            <p>☕ Ako bi kahvom počastio autora ovih kvizova, evo imaš priliku. Hvala!</p>
+            <p>☕ Počasti nas kahvom jer smo te počastili sadržajem koji koristi tebi i drugima. Hvala!</p>
             <a href="https://www.buymeacoffee.com/mekteb" target="_blank">
                 <img src="bmc_qr.png" alt="Buy Me a Coffee QR" class="qr-code">
             </a>
