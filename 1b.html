@@ -3,446 +3,522 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DRUGI DIO</title>
+    <title>1b - Namaski Šarti i Čistoća</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
-        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Lora', serif;
             background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #065f46 100%);
             min-height: 100vh;
             color: white;
         }
-        
         .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
-        
         .quiz-header { text-align: center; margin-bottom: 3rem; }
+        .quiz-icon { font-size: 5rem; margin-bottom: 1rem; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 0.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.2rem; color: #d1fae5; }
+        .nav-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .back-link { color: #fbbf24; text-decoration: none; font-size: 1.1rem; transition: all 0.3s; }
+        .back-link:hover { color: #f59e0b; }
+        .progress-container { background: rgba(255,255,255,0.2); border-radius: 50px; height: 12px; overflow: hidden; margin-bottom: 2rem; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); border-radius: 50px; transition: width 0.5s ease; }
+        .question-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.2); }
         
-        .quiz-icon {
-            font-size: 5rem;
-            margin-bottom: 1rem;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .subtitle { font-size: 1.3rem; color: #d1fae5; }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 2rem;
-            color: #fbbf24;
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-        }
-        .back-link:hover { color: #f59e0b; transform: translateX(-5px); }
-        
-        .quiz-info {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(110, 231, 183, 0.3);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        
-        .start-btn {
-            background: linear-gradient(to right, #10b981, #14b8a6);
-            color: white;
-            padding: 1.2rem 3rem;
-            border-radius: 2rem;
-            border: none;
-            font-weight: 600;
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 1rem;
-        }
-        .start-btn:hover {
-            background: linear-gradient(to right, #fbbf24, #f59e0b);
-            transform: scale(1.05);
-        }
-        
-        .quiz-screen { display: none; }
-        .quiz-screen.active { display: block; }
-        
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.8rem;
-        }
-        
-        .question-count { font-size: 1.3rem; color: #d1fae5; }
-        
-        .progress-bar {
-            width: 100%;
-            height: 0.6rem;
-            background: rgba(16, 185, 129, 0.3);
-            border-radius: 1rem;
-            overflow: hidden;
-            margin-bottom: 1.2rem;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(to right, #fbbf24, #f59e0b);
-            transition: width 0.5s;
-        }
-        
-        .question-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(110, 231, 183, 0.3);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .question-text {
-            font-size: 1.6rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-        }
-        
-        .answers-grid { display: grid; gap: 1rem; }
-        
-        .answer-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(110, 231, 183, 0.5);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            font-size: 1.3rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: left;
-        }
-        .answer-btn:hover:not(:disabled) {
-            background: rgba(16, 185, 129, 0.5);
-            transform: scale(1.02);
-        }
-        .answer-btn:disabled { cursor: not-allowed; }
-        .answer-btn.correct { background: #10b981; border-color: #34d399; }
-        .answer-btn.incorrect { background: #ef4444; border-color: #f87171; }
-        .answer-btn.show-correct { background: rgba(16, 185, 129, 0.3); border-color: #34d399; }
-        .answer-btn.faded {
-            background: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.5);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .explanation-box {
-            background: rgba(251, 191, 36, 0.2);
-            border: 2px solid rgba(251, 191, 36, 0.5);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            margin-top: 2rem;
-            display: none;
-        }
-        .explanation-box.show { display: block; animation: fadeIn 0.5s; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .explanation-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .explanation-icon { font-size: 2.5rem; }
-        .explanation-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
-        .explanation-text { color: #fef3c7; font-size: 1.1rem; line-height: 1.6; }
-        
-        .next-btn {
-            background: linear-gradient(to right, #10b981, #14b8a6);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 2rem;
-            border: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 1.5rem;
-            transition: all 0.3s;
-        }
-        .next-btn:hover {
-            background: linear-gradient(to right, #fbbf24, #f59e0b);
-            transform: scale(1.02);
-        }
-        
-        .result-screen { display: none; text-align: center; padding: 3rem; }
-        .result-screen.active { display: block; }
-        
-        .result-emoji {
-            font-size: 6rem;
-            margin-bottom: 2rem;
-            animation: bounce 1s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        
-        .result-message { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 2rem; }
-        .result-score { font-size: 4rem; font-weight: bold; color: #fbbf24; margin-bottom: 1rem; }
-        .result-percentage { font-size: 2rem; color: #d1fae5; margin-bottom: 3rem; }
-        
-        .result-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .reset-btn, .home-btn {
-            background: linear-gradient(to right, #10b981, #14b8a6);
-            color: white;
-            padding: 1rem 2.5rem;
-            border-radius: 2rem;
-            border: none;
-            font-weight: 600;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
-            text-decoration: none;
-        }
-        .reset-btn:hover, .home-btn:hover {
-            background: linear-gradient(to right, #fbbf24, #f59e0b);
-            transform: scale(1.05);
-        }
-        
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            .subtitle { font-size: 1.1rem; }
-            .container { padding: 1rem; }
-            .question-card { padding: 1.3rem; margin-bottom: 1rem; }
-            .question-text { font-size: 1.3rem; margin-bottom: 1.2rem; }
-            .answer-btn { font-size: 1rem; padding: 1rem; }
-            .back-link { font-size: 0.95rem; margin-bottom: 0; }
-            .question-count { font-size: 1.1rem; }
-            .explanation-box { padding: 1.3rem; margin-top: 1.2rem; }
-            .explanation-text { font-size: 1rem; }
-        }
+        .question-text { font-size: 1.4rem; line-height: 1.6; margin-bottom: 1.5rem; }
+        .options { display: flex; flex-direction: column; gap: 1rem; }
+        .option-btn { background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3); padding: 1rem 1.5rem; border-radius: 12px; color: white; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; text-align: left; font-family: 'Lora', serif; }
+        .option-btn:hover:not(:disabled) { background: rgba(34, 197, 94, 0.4); transform: translateX(10px); }
+        .option-btn.correct { background: linear-gradient(135deg, #10b981, #059669); border-color: #10b981; }
+        .option-btn.incorrect { background: linear-gradient(135deg, #ef4444, #dc2626); border-color: #ef4444; }
+        .option-btn.show-correct { background: linear-gradient(135deg, #10b981, #059669); border-color: #10b981; opacity: 0.7; }
+        .option-btn.faded { opacity: 0.5; }
+        .option-btn:disabled { cursor: not-allowed; }
+        .explanation-box { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #064e3b; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; display: none; }
+        .explanation-box.show { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .explanation-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .next-btn { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #064e3b; border: none; padding: 1rem 2.5rem; border-radius: 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer; display: block; margin: 2rem auto 0; transition: all 0.3s; font-family: 'Lora', serif; }
+        .next-btn:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4); }
+        .result-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 3rem; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
+        .result-emoji { font-size: 5rem; margin-bottom: 1rem; }
+        .result-message { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 1rem; }
+        .result-score { font-size: 3rem; font-weight: 700; color: #fbbf24; margin-bottom: 0.5rem; }
+        .result-percentage { font-size: 1.2rem; color: #d1fae5; margin-bottom: 2rem; }
+        .restart-btn { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #064e3b; border: none; padding: 1rem 2.5rem; border-radius: 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: 'Lora', serif; }
+        .restart-btn:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4); }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        @media (max-width: 600px) { h1 { font-size: 1.8rem; } .question-text { font-size: 1.2rem; } .container { padding: 1rem; } .quiz-icon { font-size: 3rem; } }
     </style>
 </head>
 <body>
-    <div class="container" id="welcomeScreen">
-        <a href="index.html" class="back-link">← Nazad na Home</a>
-        
-        <div class="quiz-header">
-            <div class="quiz-icon">🕌</div>
-            <h1>DRUGI DIO</h1>
-            <p class="subtitle">Namaz, abdest, gusul, čistoća i džamija</p>
-        </div>
-        
-        <div class="quiz-info">
-            <p style="font-size: 1.3rem; margin-bottom: 1rem;">
-                <strong>20</strong> pitanja iz <strong>65</strong> ukupno
-            </p>
-            <p style="color: #d1fae5; margin-bottom: 0.5rem;">
-                ⚡ Svaki put drugačija pitanja!
-            </p>
-            <button class="start-btn" onclick="startQuiz()">🎯 Započni kviz</button>
-        </div>
-    </div>
-    
-    <div class="container quiz-screen" id="quizScreen">
-        <div class="progress-info">
-            <a href="index.html" class="back-link">← Nazad</a>
-            <div class="question-count" id="questionCount"></div>
-        </div>
-        
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-        
-        <div class="question-card">
-            <div class="question-text" id="questionText"></div>
-            <div class="answers-grid" id="answersGrid"></div>
-        </div>
-        
-        <div class="explanation-box" id="explanationBox">
-            <div class="explanation-header">
-                <span class="explanation-icon" id="explanationIcon"></span>
-                <h3 class="explanation-title" id="explanationTitle"></h3>
+    <div class="container">
+        <div id="quizScreen" class="screen active">
+            <div class="quiz-header">
+                <div class="quiz-icon">🕌</div>
+                <h1>Namaski Šarti i Čistoća</h1>
+                <p class="subtitle">Ilmihal 1 - Nivo 1B</p>
             </div>
-            <p class="explanation-text" id="explanationText"></p>
-            <button class="next-btn" onclick="nextQuestion()">Sljedeće pitanje</button>
+            <div class="nav-row">
+                <a href="index.html" class="back-link">← Početna</a>
+                <span id="questionCounter">1/20</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="question-card">
+                <p class="question-text" id="questionText"></p>
+                <div class="options" id="optionsContainer"></div>
+                <div class="explanation-box" id="explanationBox">
+                    <div class="explanation-title">
+                        <span id="explanationIcon">✅</span>
+                        <span id="explanationTitle">Tačno!</span>
+                    </div>
+                    <p id="explanationText"></p>
+                </div>
+            </div>
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()" style="display: none;">Sljedeće pitanje</button>
         </div>
-    </div>
-    
-    <div class="container result-screen" id="resultScreen">
-        <div class="result-emoji" id="resultEmoji"></div>
-        <h2 class="result-message" id="resultMessage"></h2>
-        <div class="result-score" id="resultScore"></div>
-        <p class="result-percentage" id="resultPercentage"></p>
-        <div class="result-buttons">
-            <button class="reset-btn" onclick="location.reload()">
-                <span>↻</span> Ponovi kviz
-            </button>
-            <a href="index.html" class="home-btn">
-                <span>🏠</span> Nazad na Home
-            </a>
+        <div id="resultScreen" class="screen">
+            <div class="quiz-header">
+                <div class="quiz-icon">🕌</div>
+                <h1>Namaski Šarti i Čistoća</h1>
+                <p class="subtitle">Ilmihal 1 - Nivo 1B</p>
+            </div>
+            <div class="result-card">
+                <div class="result-emoji" id="resultEmoji">🌟</div>
+                <div class="result-message" id="resultMessage">Odličan rezultat!</div>
+                <div class="result-score" id="resultScore">0/20</div>
+                <div class="result-percentage" id="resultPercentage">0% tačnih odgovora</div>
+                <button class="restart-btn" onclick="restartQuiz()">Ponovi kviz</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // SVA PITANJA IZ 1B.PDF - 65 pitanja
         const allQuestions = [
-            {question: 'Prvi islamski šart je', options: ['Namaz', 'Post', 'Zekat', 'Hadž'], answer: 'Namaz', explanation: 'Nakon kelime-i šehadeta, namaz je najvažniji.'},
-            {question: 'Sura koja vrijedi kao trećina Kur\'ana', options: ['El-Fatiha', 'El-Ihlas', 'El-Felek', 'En-Nas'], answer: 'El-Ihlas', explanation: 'Sura El-Ihlas govori o tevhidu.'},
-            {question: 'Prva sura u Kur\'anu je', options: ['El-Ihlas', 'El-Fatiha', 'El-Felek', 'En-Nas'], answer: 'El-Fatiha', explanation: 'El-Fatiha je majka Kur\'ana.'},
-            {question: 'Suru koju učimo na svakom rekatu namaza', options: ['El-Ihlas', 'El-Fatiha', 'Subhaneke', 'Ettehijjatu'], answer: 'El-Fatiha', explanation: 'Fatiha je obavezna na svakom rekatu.'},
-            {question: 'Namaz je Allah dž.š. naredio direktno na', options: ['Pored Ka\'be', 'U pećini Hira', 'Na nebesima', 'U Medini'], answer: 'Na nebesima', explanation: 'Tokom Miradža naredio je namaz.'},
-            {question: 'Namaz je spomenut u Kur\'anu više od', options: ['10 mjesta', '20 mjesta', '100 mjesta', '30 mjesta'], answer: '100 mjesta', explanation: 'Namaz se spominje više od 100 puta.'},
-            {question: 'Dnevnih namaza ima', options: ['3', '4', '5', '6'], answer: '5', explanation: 'Pet dnevnih namaza je obaveza.'},
-            {question: 'Jutarnji namaz', options: ['Sabah', 'Podne', 'Akšam', 'Jacija'], answer: 'Sabah', explanation: 'Sabah je jutarnji namaz.'},
-            {question: 'Podnevni namaz', options: ['Sabah', 'Podne', 'Ikindija', 'Akšam'], answer: 'Podne', explanation: 'Podne se klanja u podne.'},
-            {question: 'Poslijepodnevni namaz', options: ['Sabah', 'Podne', 'Ikindija', 'Akšam'], answer: 'Ikindija', explanation: 'Ikindija je poslijepodne.'},
-            {question: 'Večernji namaz', options: ['Sabah', 'Podne', 'Akšam', 'Jacija'], answer: 'Akšam', explanation: 'Akšam je večernji namaz.'},
-            {question: 'Noćni namaz', options: ['Sabah', 'Podne', 'Akšam', 'Jacija'], answer: 'Jacija', explanation: 'Jacija je noćni namaz.'},
-            {question: 'Dva namaza koji se klanjaju po danu', options: ['Sabah i podne', 'Podne i ikindija', 'Akšam i jacija', 'Sabah i akšam'], answer: 'Podne i ikindija', explanation: 'Dva dnevna namaza.'},
-            {question: 'Hadis: "Čistoća je..."', options: ['Pola imana', 'Dio islama', 'Odlika muslimana', 'Velika blagodat'], answer: 'Pola imana', explanation: 'Čistoća je pola imana.'},
-            {question: 'Obavezno vjersko pranje', options: ['Abdest', 'Gusul', 'Tejemmum', 'Mesh'], answer: 'Abdest', explanation: 'Abdest je prije namaza.'},
-            {question: 'Obavezno vjersko kupanje', options: ['Abdest', 'Gusul', 'Tejemmum', 'Mesh'], answer: 'Gusul', explanation: 'Gusul je kupanje cijelog tijela.'},
-            {question: 'Čišćenje zemljom radi namaza', options: ['Abdest', 'Gusul', 'Tejemmum', 'Mesh'], answer: 'Tejemmum', explanation: 'Tejemmum kada nema vode.'},
-            {question: 'Nakon uzimanja abdesta lijepo je proučiti', options: ['Kelime-i šehadet', 'Rabbi Jessir', 'Subhaneke', 'El-Fatiha'], answer: 'Kelime-i šehadet', explanation: 'Šehadet nakon abdesta.'},
-            {question: 'Potiranje mokrom rukom dio glave', options: ['Abdest', 'Tejemmum', 'Gusul', 'Mesh'], answer: 'Mesh', explanation: 'Mesh je potiranje.'},
-            {question: 'Ispiranje usta i grla prilikom kupanja', options: ['Gargara', 'Istinšak', 'Gusul', 'Mesh'], answer: 'Gargara', explanation: 'Gargara je ispiranje usta.'},
-            {question: 'Ispiranje nosa prilikom kupanja', options: ['Gargara', 'Istinšak', 'Gusul', 'Mesh'], answer: 'Istinšak', explanation: 'Istinšak je ispiranje nosa.'},
-            {question: 'Pranje cijelog tijela prilikom kupanja', options: ['Gargara', 'Istinšak', 'Gasi vudžud', 'Mesh'], answer: 'Gasli vudžud', explanation: 'Cijelo tijelo se pere.'},
-            {question: 'Nečista osoba koja se mora okupati', options: ['Džunub', 'Džunud', 'Muhrim', 'Mušrik'], answer: 'Džunub', explanation: 'Džunub zahtijeva gusul.'},
-            {question: 'U kojima je nijet/odluka šart', options: ['Abdest i gusul', 'Samo abdest', 'Samo namaz', 'Namaz i post'], answer: 'Abdest i gusul', explanation: 'Nijet je potreban za abdest, gusul i namaz.'},
-            {question: 'Tejemmum se uzima umjesto', options: ['Abdesta', 'Gusula', 'Abdesta i gusula', 'Namaza'], answer: 'Abdesta i gusula', explanation: 'Tejemmum je zamjena za oba.'},
-            {question: 'Farzovi tejemmuma su', options: ['Nijet i potiranje lica', 'Samo nijet', 'Potiranje ruku', 'Potiranje glave'], answer: 'Nijet i potiranje lica', explanation: 'Dva farza tejemmuma.'},
-            {question: 'Šta je od ovoga nečistoća', options: ['Krv', 'Znoj', 'Suze', 'Prašina'], answer: 'Krv', explanation: 'Krv je nečistoća.'},
-            {question: 'Odredi šta kvari abdest', options: ['Spavanje', 'Znojenje', 'Smijanje', 'Plakanje'], answer: 'Spavanje', explanation: 'Spavanje kvari abdest.'},
-            {question: 'Prva i najvrijednija džamija', options: ['Ka\'ba', 'Mesdžidul-aksa', 'Poslanikova džamija', 'Kuba'], answer: 'Ka\'ba', explanation: 'Ka\'ba je prva džamija.'},
-            {question: 'Smjer prema Ka\'bi zove se', options: ['Kibla', 'Mukabela', 'Tawaf', 'Kubbe'], answer: 'Kibla', explanation: 'Kibla je smjer molitve.'},
-            {question: 'Ka\'ba se u odnosu na našu zemlju nalazi na', options: ['Jugoistoku', 'Jugozapadu', 'Sjeveroist oku', 'Sjeverozapadu'], answer: 'Jugoistoku', explanation: 'Ka\'ba je na jugoistoku od BiH.'},
-            {question: 'Riječ "odluka" na arapskom se kaže', options: ['Nijet', 'Tekbir', 'Tespih', 'Levha'], answer: 'Nijet', explanation: 'Nijet znači odluka.'},
-            {question: 'Peti šart/uvjet za namaza je', options: ['Zanijetiti namaz', 'Biti propisno obučen', 'Na vrijeme klanjati', 'Prema kibli okrenuti'], answer: 'Zanijetiti namaz', explanation: 'Nijet je peti šart.'},
-            {question: 'Šesti šart/uvjet za namaza je', options: ['Zanijetiti', 'Biti obučen', 'Na vrijeme', 'Prema kibli'], answer: 'Prema kibli', explanation: 'Kibla je šesti šart.'},
-            {question: 'Obilazak Ka\'be', options: ['Kibla', 'Mukabela', 'Tawaf', 'Kubbe'], answer: 'Tawaf', explanation: 'Tawaf je obilazak Ka\'be.'},
-            {question: 'Hadžerul-esved znači', options: ['Crni kamen', 'Bijeli biser', 'Zlatna vrata', 'Srebrna kupola'], answer: 'Crni kamen', explanation: 'Crni kamen u Ka\'bi.'},
-            {question: 'Odjeća muslimana ne smije biti', options: ['Tijesna', 'Providna', 'Poderana', 'Sve navedeno'], answer: 'Sve navedeno', explanation: 'Odjeća mora biti pristojna.'},
-            {question: 'Dvije sure poznate kao zaštitnice', options: ['El-Felek i En-Nas', 'El-Ihlas i El-Fatiha', 'El-Fatiha i En-Nas', 'El-Felek i El-Ihlas'], answer: 'El-Felek i En-Nas', explanation: 'Ove dvije sure su zaštitnice.'},
-            {question: 'Treća i posljednja sura u Kur\'anu je', options: ['El-Felek', 'El-Ihlas', 'El-Fatiha', 'En-Nas'], answer: 'En-Nas', explanation: 'En-Nas je posljednja sura.'},
-            {question: 'Na početku namaskog vremena uči se', options: ['Ikamet', 'Ezan', 'Salavat', 'Salat'], answer: 'Ezan', explanation: 'Ezan poziva na namaz.'},
-            {question: 'Muškarci uče neposredno prije farza', options: ['Ezan', 'Ikamet', 'Salavat', 'Tekbir'], answer: 'Ikamet', explanation: 'Ikamet je prije početka.'},
-            {question: 'Osoba koja uči ezan i ikamet', options: ['Mujezin', 'Hodža', 'Imam', 'Mutevellija'], answer: 'Mujezin', explanation: 'Mujezin poziva na namaz.'},
-            {question: 'Poslanikov a.s. mujezin zvao se', options: ['Bilal', 'Muaz', 'Zejd', 'Osman'], answer: 'Bilal', explanation: 'Bilal je bio prvi mujezin.'},
-            {question: 'Poslanikov a.s. drug koji je sanjao ezan', options: ['Abdullah', 'Bilal', 'Omer', 'Alija'], answer: 'Abdullah', explanation: 'Abdullah je sanjao ezan.'},
-            {question: 'U odnosu na ezan ikamet se uči', options: ['Brže', 'Sporije', 'Jednako', 'Tiše'], answer: 'Brže', explanation: 'Ikamet je brži od ezana.'},
-            {question: 'Vrijeme kad se namaz ne može klanjati', options: ['Kad sunce izlazi', 'Kad sunce zalazi', 'Kad je sunce na sredini neba', 'Sve navedeno'], answer: 'Sve navedeno', explanation: 'Tri vremena zabrane.'},
-            {question: 'Početni tekbir', options: ['Iftitahi tekbir', 'Kijam', 'Kiraet', 'Ruku'], answer: 'Iftitahi tekbir', explanation: 'Prvi tekbir u namazu.'},
-            {question: 'Mirno stajanje u namazu', options: ['Iftitahi tekbir', 'Kijam', 'Kiraet', 'Ruku'], answer: 'Kijam', explanation: 'Kijam je stajanje.'},
-            {question: 'Učenje Kur\'ana u namazu', options: ['Kijam', 'Kiraet', 'Ruku', 'Sedžda'], answer: 'Kiraet', explanation: 'Kiraet je učenje Kur\'ana.'},
-            {question: 'Pregibanje u namazu', options: ['Kijam', 'Kiraet', 'Ruku', 'Sedžda'], answer: 'Ruku', explanation: 'Ruku je pregibanje.'},
-            {question: 'Spuštanje lica na tlo', options: ['Kijam', 'Ruku', 'Sedžda', 'Ka\'dei ehire'], answer: 'Sedžda', explanation: 'Sedžda je najviši čin poniznosti.'},
-            {question: 'Posljednje sjedenje u namazu', options: ['Kijam', 'Ruku', 'Sedžda', 'Ka\'dei ehire'], answer: 'Ka\'dei ehire', explanation: 'Zadnje sjedenje u namazu.'},
-            {question: 'Sabahski sunnet ima', options: ['2 rekata', '4 rekata', '6 rekata', '8 rekata'], answer: '2 rekata', explanation: 'Dva rekata sunneta.'},
-            {question: 'Sabahski farz ima', options: ['2 rekata', '4 rekata', '6 rekata', '8 rekata'], answer: '2 rekata', explanation: 'Dva rekata farza.'},
-            {question: 'Kod sabah-namaza prvo se klanjaju', options: ['Farzi', 'Sunneti', 'Nema sunneta', 'Vitr'], answer: 'Sunneti', explanation: 'Prvo sunnet pa farz.'},
-            {question: 'Akšamski farzi imaju', options: ['2 rekata', '3 rekata', '4 rekata', '6 rekata'], answer: '3 rekata', explanation: 'Tri rekata farza.'},
-            {question: 'Akšamski sunneti imaju', options: ['2 rekata', '3 rekata', '4 rekata', '6 rekata'], answer: '2 rekata', explanation: 'Dva rekata sunneta.'},
-            {question: 'Kod akšam-namaza prvo se klanjaju', options: ['Farzi', 'Sunneti', 'Nema sunneta', 'Vitr'], answer: 'Farzi', explanation: 'Prvo farz pa sunnet.'},
-            {question: 'Sve što nam je Allah naredio da radimo', options: ['Farz', 'Sunnet', 'Mendub', 'Mubah'], answer: 'Farz', explanation: 'Farz je obaveza.'},
-            {question: 'Sve što nam Muhammed a.s. preporučio', options: ['Farz', 'Sunnet', 'Mendub', 'Haram'], answer: 'Sunnet', explanation: 'Sunnet je preporuka.'},
-            {question: 'Spomenji je Allah dž.š. po imenu', options: ['Zikr', 'Ders', 'Tešrik', 'Salavat'], answer: 'Zikr', explanation: 'Zikr je spominjanje Allaha.'},
-            {question: 'Najduži ajet u Kur\'anu je', options: ['Ajetul-kursi', 'Ajetud-dejn', 'El-Fatiha', 'El-Ihlas'], answer: 'Ajetud-dejn', explanation: 'Ajetud-dejn je najduži ajet.'},
-            {question: 'Desnom nogom ulazimo u', options: ['Kuću', 'Mekteb', 'Džamiju', 'WC'], answer: 'Džamiju', explanation: 'Desnom nogom u džamiju.'},
-            {question: 'Lijevom nogom ulazimo u', options: ['Stan', 'Mekteb', 'Kupatilo', 'Džamiju'], answer: 'Kupatilo', explanation: 'Lijevom nogom u WC.'},
-            {question: 'Desnom nogom izlazimo iz', options: ['Stana', 'Mekteba', 'Kupatila', 'WC-a'], answer: 'WC-a', explanation: 'Desnom nogom izlazimo iz WC-a.'},
-            {question: 'Lijevom nogom izlazimo iz', options: ['Stana', 'Džamije', 'Oba navedena', 'Nijedno'], answer: 'Oba navedena', explanation: 'Lijevom iz kuće i džamije.'}
+            // ===== DA/NE PITANJA (15) =====
+            {
+                question: "Namaskih šarta ima ukupno dvanaest.",
+                options: ["DA", "NE"],
+                answer: "DA",
+                explanation: "Namaskih šarta ima 12: 6 uvjeta (priprema za namaz) i 6 ruknova (sastavni dijelovi namaza)."
+            },
+            {
+                question: "Abdest je vjersko pranje cijelog tijela.",
+                options: ["DA", "NE"],
+                answer: "NE",
+                explanation: "Abdest je vjersko pranje određenih dijelova tijela (lice, ruke, glava, noge). Pranje cijelog tijela je gusul."
+            },
+            {
+                question: "Abdeskih šarta (farzova) ima četiri.",
+                options: ["DA", "NE"],
+                answer: "DA",
+                explanation: "Četiri abdestka šarta su: umiti lice, oprati ruke do iznad lakata, potrati glavu (mesh) i oprati noge do iznad članaka."
+            },
+            {
+                question: "Spavanje kvari abdest.",
+                options: ["DA", "NE"],
+                answer: "DA",
+                explanation: "Abdest kvari: spavanje ili gubitak svijesti, oticanje krvi, povraćanje, prirodna nužda i glasno smijanje u namazu."
+            },
+            {
+                question: "Sura En-Nas je prva sura u Kur'anu.",
+                options: ["DA", "NE"],
+                answer: "NE",
+                explanation: "Sura En-Nas je posljednja (114.) sura u Kur'anu. Prva sura je El-Fatiha."
+            },
+            {
+                question: "Gusulskih šarta ima tri.",
+                options: ["DA", "NE"],
+                answer: "DA",
+                explanation: "Tri gusulska šarta su: gargara (ispiranje usta), istinšak (ispiranje nosa) i pranje cijelog tijela."
+            },
+            {
+                question: "Tejemum se obavlja kada nemamo vode za abdest.",
+                options: ["DA", "NE"],
+                answer: "DA",
+                explanation: "Tejemum je simboličko čišćenje zemljom kada nemamo vode ili ne možemo koristiti vodu."
+            },
+            {
+                question: "U džamiju ulazimo lijevom nogom.",
+                options: ["DA", "NE"],
+                answer: "NE",
+                explanation: "U džamiju, kuću, školu i mekteb ulazimo DESNOM nogom, a izlazimo lijevom."
+            },
+            {
+                question: "Kijam je stajanje u namazu.",
+                options: ["DA", "NE"],
+                answer: "DA",
+                explanation: "Kijam je drugi namaski rukn - stajanje u namazu kada učimo Subhaneke, Fatihu i suru."
+            },
+            {
+                question: "Ruku' je spuštanje lica na tlo.",
+                options: ["DA", "NE"],
+                answer: "NE",
+                explanation: "Ruku' je pregibanje u namazu (savijanje do polovine tijela). Spuštanje lica na tlo je sedžda."
+            },
+            {
+                question: "Sure El-Felek i En-Nas se nazivaju 'Zaštitnice'.",
+                options: ["DA", "NE"],
+                answer: "DA",
+                explanation: "El-Felek i En-Nas su 'zaštitnice' (mu'avvizetejn) - sure kojima tražimo zaštitu od zla."
+            },
+            {
+                question: "Kadei-ehire je sjedenje na kraju namaza.",
+                options: ["DA", "NE"],
+                answer: "DA",
+                explanation: "Kadei-ehire je posljednje sjedenje u namazu na kojem učimo Et-Tehijatu, salavate i dove."
+            },
+            {
+                question: "Namaz se može klanjati kada Sunce izlazi.",
+                options: ["DA", "NE"],
+                answer: "NE",
+                explanation: "Namaz se ne može klanjati: kada Sunce izlazi, kada je na sredini neba i kada zalazi."
+            },
+            {
+                question: "Mesh je potiranje mokrom rukom po glavi.",
+                options: ["DA", "NE"],
+                answer: "DA",
+                explanation: "Mesh je treći abdestkši šart - potiranje najmanje četvrtine glave mokrom rukom."
+            },
+            {
+                question: "Tejemumskih šarta ima tri.",
+                options: ["DA", "NE"],
+                answer: "DA",
+                explanation: "Tri tejemumska šarta: nijet, potiranje lica zemljom i potiranje ruku do iznad lakata zemljom."
+            },
+            // ===== VIŠESTRUKI IZBOR (15) =====
+            {
+                question: "Koliko namaskih šarta ima?",
+                options: ["Šest", "Deset", "Dvanaest", "Petnaest"],
+                answer: "Dvanaest",
+                explanation: "Namaskih šarta ima 12: 6 uvjeta prije namaza (pripreme) i 6 ruknova u toku namaza."
+            },
+            {
+                question: "Koji je prvi namaski šart (uvjet)?",
+                options: ["Abdest", "Kibla", "Čistoća tijela, odjeće i mjesta", "Nijet"],
+                answer: "Čistoća tijela, odjeće i mjesta",
+                explanation: "Prvi namaski uvjet je čistoća tijela, odjeće i mjesta za klanjanje."
+            },
+            {
+                question: "Koliko ima abdeskih šarta (farzova)?",
+                options: ["Tri", "Četiri", "Pet", "Šest"],
+                answer: "Četiri",
+                explanation: "Četiri abdestka šarta: 1) umiti lice, 2) oprati ruke do lakata, 3) mesh glave, 4) oprati noge."
+            },
+            {
+                question: "Šta je Kibla?",
+                options: ["Vrsta namaza", "Smjer prema Kabi u Mekki", "Namaski rukn", "Vrsta abdesta"],
+                answer: "Smjer prema Kabi u Mekki",
+                explanation: "Kibla je smjer prema Kabi u Mekki. Muslimani se okreću prema Kibli kada klanjaju namaz."
+            },
+            {
+                question: "Šta učimo na ruku'u?",
+                options: ["Subhane Rabbijel-e'ala", "Subhane Rabbijel-'azim", "Semiallahu limen hamideh", "Et-Tehijatu"],
+                answer: "Subhane Rabbijel-'azim",
+                explanation: "Na ruku'u tri puta učimo 'Subhane Rabbijel-'azim' - Slavljen je moj Gospodar Veličanstveni."
+            },
+            {
+                question: "Šta učimo na sedždi?",
+                options: ["Subhane Rabbijel-'azim", "Subhane Rabbijel-e'ala", "Allahu ekber", "Rabbena lekel-hamd"],
+                answer: "Subhane Rabbijel-e'ala",
+                explanation: "Na sedždi tri puta učimo 'Subhane Rabbijel-e'ala' - Slavljen je moj Gospodar Uzvišeni."
+            },
+            {
+                question: "Koja sura je posljednja u Kur'anu?",
+                options: ["El-Felek", "El-Ihlas", "En-Nas", "El-Kevser"],
+                answer: "En-Nas",
+                explanation: "Sura En-Nas je 114. i posljednja sura u Kur'anu. Govori o traženju zaštite od šejtana."
+            },
+            {
+                question: "Šta je gusul?",
+                options: ["Pranje ruku", "Obavezno vjersko kupanje", "Potiranje zemljom", "Pranje zuba"],
+                answer: "Obavezno vjersko kupanje",
+                explanation: "Gusul je obavezno vjersko kupanje cijelog tijela propisano punoljetnim muslimanima."
+            },
+            {
+                question: "Šta je iftitahi-tekbir?",
+                options: ["Završetak namaza", "Početni tekbir", "Sjedenje u namazu", "Pregibanje"],
+                answer: "Početni tekbir",
+                explanation: "Iftitahi-tekbir je početni tekbir (Allahu ekber) kojim započinjemo namaz nakon nijeta."
+            },
+            {
+                question: "Koliko namaskih vremena ima?",
+                options: ["Tri", "Četiri", "Pet", "Šest"],
+                answer: "Pet",
+                explanation: "Pet namaskih vremena: sabah, podne, ikindija, akšam i jacija."
+            },
+            {
+                question: "Čime se obavlja tejemum?",
+                options: ["Vodom", "Zemljom", "Pijeskom", "Kamenjem"],
+                answer: "Zemljom",
+                explanation: "Tejemum se obavlja čistom suhom zemljom ili predmetom od zemlje (kamen, zid)."
+            },
+            {
+                question: "Šta je kiraet?",
+                options: ["Stajanje u namazu", "Učenje Kur'ana u namazu", "Pregibanje", "Sjedenje"],
+                answer: "Učenje Kur'ana u namazu",
+                explanation: "Kiraet je treći namaski rukn - učenje Kur'ana (Fatihe i sure) stojeći u namazu."
+            },
+            {
+                question: "Kojom nogom izlazimo iz džamije?",
+                options: ["Desnom", "Lijevom", "Obje istovremeno", "Svejedno"],
+                answer: "Lijevom",
+                explanation: "Iz džamije, kuće i škole izlazimo lijevom nogom, a ulazimo desnom."
+            },
+            {
+                question: "Ko uči ezan?",
+                options: ["Imam", "Mujezin", "Hatib", "Muallim"],
+                answer: "Mujezin",
+                explanation: "Mujezin je osoba koja uči ezan - poziv na namaz sa munare džamije."
+            },
+            {
+                question: "Šta čini jedan rekat?",
+                options: ["Samo kijam", "Kijam, kiraet, ruku' i dvije sedžde", "Samo sedžda", "Samo ruku'"],
+                answer: "Kijam, kiraet, ruku' i dvije sedžde",
+                explanation: "Jedan rekat čine: kijam (stajanje) + kiraet (učenje) + ruku' + dvije sedžde."
+            },
+            // ===== PAMETNA PITANJA (30) =====
+            {
+                question: "IZBACI ULJEZA: Šta NE kvari abdest?",
+                options: ["Spavanje", "Plakanje", "Povraćanje", "Krvarenje"],
+                answer: "Plakanje",
+                explanation: "Plakanje NE kvari abdest. Abdest kvare: spavanje, povraćanje, krvarenje i prirodna nužda."
+            },
+            {
+                question: "IZBACI ULJEZA: Šta ne spada u namaske ruknove?",
+                options: ["Kijam", "Ruku'", "Abdest", "Sedžda"],
+                answer: "Abdest",
+                explanation: "Abdest je namaski UVJET (priprema za namaz), a ne rukn. Kijam, ruku' i sedžda su ruknovi."
+            },
+            {
+                question: "IZBACI ULJEZA: Koja riječ ne pripada nizu?",
+                options: ["Iftitahi-tekbir", "Kijam", "Kibla", "Sedžda"],
+                answer: "Kibla",
+                explanation: "Kibla je namaski uvjet (smjer), dok su iftitahi-tekbir, kijam i sedžda namaski ruknovi."
+            },
+            {
+                question: "IZBACI ULJEZA: Šta nije dio abdesta?",
+                options: ["Pranje lica", "Mesh glave", "Gargara", "Pranje nogu"],
+                answer: "Gargara",
+                explanation: "Gargara (ispiranje usta i grla) je dio GUSULA, ne abdesta. Četiri abdestka šarta su: lice, ruke, mesh i noge."
+            },
+            {
+                question: "IZBACI ULJEZA: Koja sura ne spada u 'zaštitnice'?",
+                options: ["El-Felek", "En-Nas", "El-Ihlas", "Sve su zaštitnice"],
+                answer: "El-Ihlas",
+                explanation: "Zaštitnice (mu'avvizetejn) su samo El-Felek i En-Nas. El-Ihlas govori o Allahovom jedinstvu."
+            },
+            {
+                question: "ASOCIJACIJA: Broj '12' u kontekstu namaza vas asocira na:",
+                options: ["Namaske šarte", "Broj rekata", "Broj sedždi", "Broj sura"],
+                answer: "Namaske šarte",
+                explanation: "Namaskih šarta ima 12: 6 uvjeta prije namaza i 6 ruknova u toku namaza."
+            },
+            {
+                question: "ASOCIJACIJA: Riječ 'Kaba' vas asocira na:",
+                options: ["Medinu", "Kiblu", "Minaret", "Mihrab"],
+                answer: "Kiblu",
+                explanation: "Kaba je građevina u Mekki prema kojoj se muslimani okreću (Kibla) prilikom klanjanja namaza."
+            },
+            {
+                question: "ASOCIJACIJA: Riječ 'mesh' vas asocira na:",
+                options: ["Pranje lica", "Potiranje glave", "Pranje nogu", "Gargaru"],
+                answer: "Potiranje glave",
+                explanation: "Mesh je potiranje mokrom rukom najmanje četvrtine glave - treći abdestki šart."
+            },
+            {
+                question: "ASOCIJACIJA: Izraz 'Subhane Rabbijel-e'ala' vas asocira na:",
+                options: ["Ruku'", "Sedždu", "Kijam", "Sjedenje"],
+                answer: "Sedždu",
+                explanation: "'Subhane Rabbijel-e'ala' (Slavljen je Gospodar moj Uzvišeni) učimo na sedždi tri puta."
+            },
+            {
+                question: "ASOCIJACIJA: Riječ 'džunub' vas asocira na:",
+                options: ["Abdest", "Gusul", "Tejemum", "Namaz"],
+                answer: "Gusul",
+                explanation: "Džunub je stanje nečistoće koje zahtijeva gusul (obavezno kupanje)."
+            },
+            {
+                question: "ANALOGIJA: Abdest : voda = Tejemum : ?",
+                options: ["Pijesak", "Voda", "Zemlja", "Zrak"],
+                answer: "Zemlja",
+                explanation: "Kao što se abdest uzima vodom, tako se tejemum obavlja zemljom (ili predmetom od zemlje)."
+            },
+            {
+                question: "ANALOGIJA: Kijam : stajanje = Ruku' : ?",
+                options: ["Sjedenje", "Pregibanje", "Ležanje", "Hodanje"],
+                answer: "Pregibanje",
+                explanation: "Kijam je stajanje u namazu, a ruku' je pregibanje (savijanje do polovine tijela)."
+            },
+            {
+                question: "ANALOGIJA: Iftitahi-tekbir : početak = Selam : ?",
+                options: ["Sredina", "Početak", "Kraj", "Pauza"],
+                answer: "Kraj",
+                explanation: "Iftitahi-tekbir je početak namaza, a selam (Es-selamu alejkum) je kraj namaza."
+            },
+            {
+                question: "ANALOGIJA: El-Felek : 113. = En-Nas : ?",
+                options: ["110.", "112.", "114.", "115."],
+                answer: "114.",
+                explanation: "El-Felek je 113. sura, a En-Nas je 114. i posljednja sura u Kur'anu."
+            },
+            {
+                question: "ANALOGIJA: Sabah : jutro = Akšam : ?",
+                options: ["Podne", "Noć", "Veče", "Popodne"],
+                answer: "Veče",
+                explanation: "Sabah je jutarnji namaz, a akšam je večernji namaz (klanja se nakon zalaska Sunca)."
+            },
+            {
+                question: "KO SAM JA? Ja sam namaski rukn. Savijate se do polovine tijela. Na meni učite 'Subhane Rabbijel-'azim'.",
+                options: ["Kijam", "Sedžda", "Ruku'", "Kadei-ehire"],
+                answer: "Ruku'",
+                explanation: "Ruku' je pregibanje u namazu - savijanje do polovine tijela uz učenje 'Subhane Rabbijel-'azim'."
+            },
+            {
+                question: "KO SAM JA? Ja sam namaski rukn. Spuštate lice na tlo. Na meni učite 'Subhane Rabbijel-e'ala'.",
+                options: ["Ruku'", "Kijam", "Sedžda", "Kiraet"],
+                answer: "Sedžda",
+                explanation: "Sedžda je spuštanje lica (čela i nosa) na tlo uz učenje 'Subhane Rabbijel-e'ala'."
+            },
+            {
+                question: "ŠTA SAM JA? Ja sam simboličko čišćenje. Koristim se kada nema vode. Obavljam se zemljom.",
+                options: ["Abdest", "Gusul", "Tejemum", "Istindža"],
+                answer: "Tejemum",
+                explanation: "Tejemum je simboličko čišćenje zemljom kada nema vode ili se voda ne može koristiti."
+            },
+            {
+                question: "KO SAM JA? Ja sam posljednja sura u Kur'anu. Tražim zaštitu od šejtana. Zovem se 'Ljudi'.",
+                options: ["El-Felek", "El-Ihlas", "En-Nas", "El-Kevser"],
+                answer: "En-Nas",
+                explanation: "Sura En-Nas (Ljudi) je 114. i posljednja sura Kur'ana - tražimo zaštitu od šejtana."
+            },
+            {
+                question: "ŠTA SAM JA? Ja sam poziv na namaz. Učim se sa munare. Uči me mujezin.",
+                options: ["Ikamet", "Ezan", "Hutba", "Dova"],
+                answer: "Ezan",
+                explanation: "Ezan je poziv na namaz koji mujezin uči sa munare kako bi obavijestio muslimane o namaskom vremenu."
+            },
+            {
+                question: "DOPUNI NIZ: Iftitahi-tekbir, kijam, kiraet, ruku', sedžda, ...?",
+                options: ["Selam", "Kadei-ehire", "Ezan", "Nijet"],
+                answer: "Kadei-ehire",
+                explanation: "Šest namaskih ruknova su: 1) iftitahi-tekbir, 2) kijam, 3) kiraet, 4) ruku', 5) sedžda, 6) kadei-ehire."
+            },
+            {
+                question: "DOPUNI NIZ: Čistoća, abdest, odjeća, vrijeme, Kibla, ...?",
+                options: ["Ruku'", "Nijet", "Sedžda", "Kijam"],
+                answer: "Nijet",
+                explanation: "Šest namaskih uvjeta: 1) čistoća, 2) abdest, 3) odjeća, 4) vrijeme, 5) Kibla, 6) nijet."
+            },
+            {
+                question: "DOPUNI NIZ: Sabah, podne, ikindija, akšam, ...?",
+                options: ["Duha", "Jacija", "Teravih", "Vitr"],
+                answer: "Jacija",
+                explanation: "Pet dnevnih namaza su: sabah, podne, ikindija, akšam i jacija."
+            },
+            {
+                question: "DOPUNI NIZ: Umiti lice, oprati ruke, mesh glave, ...?",
+                options: ["Gargara", "Oprati noge", "Istinšak", "Potrati vrat"],
+                answer: "Oprati noge",
+                explanation: "Četiri abdestka šarta: 1) umiti lice, 2) oprati ruke do lakata, 3) mesh glave, 4) oprati noge."
+            },
+            {
+                question: "DOPUNI NIZ: Gargara, istinšak, ...?",
+                options: ["Mesh", "Gasli vudžud", "Abdest", "Nijet"],
+                answer: "Gasli vudžud",
+                explanation: "Tri gusulska šarta: 1) gargara (ispiranje usta), 2) istinšak (ispiranje nosa), 3) gasli vudžud (pranje tijela)."
+            },
+            {
+                question: "SITUACIJA: Ahmed mora klanjati namaz, ali nema vode u blizini. Šta treba uraditi?",
+                options: ["Ne klanjati", "Uzeti tejemum", "Čekati vodu", "Klanjati bez čistoće"],
+                answer: "Uzeti tejemum",
+                explanation: "Kada nema vode, uzima se tejemum (simboličko čišćenje zemljom) i klanja namaz."
+            },
+            {
+                question: "SITUACIJA: Merjem je zaboravila na koju stranu treba predati selam prvo. Koja je ispravna?",
+                options: ["Lijeva pa desna", "Desna pa lijeva", "Samo desna", "Samo lijeva"],
+                answer: "Desna pa lijeva",
+                explanation: "Selam se prvo predaje na DESNU stranu, pa zatim na lijevu stranu."
+            },
+            {
+                question: "SITUACIJA: Hasan ulazi u džamiju. Kojom nogom treba ući?",
+                options: ["Lijevom", "Desnom", "Obje istovremeno", "Svejedno"],
+                answer: "Desnom",
+                explanation: "U džamiju, kuću, školu i mekteb ulazimo DESNOM nogom, a izlazimo lijevom."
+            },
+            {
+                question: "SITUACIJA: Selma se glasno nasmijala tokom namaza. Šta se desilo s njenim abdestom?",
+                options: ["Ništa", "Pokvario se", "Pojačao se", "Obnovio se"],
+                answer: "Pokvario se",
+                explanation: "Glasno smijanje u namazu kvari abdest. Potrebno je ponovo uzeti abdest i klanjati namaz."
+            },
+            {
+                question: "PRONAĐI GREŠKU: Namaski ruknovi su: kijam, Kibla, ruku', sedžda, kadei-ehire, iftitahi-tekbir.",
+                options: ["Kijam", "Kibla", "Ruku'", "Sedžda"],
+                answer: "Kibla",
+                explanation: "KIBLA je namaski UVJET, a ne rukn! Šesti rukn je kiraet (umjesto Kible)."
+            }
         ];
 
         let questions = [];
         let currentQuestion = 0;
         let score = 0;
-        const QUESTIONS_TO_SHOW = 20;
-        
+
         function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
-            return newArray;
+            return shuffled;
         }
 
-        function shuffleQuestionOptions(question) {
-            return { ...question, options: shuffleArray(question.options) };
-        }
-        
-        function startQuiz() {
-            let shuffledAll = shuffleArray(allQuestions);
-            let selectedQuestions = shuffledAll.slice(0, QUESTIONS_TO_SHOW);
-            questions = selectedQuestions.map(q => shuffleQuestionOptions(q));
+        function initQuiz() {
+            questions = shuffleArray(allQuestions).slice(0, 20);
+            questions.forEach(q => {
+                if (q.options.length > 2) {
+                    const correctAnswer = q.answer;
+                    q.options = shuffleArray(q.options);
+                    q.answer = correctAnswer;
+                }
+            });
             currentQuestion = 0;
             score = 0;
-            document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('quizScreen').classList.add('active');
+            document.getElementById('resultScreen').classList.remove('active');
             showQuestion();
         }
-        
+
         function showQuestion() {
             const q = questions[currentQuestion];
-            const total = questions.length;
-            
-            document.getElementById('questionCount').textContent = `Pitanje ${currentQuestion + 1} / ${total}`;
-            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / total) * 100}%`;
+            document.getElementById('questionCounter').textContent = `${currentQuestion + 1}/${questions.length}`;
             document.getElementById('questionText').textContent = q.question;
-            
-            const answersGrid = document.getElementById('answersGrid');
-            answersGrid.innerHTML = '';
-            
+            document.getElementById('progressBar').style.width = `${(currentQuestion / questions.length) * 100}%`;
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
             q.options.forEach(option => {
                 const btn = document.createElement('button');
-                btn.className = 'answer-btn';
+                btn.className = 'option-btn';
                 btn.textContent = option;
-                btn.onclick = () => checkAnswer(option);
-                answersGrid.appendChild(btn);
+                btn.onclick = () => selectAnswer(option);
+                optionsContainer.appendChild(btn);
             });
-            
             document.getElementById('explanationBox').classList.remove('show');
+            document.getElementById('nextBtn').style.display = 'none';
         }
-        
-        function checkAnswer(userAnswer) {
+
+        function selectAnswer(selected) {
             const q = questions[currentQuestion];
-            const isCorrect = userAnswer === q.answer;
-            
+            const isCorrect = selected === q.answer;
             if (isCorrect) score++;
-            
-            const buttons = document.querySelectorAll('.answer-btn');
+            const buttons = document.querySelectorAll('.option-btn');
             buttons.forEach(btn => {
                 btn.disabled = true;
-                
-                if (btn.textContent === userAnswer) {
+                if (btn.textContent === selected) {
                     btn.classList.add(isCorrect ? 'correct' : 'incorrect');
                 } else if (btn.textContent === q.answer) {
                     btn.classList.add('show-correct');
@@ -450,51 +526,37 @@
                     btn.classList.add('faded');
                 }
             });
-            
             document.getElementById('explanationIcon').textContent = isCorrect ? '✅' : '❌';
             document.getElementById('explanationTitle').textContent = isCorrect ? 'Tačno!' : 'Netačno!';
             document.getElementById('explanationText').textContent = q.explanation;
             document.getElementById('explanationBox').classList.add('show');
-            
-            const nextBtn = document.querySelector('.next-btn');
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.style.display = 'block';
             nextBtn.textContent = currentQuestion < questions.length - 1 ? 'Sljedeće pitanje' : 'Prikaži rezultate';
         }
-        
+
         function nextQuestion() {
-            if (currentQuestion < questions.length - 1) {
-                currentQuestion++;
-                showQuestion();
-            } else {
-                showResults();
-            }
+            if (currentQuestion < questions.length - 1) { currentQuestion++; showQuestion(); }
+            else { showResults(); }
         }
-        
+
         function showResults() {
             const percentage = Math.round((score / questions.length) * 100);
             let message, emoji;
-            
-            if (percentage >= 90) {
-                message = 'Izvrsno! Mašallah!';
-                emoji = '🌟';
-            } else if (percentage >= 70) {
-                message = 'Vrlo dobro!';
-                emoji = '✨';
-            } else if (percentage >= 50) {
-                message = 'Dobro! Nastavite učiti.';
-                emoji = '📚';
-            } else {
-                message = 'Potrebno je više učenja.';
-                emoji = '💪';
-            }
-            
+            if (percentage >= 90) { message = 'Izvrsno! Mashallah!'; emoji = '🌟'; }
+            else if (percentage >= 70) { message = 'Vrlo dobro!'; emoji = '✨'; }
+            else if (percentage >= 50) { message = 'Dobro! Nastavi učiti.'; emoji = '📚'; }
+            else { message = 'Potrebno je više učenja.'; emoji = '💪'; }
             document.getElementById('quizScreen').classList.remove('active');
             document.getElementById('resultScreen').classList.add('active');
-            
             document.getElementById('resultEmoji').textContent = emoji;
             document.getElementById('resultMessage').textContent = message;
             document.getElementById('resultScore').textContent = `${score}/${questions.length}`;
             document.getElementById('resultPercentage').textContent = `${percentage}% tačnih odgovora`;
         }
+
+        function restartQuiz() { initQuiz(); }
+        initQuiz();
     </script>
 </body>
 </html>

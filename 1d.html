@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1d - Pametna Pitanja</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Lora', serif;
+            background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #065f46 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        
+        .quiz-header { text-align: center; margin-bottom: 3rem; }
+        
+        .quiz-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #d1fae5;
+        }
+        
+        .nav-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .back-link {
+            color: #fbbf24;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover { color: #f59e0b; }
+        
+        .progress-container {
+            background: rgba(255,255,255,0.2);
+            border-radius: 50px;
+            height: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            border-radius: 50px;
+            transition: width 0.5s ease;
+        }
+        
+        .question-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .question-text {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .options { display: flex; flex-direction: column; gap: 0.8rem; }
+        
+        .option-btn {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-family: 'Lora', serif;
+        }
+        
+        .option-btn:hover:not(.disabled) {
+            background: rgba(34, 197, 94, 0.4);
+            border-color: #fbbf24;
+            transform: translateX(5px);
+        }
+        
+        .option-btn.correct {
+            background: rgba(34, 197, 94, 0.4);
+            border-color: #22c55e;
+        }
+        
+        .option-btn.incorrect {
+            background: rgba(239, 68, 68, 0.4);
+            border-color: #ef4444;
+        }
+        
+        .option-btn.disabled { pointer-events: none; }
+        
+        .explanation-box {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #064e3b;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            display: none;
+        }
+        
+        .explanation-box.show { display: block; }
+        
+        .explanation-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #064e3b;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            margin: 0 auto;
+            font-family: 'Lora', serif;
+        }
+        
+        .next-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4);
+        }
+        
+        .result-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .result-emoji {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .result-message {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .result-score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-percentage {
+            font-size: 1.2rem;
+            color: #d1fae5;
+            margin-bottom: 2rem;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #064e3b;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Lora', serif;
+        }
+        
+        .restart-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4);
+        }
+        
+        .screen { display: none; }
+        .screen.active { display: block; }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .question-text { font-size: 1.2rem; }
+            .container { padding: 1rem; }
+            .quiz-icon { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quizScreen" class="screen active">
+            <div class="quiz-header">
+                <div class="quiz-icon">🧠</div>
+                <h1>Pametna Pitanja</h1>
+                <p class="subtitle">Ilmihal 1 - Nivo 1D</p>
+            </div>
+            
+            <div class="nav-row">
+                <a href="index.html" class="back-link">← Početna</a>
+                <span id="questionCounter">1/20</span>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            
+            <div class="question-card">
+                <p class="question-text" id="questionText"></p>
+                <div class="options" id="optionsContainer"></div>
+                <div class="explanation-box" id="explanationBox">
+                    <div class="explanation-title">
+                        <span id="explanationIcon">✅</span>
+                        <span id="explanationTitle">Tačno!</span>
+                    </div>
+                    <p id="explanationText"></p>
+                </div>
+            </div>
+            
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()" style="display: none;">Sljedeće pitanje</button>
+        </div>
+        
+        <div id="resultScreen" class="screen">
+            <div class="quiz-header">
+                <div class="quiz-icon">🧠</div>
+                <h1>Pametna Pitanja</h1>
+                <p class="subtitle">Ilmihal 1 - Nivo 1D</p>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-emoji" id="resultEmoji">🌟</div>
+                <div class="result-message" id="resultMessage">Odličan rezultat!</div>
+                <div class="result-score" id="resultScore">0/20</div>
+                <div class="result-percentage" id="resultPercentage">0% tačnih odgovora</div>
+                <button class="restart-btn" onclick="restartQuiz()">Ponovi kviz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            // ===== TEMA 1A: OSNOVE ISLAMA (20 pitanja) =====
+            {
+                question: "IZBACI ULJEZA: Koja riječ ne pripada nizu?",
+                options: ["Šehadet", "Namaz", "Iman", "Post"],
+                answer: "Iman",
+                explanation: "Iman (vjerovanje) nije islamski šart. Šehadet, namaz i post su islamski šarti, dok je iman šest temeljnih istina vjere."
+            },
+            {
+                question: "IZBACI ULJEZA: Koja riječ ne pripada nizu?",
+                options: ["Kur'an", "Tevrat", "Zebur", "Mekka"],
+                answer: "Mekka",
+                explanation: "Mekka je grad, dok su Kur'an, Tevrat i Zebur Allahove objavljene knjige."
+            },
+            {
+                question: "IZBACI ULJEZA: Koja riječ ne pripada?",
+                options: ["Abdullah", "Amina", "Hatidža", "Abdulmuttalib"],
+                answer: "Hatidža",
+                explanation: "Hatidža je bila supruga Muhammeda, a.s. Abdullah (otac), Amina (majka) i Abdulmuttalib (djed) su njegova porodica iz djetinjstva."
+            },
+            {
+                question: "IZBACI ULJEZA: Šta ne spada u imanske šarte?",
+                options: ["Vjerovanje u Allaha", "Vjerovanje u meleke", "Klanjanje namaza", "Vjerovanje u poslanike"],
+                answer: "Klanjanje namaza",
+                explanation: "Namaz je islamski šart (praktična dužnost), a ne imanski šart. Imanski šarti su vjerovanja srcem."
+            },
+            {
+                question: "ASOCIJACIJA: Riječ 'Mekka' vas asocira na:",
+                options: ["Mjesto rođenja Muhammeda, a.s.", "Prvu džamiju", "Medinu", "Jeruzalem"],
+                answer: "Mjesto rođenja Muhammeda, a.s.",
+                explanation: "Mekka je grad u Arabiji gdje je rođen Muhammed, a.s., i gdje se nalazi Kaba - najsvetije mjesto u islamu."
+            },
+            {
+                question: "ASOCIJACIJA: Broj '5' u islamu vas asocira na:",
+                options: ["Islamske šarte", "Imanske šarte", "Dnevne namaze", "Oboje A i C"],
+                answer: "Oboje A i C",
+                explanation: "Broj 5 u islamu predstavlja i pet islamskih šarta i pet dnevnih namaza (sabah, podne, ikindija, akšam, jacija)."
+            },
+            {
+                question: "ASOCIJACIJA: Riječ 'Džibril' vas asocira na:",
+                options: ["Melek koji je donosio objavu", "Allahovo ime", "Poslanika", "Suru u Kur'anu"],
+                answer: "Melek koji je donosio objavu",
+                explanation: "Džibril (Gabrijel) je melek koji je donosio Allahovu objavu poslanicima, uključujući Kur'an Muhammedu, a.s."
+            },
+            {
+                question: "ANALOGIJA: Islam : vjera = Kur'an : ?",
+                options: ["Knjiga", "Poslanik", "Melek", "Namaz"],
+                answer: "Knjiga",
+                explanation: "Kao što je Islam vjera, tako je Kur'an knjiga - Allahova objavljena Knjiga."
+            },
+            {
+                question: "ANALOGIJA: Muhammed, a.s. : Mekka = Hidžra : ?",
+                options: ["Jeruzalem", "Medina", "Taif", "Jemen"],
+                answer: "Medina",
+                explanation: "Kao što je Muhammed, a.s., vezan za Mekku (rodno mjesto), tako je Hidžra vezana za Medinu (preseljenje u Medinu)."
+            },
+            {
+                question: "ANALOGIJA: Šehadet : prvi = Hadž : ?",
+                options: ["Drugi", "Treći", "Četvrti", "Peti"],
+                answer: "Peti",
+                explanation: "Šehadet je prvi islamski šart, a hadž je peti (zadnji) islamski šart."
+            },
+            {
+                question: "ANALOGIJA: Es-selamu alejkum : pozdrav = El-hamdu lillah : ?",
+                options: ["Oprost", "Zahvala", "Molba", "Čuđenje"],
+                answer: "Zahvala",
+                explanation: "Kao što je 'Es-selamu alejkum' islamski pozdrav, tako je 'El-hamdu lillah' izraz zahvale Allahu."
+            },
+            {
+                question: "KO SAM JA? Ja sam prvi islamski šart. Izgovaram se pri prihvatanju islama. Svjedočim o Allahovom jedinstvu.",
+                options: ["Namaz", "Šehadet", "Post", "Zekat"],
+                answer: "Šehadet",
+                explanation: "Šehadet (Kelimei-šehadet) je svjedočenje da nema boga osim Allaha i da je Muhammed Allahov poslanik."
+            },
+            {
+                question: "KO SAM JA? Ja sam grad u Arabiji. U meni je rođen Muhammed, a.s. U meni se nalazi Kaba.",
+                options: ["Medina", "Mekka", "Jeruzalem", "Taif"],
+                answer: "Mekka",
+                explanation: "Mekka je sveti grad u Arabiji, rodno mjesto Muhammeda, a.s., i mjesto gdje se nalazi Kaba."
+            },
+            {
+                question: "ŠTA SAM JA? Ja sam prva sura u Kur'anu. Imam sedam ajeta. Učim se u svakom rekatu namaza.",
+                options: ["El-Bekare", "El-Ihlas", "El-Fatiha", "En-Nas"],
+                answer: "El-Fatiha",
+                explanation: "El-Fatiha je prva sura Kur'ana, ima 7 ajeta i obavezna je u svakom rekatu namaza."
+            },
+            {
+                question: "DOPUNI NIZ: Šehadet, namaz, post, zekat, ...?",
+                options: ["Iman", "Hadž", "Ihsan", "Sadaka"],
+                answer: "Hadž",
+                explanation: "Pet islamskih šarta su: 1. Šehadet, 2. Namaz, 3. Post, 4. Zekat, 5. Hadž."
+            },
+            {
+                question: "DOPUNI NIZ: Tevrat, Zebur, Indžil, ...?",
+                options: ["Suhuf", "Kur'an", "Hadis", "Fikh"],
+                answer: "Kur'an",
+                explanation: "Četiri velike Allahove knjige su: Tevrat (Musau), Zebur (Davudu), Indžil (Isau), Kur'an (Muhammedu, a.s.)."
+            },
+            {
+                question: "DOPUNI NIZ: Allah, meleki, knjige, poslanici, Sudnji dan, ...?",
+                options: ["Namaz", "Kader", "Post", "Zekat"],
+                answer: "Kader",
+                explanation: "Šest imanskih šarta su: vjerovanje u Allaha, meleke, knjige, poslanike, Sudnji dan i kader (sudbinu)."
+            },
+            {
+                question: "SITUACIJA: Ahmed vidi prekrasan cvijet u bašči. Koje riječi treba izgovoriti?",
+                options: ["Inšallah", "Mašallah", "Estagfirullah", "Bismillah"],
+                answer: "Mašallah",
+                explanation: "Mašallah kažemo kada se divimo nečemu lijepom, da zahvalimo Allahu i zaštitimo od uroka."
+            },
+            {
+                question: "SITUACIJA: Merjem planira sutra posjetiti baku. Šta treba reći?",
+                options: ["Mašallah", "Subhanallah", "Inšallah", "El-hamdu lillah"],
+                answer: "Inšallah",
+                explanation: "Inšallah (Ako Bog da) kažemo kada govorimo o budućim planovima, jer samo Allah zna šta će se desiti."
+            },
+            {
+                question: "SITUACIJA: Hasan je upravo položio ispit. Šta treba reći?",
+                options: ["Inšallah", "Estagfirullah", "El-hamdu lillah", "Bismillah"],
+                answer: "El-hamdu lillah",
+                explanation: "El-hamdu lillah (Hvala Allahu) kažemo kada smo zahvalni za nešto dobro što nam se desilo."
+            },
+
+            // ===== TEMA 1B: NAMAZ I ČISTOĆA (20 pitanja) =====
+            {
+                question: "IZBACI ULJEZA: Šta nije abdestki šart?",
+                options: ["Pranje lica", "Pranje ruku do lakata", "Pranje cijelog tijela", "Mesh glave"],
+                answer: "Pranje cijelog tijela",
+                explanation: "Pranje cijelog tijela je gusulski šart (gasli-vudžud), ne abdestki. Abdest uključuje lice, ruke do lakata, mesh glave i noge."
+            },
+            {
+                question: "IZBACI ULJEZA: Šta ne kvari abdest?",
+                options: ["Spavanje", "Jedenje", "Krvarenje", "Povraćanje"],
+                answer: "Jedenje",
+                explanation: "Jedenje ne kvari abdest. Abdest kvare: spavanje, krvarenje, povraćanje, prirodna nužda i glasno smijanje u namazu."
+            },
+            {
+                question: "IZBACI ULJEZA: Koji nije namaski rukn?",
+                options: ["Kijam", "Kibla", "Ruku'", "Sedžda"],
+                answer: "Kibla",
+                explanation: "Kibla (okretanje prema Kabi) je namaski uvjet, ne rukn. Namaski ruknovi su: iftitahi-tekbir, kijam, kiraet, ruku', sedžda i kadei-ehire."
+            },
+            {
+                question: "IZBACI ULJEZA: Šta nije gusulski šart?",
+                options: ["Gargara", "Istinšak", "Mesh glave", "Gasli-vudžud"],
+                answer: "Mesh glave",
+                explanation: "Mesh glave (potiranje) je abdestki šart. Gusulski šarti su tri: gargara (ispiranje usta), istinšak (ispiranje nosa), gasli-vudžud (pranje cijelog tijela)."
+            },
+            {
+                question: "ASOCIJACIJA: Riječ 'ruku'' vas asocira na:",
+                options: ["Stajanje u namazu", "Pregibanje u namazu", "Sjedenje u namazu", "Ležanje u namazu"],
+                answer: "Pregibanje u namazu",
+                explanation: "Ruku' je pregibanje (naklon) u namazu kada stavimo ruke na koljena i učimo 'Subhane Rabbijel-'azim'."
+            },
+            {
+                question: "ASOCIJACIJA: Broj '12' u namazu vas asocira na:",
+                options: ["Broj namaskih šarta", "Broj rekata sabah-namaza", "Broj sedždi", "Broj sura"],
+                answer: "Broj namaskih šarta",
+                explanation: "Namaskih šarta ima 12: 6 namaskih uvjeta i 6 namaskih ruknova."
+            },
+            {
+                question: "ASOCIJACIJA: Riječ 'mujezin' vas asocira na:",
+                options: ["Onaj ko uči Kur'an", "Onaj ko predvodi namaz", "Onaj ko uči ezan", "Onaj ko daje zekat"],
+                answer: "Onaj ko uči ezan",
+                explanation: "Mujezin je osoba koja uči ezan - poziv na namaz sa munare džamije."
+            },
+            {
+                question: "ANALOGIJA: Abdest : voda = Tejemum : ?",
+                options: ["Pijesak", "Zemlja/prašina", "Kamen", "Drvo"],
+                answer: "Zemlja/prašina",
+                explanation: "Kao što se abdest uzima vodom, tako se tejemum uzima čistom zemljom ili prašinom kada nema vode."
+            },
+            {
+                question: "ANALOGIJA: Ruku' : 'Subhane Rabbijel-'azim' = Sedžda : ?",
+                options: ["Subhane Rabbijel-e'ala", "El-Fatiha", "Et-Tehijatu", "Selam"],
+                answer: "Subhane Rabbijel-e'ala",
+                explanation: "Kao što na ruku'u učimo 'Subhane Rabbijel-'azim', tako na sedždi učimo 'Subhane Rabbijel-e'ala'."
+            },
+            {
+                question: "ANALOGIJA: En-Nas : 114. = El-Felek : ?",
+                options: ["112.", "113.", "111.", "110."],
+                answer: "113.",
+                explanation: "Sura En-Nas je 114. sura u Kur'anu, a sura El-Felek je 113. sura."
+            },
+            {
+                question: "KO SAM JA? Ja sam namaski rukn. Na meni se čelo dodiruje tle. Na meni učiš 'Subhane Rabbijel-e'ala'.",
+                options: ["Kijam", "Ruku'", "Sedžda", "Kadei-ehire"],
+                answer: "Sedžda",
+                explanation: "Sedžda je padanje ničice u namazu kada čelo, nos, dlanovi, koljena i prsti nogu dodiruju tle."
+            },
+            {
+                question: "ŠTA SAM JA? Ja sam zamjena za abdest i gusul. Koristim se kada nema vode. Uzimam se čistom zemljom.",
+                options: ["Gusul", "Abdest", "Tejemum", "Mesh"],
+                answer: "Tejemum",
+                explanation: "Tejemum je zamjena za abdest i gusul kada nema vode ili kada je osoba bolesna pa ne može koristiti vodu."
+            },
+            {
+                question: "KO SAM JA? Ja sam poziv na namaz. Učim se pet puta dnevno. Učim sa munare džamije.",
+                options: ["Ikamet", "Ezan", "Salavat", "Tekbir"],
+                answer: "Ezan",
+                explanation: "Ezan je poziv na namaz koji mujezin uči pet puta dnevno sa munare džamije."
+            },
+            {
+                question: "ŠTA SAM JA? Ja sam 114. sura u Kur'anu. Tražim zaštitu od šejtana. Počinjem riječima 'Kul e'uzu bi Rabbin-nas'.",
+                options: ["El-Felek", "El-Ihlas", "En-Nas", "El-Fatiha"],
+                answer: "En-Nas",
+                explanation: "Sura En-Nas (Ljudi) je 114. i posljednja sura u Kur'anu, u kojoj tražimo Allahovu zaštitu od zla."
+            },
+            {
+                question: "DOPUNI NIZ: Lice, ruke do lakata, mesh glave, ...?",
+                options: ["Uši", "Vrat", "Noge do članaka", "Cijelo tijelo"],
+                answer: "Noge do članaka",
+                explanation: "Četiri abdestka farda su: pranje lica, pranje ruku do lakata, mesh (potiranje) glave i pranje nogu do članaka."
+            },
+            {
+                question: "DOPUNI NIZ: Iftitahi-tekbir, kijam, kiraet, ruku', sedžda, ...?",
+                options: ["Selam", "Kadei-ehire", "Salavat", "Dova"],
+                answer: "Kadei-ehire",
+                explanation: "Šest namaskih ruknova su: iftitahi-tekbir, kijam, kiraet, ruku', sedžda i kadei-ehire (posljednje sjedenje)."
+            },
+            {
+                question: "DOPUNI NIZ: Sabah, podne, ikindija, akšam, ...?",
+                options: ["Teravih", "Jacija", "Džuma", "Bajram"],
+                answer: "Jacija",
+                explanation: "Pet dnevnih namaza su: sabah (zora), podne, ikindija (poslijepodne), akšam (zalazak sunca) i jacija (noć)."
+            },
+            {
+                question: "SITUACIJA: Lejla nema vode za abdest, ali ima čistu zemlju. Šta treba učiniti?",
+                options: ["Ne klanjati namaz", "Uzeti tejemum", "Čekati dok ne nađe vodu", "Klanjati bez čistoće"],
+                answer: "Uzeti tejemum",
+                explanation: "Kada nema vode, musliman može uzeti tejemum čistom zemljom ili prašinom i klanjati namaz."
+            },
+            {
+                question: "SITUACIJA: Imran ulazi u džamiju. Kojom nogom treba ući?",
+                options: ["Lijevom nogom", "Desnom nogom", "Svejedno", "Objema nogama istovremeno"],
+                answer: "Desnom nogom",
+                explanation: "U džamiju ulazimo desnom nogom, a izlazimo lijevom. Ovo je sunnet Allahovog Poslanika, a.s."
+            },
+            {
+                question: "SITUACIJA: Amira se glasno nasmijala u namazu. Šta se desilo s njenim abdestom?",
+                options: ["Abdest je i dalje ispravan", "Abdest je pokvaren", "Treba ponoviti cijeli namaz", "Oboje B i C"],
+                answer: "Oboje B i C",
+                explanation: "Glasno smijanje u namazu kvari abdest i namaz, pa je potrebno ponovo uzeti abdest i klanjati namaz."
+            },
+
+            // ===== TEMA 1C: DOVE, NAMAZI I MUBAREK-DANI (20 pitanja) =====
+            {
+                question: "IZBACI ULJEZA: Šta nije mubarek-dan?",
+                options: ["Ramazanski bajram", "Kurban-bajram", "Mevlud", "Sabah"],
+                answer: "Sabah",
+                explanation: "Sabah je jutarnji namaz, ne mubarek-dan. Mubarek-dani su: Ramazanski bajram, Kurban-bajram, Mevlud, Lejletul-kadr i drugi."
+            },
+            {
+                question: "IZBACI ULJEZA: Šta ne spada u dijelove Et-Tehijata?",
+                options: ["Pozdravi Allahu", "Salavati na Poslanika", "Sura El-Fatiha", "Šehadet"],
+                answer: "Sura El-Fatiha",
+                explanation: "El-Fatiha se uči na kijamu, ne u Et-Tehijatu. Et-Tehijatu sadrži: pozdrave Allahu, salavate na Poslanika i šehadet."
+            },
+            {
+                question: "IZBACI ULJEZA: Koji namaz se ne klanja svaki dan?",
+                options: ["Sabah-namaz", "Akšam-namaz", "Teravih-namaz", "Jacija-namaz"],
+                answer: "Teravih-namaz",
+                explanation: "Teravih-namaz se klanja samo u mjesecu ramazanu, dok se sabah, akšam i jacija klanjaju svaki dan."
+            },
+            {
+                question: "IZBACI ULJEZA: Šta nije hidžretski mjesec?",
+                options: ["Muharrem", "Ramazan", "Januar", "Zul-hidždže"],
+                answer: "Januar",
+                explanation: "Januar je mjesec gregorijanskog kalendara. Muharrem, ramazan i zul-hidždže su hidžretski (islamski) mjeseci."
+            },
+            {
+                question: "ASOCIJACIJA: Riječ 'Miradž' vas asocira na:",
+                options: ["Noćno putovanje Muhammeda, a.s.", "Hidžru u Medinu", "Rođenje Poslanika", "Objavu Kur'ana"],
+                answer: "Noćno putovanje Muhammeda, a.s.",
+                explanation: "Miradž je čudesno noćno putovanje Muhammeda, a.s., na nebesa, kada je propisan namaz."
+            },
+            {
+                question: "ASOCIJACIJA: Datum '12. rebiul-evvel' vas asocira na:",
+                options: ["Kurban-bajram", "Ramazanski bajram", "Mevlud", "Lejletul-kadr"],
+                answer: "Mevlud",
+                explanation: "12. rebiul-evvela je dan Mevluda - rođendana Muhammeda, a.s., koji se svečano obilježava."
+            },
+            {
+                question: "ASOCIJACIJA: Riječ 'ševval' vas asocira na:",
+                options: ["Kurban-bajram", "Ramazanski bajram", "Post", "Mevlud"],
+                answer: "Ramazanski bajram",
+                explanation: "Ramazanski bajram pada 1. ševvala, prvog dana mjeseca ševvala nakon ramazana."
+            },
+            {
+                question: "ASOCIJACIJA: Broj '622' vas asocira na:",
+                options: ["Rođenje Muhammeda, a.s.", "Godinu Hidžre", "Broj ajeta u Kur'anu", "Broj poslanika"],
+                answer: "Godinu Hidžre",
+                explanation: "622. godina je godina Hidžre - preseljenja Muhammeda, a.s., iz Mekke u Medinu. Od nje počinje islamski kalendar."
+            },
+            {
+                question: "ANALOGIJA: Ramazanski bajram : 1. ševval = Kurban-bajram : ?",
+                options: ["1. muharrem", "10. zul-hidždže", "12. rebiul-evvel", "27. redžeb"],
+                answer: "10. zul-hidždže",
+                explanation: "Kao što Ramazanski bajram pada 1. ševvala, tako Kurban-bajram pada 10. zul-hidždžeta."
+            },
+            {
+                question: "ANALOGIJA: Sabah : 4 rekata = Akšam : ?",
+                options: ["3 rekata", "4 rekata", "5 rekata", "6 rekata"],
+                answer: "5 rekata",
+                explanation: "Sabah-namaz ima 4 rekata (2 sunnet + 2 farz), a akšam-namaz ima 5 rekata (3 farz + 2 sunnet)."
+            },
+            {
+                question: "ANALOGIJA: Mekka : Hidžra = Medina : ?",
+                options: ["Polazište", "Odredište", "Rodno mjesto", "Kibla"],
+                answer: "Odredište",
+                explanation: "Kao što je Mekka bila polazište Hidžre, tako je Medina bila odredište - grad u koji se preselio Muhammed, a.s."
+            },
+            {
+                question: "KO SAM JA? Ja sam dova koja se uči na sjedenju u namazu. Potječem od razgovora na Miradžu. Sadržim pozdrave Allahu.",
+                options: ["Subhaneke", "Et-Tehijatu", "Salavati", "Kunut-dova"],
+                answer: "Et-Tehijatu",
+                explanation: "Et-Tehijatu je dova na sjedenju u namazu, sadrži pozdrave Allahu i potječe od razgovora Muhammeda, a.s., s Allahom na Miradžu."
+            },
+            {
+                question: "ŠTA SAM JA? Ja sam mjesec posta. Deveti sam mjesec hidžretskog kalendara. U meni je objavljen Kur'an.",
+                options: ["Muharrem", "Ramazan", "Ševval", "Zul-hidždže"],
+                answer: "Ramazan",
+                explanation: "Ramazan je deveti mjesec islamskog kalendara, mjesec posta u kojem je počela objava Kur'ana."
+            },
+            {
+                question: "KO SAM JA? Ja sam namaz koji se klanja samo u ramazanu. Klanjam se poslije jacije. Imam 20 rekata.",
+                options: ["Džuma-namaz", "Teravih-namaz", "Bajram-namaz", "Dženaza-namaz"],
+                answer: "Teravih-namaz",
+                explanation: "Teravih je namaz koji se klanja samo u ramazanu, poslije jacija-namaza, i ima 20 rekata."
+            },
+            {
+                question: "ŠTA SAM JA? Ja sam čestitka za bajram. Izgovaram se prilikom čestitanja. Značim 'Neka vam je bajram blagoslovljen'.",
+                options: ["Es-selamu alejkum", "Bajram šerif mubarek olsun", "El-hamdu lillah", "Mašallah"],
+                answer: "Bajram šerif mubarek olsun",
+                explanation: "Bajram šerif mubarek olsun je tradicionalna bajramska čestitka koja znači 'Neka vam je bajram blagoslovljen'."
+            },
+            {
+                question: "DOPUNI NIZ: Muharrem, safer, rebiul-evvel, rebiul-ahir, ...?",
+                options: ["Ramazan", "Džumadel-ula", "Ševval", "Zul-hidždže"],
+                answer: "Džumadel-ula",
+                explanation: "Redoslijed prvih mjeseci islamskog kalendara: Muharrem, safer, rebiul-evvel, rebiul-ahir, džumadel-ula..."
+            },
+            {
+                question: "DOPUNI NIZ: Farz sabaha, sunnet sabaha, farz podne, ...?",
+                options: ["Sunnet podne", "Farz ikindije", "Sunnet ikindije", "Prvi sunnet podne"],
+                answer: "Sunnet podne",
+                explanation: "U sabahu prvo klanjamo sunnet pa farz, a u podne prvo farz pa sunnet (ima i sunnet prije farza)."
+            },
+            {
+                question: "SITUACIJA: Sutra je bajram. Šta treba proučiti ujutro prije bajram-namaza?",
+                options: ["Salavate", "Tekbire", "Et-Tehijatu", "Kunut-dovu"],
+                answer: "Tekbire",
+                explanation: "Uoči i na dan bajrama uče se tekbiri - veličanje Allaha riječima 'Allahu ekber'."
+            },
+            {
+                question: "SITUACIJA: Aiša je pogriješila i želi zatražiti Allahov oprost. Koje riječi treba izgovoriti?",
+                options: ["Inšallah", "Mašallah", "Estagfirullah", "Subhanallah"],
+                answer: "Estagfirullah",
+                explanation: "Estagfirullah (Tražim Allahov oprost) kažemo kada se kajemo za grijehe i tražimo Allahov oprost."
+            },
+            {
+                question: "SITUACIJA: Bilal je završio učenje Kur'ana. Koje riječi treba izgovoriti?",
+                options: ["Bismillah", "Sadekallahul-'azim", "Inšallah", "Estagfirullah"],
+                answer: "Sadekallahul-'azim",
+                explanation: "Sadekallahul-'azim (Istinu je rekao Uzvišeni Allah) kažemo nakon učenja Kur'ana."
+            }
+        ];
+
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function initQuiz() {
+            questions = shuffleArray(allQuestions).slice(0, 20);
+            questions.forEach(q => {
+                const correctAnswer = q.answer;
+                q.options = shuffleArray(q.options);
+                q.answer = correctAnswer;
+            });
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quizScreen').classList.add('active');
+            document.getElementById('resultScreen').classList.remove('active');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('questionCounter').textContent = `${currentQuestion + 1}/${questions.length}`;
+            document.getElementById('questionText').textContent = q.question;
+            document.getElementById('progressBar').style.width = `${(currentQuestion / questions.length) * 100}%`;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = () => selectAnswer(option);
+                optionsContainer.appendChild(btn);
+            });
+            
+            document.getElementById('explanationBox').classList.remove('show');
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function selectAnswer(selected) {
+            const q = questions[currentQuestion];
+            const isCorrect = selected === q.answer;
+            if (isCorrect) score++;
+            
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.classList.add('disabled');
+                if (btn.textContent === q.answer) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selected && !isCorrect) {
+                    btn.classList.add('incorrect');
+                }
+            });
+            
+            const explanationBox = document.getElementById('explanationBox');
+            document.getElementById('explanationIcon').textContent = isCorrect ? '✅' : '❌';
+            document.getElementById('explanationTitle').textContent = isCorrect ? 'Tačno!' : 'Netačno!';
+            document.getElementById('explanationText').textContent = q.explanation;
+            explanationBox.classList.add('show');
+            
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.add('active');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('resultScore').textContent = `${score}/${questions.length}`;
+            document.getElementById('resultPercentage').textContent = `${percentage}% tačnih odgovora`;
+            
+            let emoji, message;
+            if (percentage >= 90) {
+                emoji = '🌟';
+                message = 'Izvrsno! Odličan rezultat!';
+            } else if (percentage >= 70) {
+                emoji = '✨';
+                message = 'Vrlo dobro! Svaka čast!';
+            } else if (percentage >= 50) {
+                emoji = '📚';
+                message = 'Dobro! Nastavi učiti!';
+            } else {
+                emoji = '💪';
+                message = 'Potrebno je više učenja!';
+            }
+            
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultMessage').textContent = message;
+        }
+
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // Pokreni kviz kada se stranica učita
+        initQuiz();
+    </script>
+</body>
+</html>
