@@ -84,24 +84,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.8rem;
+            margin-bottom: 1.5rem;
         }
         
-        .question-count { font-size: 1.3rem; color: #d1fae5; }
+        .progress-bar-container {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin: 0 1rem;
+            overflow: hidden;
+        }
         
         .progress-bar {
-            width: 100%;
-            height: 0.6rem;
-            background: rgba(16, 185, 129, 0.3);
-            border-radius: 1rem;
-            overflow: hidden;
-            margin-bottom: 1.2rem;
-        }
-        
-        .progress-fill {
             height: 100%;
             background: linear-gradient(to right, #fbbf24, #f59e0b);
-            transition: width 0.5s;
+            border-radius: 4px;
+            transition: width 0.3s;
         }
         
         .question-card {
@@ -235,7 +234,55 @@
             background: linear-gradient(to right, #fbbf24, #f59e0b);
             transform: scale(1.05);
         }
-        
+
+        /* POPUP OVERLAY */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .popup-overlay.active { display: flex; }
+        .popup-content {
+            background: #fbbf24;
+            color: #1a1a1a;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: popupIn 0.3s ease;
+        }
+        @keyframes popupIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .popup-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .popup-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 1rem; }
+        .popup-title.correct { color: #065f46; }
+        .popup-title.incorrect { color: #dc2626; }
+        .popup-explanation { font-size: 1rem; line-height: 1.5; margin-bottom: 1.5rem; color: #333; }
+        .popup-btn {
+            background: linear-gradient(to right, #065f46, #0f766e);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+        }
+        .popup-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(6, 95, 70, 0.4); }
+
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             .subtitle { font-size: 1.1rem; }
@@ -279,28 +326,19 @@
             <p class="subtitle">Pet stubova islama i propisi o namazu</p>
         </div>
         <div class="progress-info">
-            <a href="index.html" class="back-link">← Nazad</a>
-            <div class="question-count" id="questionCount"></div>
-        </div>
-        
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
+                <a href="index.html" class="back-link">← Početna</a>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <span id="questionCounter">1/25</span>
+            </div>
         
         <div class="question-card">
             <div class="question-text" id="questionText"></div>
             <div class="answers-grid" id="answersGrid"></div>
         </div>
         
-        <div class="explanation-box" id="explanationBox">
-            <div class="explanation-header">
-                <span class="explanation-icon" id="explanationIcon"></span>
-                <h3 class="explanation-title" id="explanationTitle"></h3>
-            </div>
-            <p class="explanation-text" id="explanationText"></p>
-            <button class="next-btn" onclick="nextQuestion()">Sljedeće pitanje</button>
         </div>
-    </div>
     
     <div class="container result-screen" id="resultScreen">
         <div class="result-emoji" id="resultEmoji"></div>
@@ -471,8 +509,8 @@
             const q = questions[currentQuestion];
             const total = questions.length;
             
-            document.getElementById('questionCount').textContent = `Pitanje ${currentQuestion + 1} / ${total}`;
-            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / total) * 100}%`;
+            document.getElementById('questionCounter').textContent = `Pitanje ${currentQuestion + 1} / ${total}`;
+            document.getElementById('progressBar').style.width = `${((currentQuestion + 1) / total) * 100}%`;
             document.getElementById('questionText').textContent = q.question;
             
             const answersGrid = document.getElementById('answersGrid');
@@ -485,8 +523,7 @@
                 btn.onclick = () => checkAnswer(option);
                 answersGrid.appendChild(btn);
             });
-            
-            document.getElementById('explanationBox').classList.remove('show');
+
         }
         
         function checkAnswer(userAnswer) {
@@ -508,16 +545,19 @@
                 }
             });
             
-            document.getElementById('explanationIcon').textContent = isCorrect ? '✅' : '❌';
-            document.getElementById('explanationTitle').textContent = isCorrect ? 'Tačno!' : 'Netačno!';
-            document.getElementById('explanationText').textContent = q.explanation;
-            document.getElementById('explanationBox').classList.add('show');
-            
-            const nextBtn = document.querySelector('.next-btn');
-            nextBtn.textContent = currentQuestion < questions.length - 1 ? 'Sljedeće pitanje' : 'Prikaži rezultate';
+            showPopup(isCorrect, q.explanation);
         }
-        
+
+        function showPopup(isCorrect, explanation) {
+            document.getElementById('popupIcon').textContent = isCorrect ? '✅' : '❌';
+            document.getElementById('popupTitle').textContent = isCorrect ? 'Tačno!' : 'Netačno!';
+            document.getElementById('popupTitle').className = 'popup-title ' + (isCorrect ? 'correct' : 'incorrect');
+            document.getElementById('popupExplanation').textContent = explanation;
+            document.getElementById('popupOverlay').classList.add('active');
+        }
+
         function nextQuestion() {
+            document.getElementById('popupOverlay').classList.remove('active');
             if (currentQuestion < questions.length - 1) {
                 currentQuestion++;
                 showQuestion();
