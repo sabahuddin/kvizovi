@@ -143,13 +143,39 @@
                 <div class="progress-bar-container">
                     <div class="progress-bar" id="progressBar"></div>
                 </div>
-                <span id="questionCounterer">1/20</span>
+                <span id="questionCounter">1/20</span>
             </div>
             <div class="question-card">
                 <p class="question-text" id="questionText"></p>
                 <div class="options" id="optionsContainer"></div>
-                </div>
             </div>
+        </div>
+
+        <div class="popup-overlay" id="popupOverlay">
+            <div class="popup-content">
+                <div class="popup-icon" id="popupIcon">✅</div>
+                <div class="popup-title" id="popupTitle">Tačno!</div>
+                <div class="popup-explanation" id="popupExplanation"></div>
+                <button class="popup-btn" onclick="nextQuestion()">Sljedeće pitanje →</button>
+            </div>
+        </div>
+        
+        <div id="resultScreen" class="screen">
+            <div class="quiz-header">
+                <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
+                <h1>Namaski Šarti i Čistoća</h1>
+                <p class="subtitle">Ilmihal 1 - Nivo 1B</p>
+            </div>
+            <div class="result-card">
+                <div class="result-emoji" id="resultEmoji">🌟</div>
+                <div class="result-message" id="resultMessage">Odličan rezultat!</div>
+                <div class="result-score" id="resultScore">0/20</div>
+                <div class="result-percentage" id="resultPercentage">0% tačnih odgovora</div>
+                <button class="restart-btn" onclick="restartQuiz()">Ponovi kviz</button>
+                <a href="index.html" class="home-btn">Početna</a>
+            </div>
+        </div>
+    </div>
 
     <script>
         const allQuestions = [
@@ -549,7 +575,7 @@
 
         function showQuestion() {
             const q = questions[currentQuestion];
-            document.getElementById('questionCounterer').textContent = `${currentQuestion + 1}/${questions.length}`;
+            document.getElementById('questionCounter').textContent = `${currentQuestion + 1}/${questions.length}`;
             document.getElementById('questionText').textContent = q.question;
             document.getElementById('progressBar').style.width = `${(currentQuestion / questions.length) * 100}%`;
             const optionsContainer = document.getElementById('optionsContainer');
@@ -580,9 +606,6 @@
                 }
             });
             showPopup(isCorrect, q.explanation);
-            const nextBtn = document.getElementById('nextBtn');
-            nextBtn.style.display = 'block';
-            nextBtn.textContent = currentQuestion < questions.length - 1 ? 'Sljedeće pitanje' : 'Prikaži rezultate';
         }
 
         function showPopup(isCorrect, explanation) {
