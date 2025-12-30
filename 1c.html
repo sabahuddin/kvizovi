@@ -9,8 +9,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Lora', serif; background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #065f46 100%); min-height: 100vh; color: white; }
         .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
-        .quiz-header { text-align: center; margin-bottom: 3rem; }
-        .quiz-icon { font-size: 5rem; margin-bottom: 1rem; animation: float 3s ease-in-out infinite; }
+        .quiz-header { text-align: center; margin-bottom: 1rem; }
+        .quiz-icon { width: 100px; height: auto; margin-bottom: 0.5rem; animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 0.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
         .subtitle { font-size: 1.2rem; color: #d1fae5; }
@@ -43,16 +43,18 @@
         .result-percentage { font-size: 1.2rem; color: #d1fae5; margin-bottom: 2rem; }
         .restart-btn { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #064e3b; border: none; padding: 1rem 2.5rem; border-radius: 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: 'Lora', serif; }
         .restart-btn:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4); }
+        .home-btn { display: inline-block; background: transparent; color: #fbbf24; border: 2px solid #fbbf24; padding: 1rem 2.5rem; font-size: 1.1rem; font-weight: 600; border-radius: 30px; cursor: pointer; text-decoration: none; margin-top: 1rem; transition: all 0.3s ease; font-family: 'Lora', serif; }
+        .home-btn:hover { background: #fbbf24; color: #064e3b; }
         .screen { display: none; }
         .screen.active { display: block; }
-        @media (max-width: 600px) { h1 { font-size: 1.8rem; } .question-text { font-size: 1.2rem; } .container { padding: 1rem; } .quiz-icon { font-size: 3rem; } }
+        @media (max-width: 600px) { h1 { font-size: 1.8rem; } .question-text { font-size: 1.2rem; } .container { padding: 1rem; } .quiz-icon { width: 70px; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="quizScreen" class="screen active">
             <div class="quiz-header">
-                <div class="quiz-icon">🌙</div>
+                <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
                 <h1>Dove, Namazi i Mubarek-dani</h1>
                 <p class="subtitle">Ilmihal 1 - Nivo 1C</p>
             </div>
@@ -78,7 +80,7 @@
         </div>
         <div id="resultScreen" class="screen">
             <div class="quiz-header">
-                <div class="quiz-icon">🌙</div>
+                <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
                 <h1>Dove, Namazi i Mubarek-dani</h1>
                 <p class="subtitle">Ilmihal 1 - Nivo 1C</p>
             </div>
@@ -88,6 +90,7 @@
                 <div class="result-score" id="resultScore">0/20</div>
                 <div class="result-percentage" id="resultPercentage">0% tačnih odgovora</div>
                 <button class="restart-btn" onclick="restartQuiz()">Ponovi kviz</button>
+                <a href="index.html" class="home-btn">Početna</a>
             </div>
         </div>
     </div>
