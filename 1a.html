@@ -17,7 +17,6 @@
         }
         
         .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
-        
         .quiz-header { text-align: center; margin-bottom: 1rem; }
         
         .quiz-icon {
@@ -39,10 +38,17 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
-        .subtitle {
-            font-size: 1.2rem;
-            color: #d1fae5;
+        .subtitle { font-size: 1.2rem; color: #d1fae5; }
+        
+        .welcome-msg {
+            text-align: center;
+            margin-bottom: 1rem;
+            padding: 10px;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+            display: none;
         }
+        .welcome-msg.show { display: block; }
         
         .progress-info {
             display: flex;
@@ -57,7 +63,6 @@
             font-size: 1.1rem;
             transition: all 0.3s;
         }
-        
         .back-link:hover { color: #f59e0b; }
         
         .progress-bar-container {
@@ -84,7 +89,6 @@
             margin-bottom: 2rem;
             border: 1px solid rgba(255,255,255,0.2);
         }
-        
         
         .question-text {
             font-size: 1.4rem;
@@ -131,80 +135,31 @@
         .option-btn.faded { opacity: 0.5; }
         .option-btn:disabled { cursor: not-allowed; }
         
-        .explanation-box {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: #064e3b;
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-top: 1.5rem;
-            display: none;
-        }
-        
-        .explanation-box.show { display: block; animation: fadeIn 0.5s ease; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .explanation-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .next-btn {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: #064e3b;
-            border: none;
-            padding: 1rem 2.5rem;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: block;
-            margin: 2rem auto 0;
-            transition: all 0.3s;
-            font-family: 'Lora', serif;
-        }
-        
-        .next-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4);
-        }
-        
         .result-card {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 3rem;
+            padding: 3rem 2rem;
             text-align: center;
             border: 1px solid rgba(255,255,255,0.2);
         }
         
-        .result-emoji { font-size: 5rem; margin-bottom: 1rem; }
+        .result-emoji { font-size: 4rem; margin-bottom: 1rem; }
+        .result-message { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 1rem; }
+        .result-score { font-size: 3rem; font-weight: 700; color: #fbbf24; margin-bottom: 0.5rem; }
+        .result-percentage { font-size: 1.2rem; color: #d1fae5; margin-bottom: 0.5rem; }
+        .result-time { font-size: 1rem; color: #a7f3d0; margin-bottom: 1rem; }
         
-        .result-message {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            margin-bottom: 1rem;
+        .result-saved {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            display: none;
         }
-        
-        .result-score {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #fbbf24;
-            margin-bottom: 0.5rem;
-        }
-        
-        .result-percentage {
-            font-size: 1.2rem;
-            color: #d1fae5;
-            margin-bottom: 2rem;
-        }
+        .result-saved.show { display: block; }
         
         .restart-btn {
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
@@ -218,7 +173,6 @@
             transition: all 0.3s;
             font-family: 'Lora', serif;
         }
-        
         .restart-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4);
@@ -239,10 +193,7 @@
             transition: all 0.3s ease;
             font-family: 'Lora', serif;
         }
-        .home-btn:hover {
-            background: #fbbf24;
-            color: #064e3b;
-        }
+        .home-btn:hover { background: #fbbf24; color: #064e3b; }
         
         .screen { display: none; }
         .screen.active { display: block; }
@@ -251,10 +202,8 @@
         .popup-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6);
             z-index: 1000;
             justify-content: center;
@@ -262,6 +211,7 @@
             padding: 1rem;
         }
         .popup-overlay.active { display: flex; }
+        
         .popup-content {
             background: #fbbf24;
             color: #1a1a1a;
@@ -273,15 +223,18 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             animation: popupIn 0.3s ease;
         }
+        
         @keyframes popupIn {
             from { transform: scale(0.8); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
+        
         .popup-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .popup-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 1rem; }
         .popup-title.correct { color: #065f46; }
         .popup-title.incorrect { color: #dc2626; }
         .popup-explanation { font-size: 1rem; line-height: 1.5; margin-bottom: 1.5rem; color: #333; }
+        
         .popup-btn {
             background: linear-gradient(to right, #065f46, #0f766e);
             color: white;
@@ -305,12 +258,15 @@
 </head>
 <body>
     <div class="container">
+        <!-- QUIZ SCREEN -->
         <div id="quizScreen" class="screen active">
             <div class="quiz-header">
                 <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
                 <h1>Osnove Islama</h1>
                 <p class="subtitle">Ilmihal 1 - Nivo 1A</p>
             </div>
+            
+            <div class="welcome-msg" id="welcomeMsg"></div>
             
             <div class="progress-info">
                 <a href="index.html" class="back-link">← Početna</a>
@@ -326,6 +282,7 @@
             </div>
         </div>
 
+        <!-- POPUP -->
         <div class="popup-overlay" id="popupOverlay">
             <div class="popup-content">
                 <div class="popup-icon" id="popupIcon">✅</div>
@@ -335,6 +292,7 @@
             </div>
         </div>
         
+        <!-- RESULT SCREEN -->
         <div id="resultScreen" class="screen">
             <div class="quiz-header">
                 <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
@@ -347,6 +305,8 @@
                 <div class="result-message" id="resultMessage">Odličan rezultat!</div>
                 <div class="result-score" id="resultScore">0/20</div>
                 <div class="result-percentage" id="resultPercentage">0% tačnih odgovora</div>
+                <div class="result-time" id="resultTime"></div>
+                <div class="result-saved" id="resultSaved">✅ Rezultat je spremljen u tvoj Mektebski karton</div>
                 <button class="restart-btn" onclick="restartQuiz()">Ponovi kviz</button>
                 <a href="index.html" class="home-btn">Početna</a>
             </div>
@@ -354,376 +314,90 @@
     </div>
 
     <script>
-        const allQuestions = [
-            // ===== DA/NE PITANJA (15) =====
-            {
-                question: "Islam je Allahova vjera objavljena svim poslanicima.",
-                options: ["DA", "NE"],
-                answer: "DA",
-                explanation: "Islam znači predanost Allahu. To je vjera koju je Uzvišeni Allah objavio svim poslanicima, od Adema, a.s., do Muhammeda, a.s."
-            },
-            {
-                question: "Kelimei-šehadet se izgovara samo jednom u životu.",
-                options: ["DA", "NE"],
-                answer: "NE",
-                explanation: "Kelimei-šehadet izgovaramo svakodnevno, posebno u namazu. To je naša stalna potvrda pripadnosti islamu."
-            },
-            {
-                question: "Selam je islamski pozdrav koji znači 'Neka je na vas Allahov mir'.",
-                options: ["DA", "NE"],
-                answer: "DA",
-                explanation: "Selam (Es-selamu alejkum) je pozdrav mira kojim se muslimani pozdravljaju, a znači 'Neka je na vas Allahov mir i blagoslov'."
-            },
-            {
-                question: "Muhammed, a.s., je rođen u Medini.",
-                options: ["DA", "NE"],
-                answer: "NE",
-                explanation: "Muhammed, a.s., je rođen u Mekki 12. rebiul-evvela 571. godine. U Medinu se preselio (hidžra) 622. godine."
-            },
-            {
-                question: "Imanskih šarta ima šest.",
-                options: ["DA", "NE"],
-                answer: "DA",
-                explanation: "Imanski šarti su šest temeljnih istina vjere: vjerovanje u Allaha, meleke, knjige, poslanike, Sudnji dan i kader."
-            },
-            {
-                question: "Islamskih šarta ima pet.",
-                options: ["DA", "NE"],
-                answer: "DA",
-                explanation: "Pet islamskih šarta su: šehadet, namaz, post, zekat i hadž. To su osnovne dužnosti svakog muslimana."
-            },
-            {
-                question: "Sura El-Fatiha se naziva 'Majka Kur'ana'.",
-                options: ["DA", "NE"],
-                answer: "DA",
-                explanation: "El-Fatiha je prva sura u Kur'anu i naziva se 'Ummul-Kur'an' (Majka Kur'ana) zbog njene važnosti i sadržaja."
-            },
-            {
-                question: "Bismilla se uči samo prije jela.",
-                options: ["DA", "NE"],
-                answer: "NE",
-                explanation: "Bismilla (U ime Allaha) se uči prije svakog posla, ne samo prije jela. To je način da tražimo Allahov blagoslov."
-            },
-            {
-                question: "Ihsan je najveći stupanj vjerovanja.",
-                options: ["DA", "NE"],
-                answer: "DA",
-                explanation: "Ihsan je obožavanje Allaha kao da Ga vidiš, jer ako ti Njega ne vidiš, On tebe vidi. To je najviši stepen vjere."
-            },
-            {
-                question: "Subhaneke se uči na početku svakog namaza.",
-                options: ["DA", "NE"],
-                answer: "DA",
-                explanation: "Subhaneke je dova kojom veličamo i slavimo Allaha, a učimo je na početku svakog namaza, nakon iftitahi-tekbira."
-            },
-            {
-                question: "Euzubilla znači 'U ime Allaha'.",
-                options: ["DA", "NE"],
-                answer: "NE",
-                explanation: "Euzubilla znači 'Tražim Allahovu zaštitu od prokletog šejtana'. 'U ime Allaha' je prijevod za Bismillu."
-            },
-            {
-                question: "Allah je stvorio čovjeka kao najsavršenije stvorenje.",
-                options: ["DA", "NE"],
-                answer: "DA",
-                explanation: "Čovjek je Allahovo najodabranije i najsavršenije stvorenje, stvoren da živi u pokornosti Uzvišenom Allahu."
-            },
-            {
-                question: "Mekteb je mjesto gdje učimo o islamskim propisima.",
-                options: ["DA", "NE"],
-                answer: "DA",
-                explanation: "Mekteb je islamska škola gdje djeca uče o vjeri, Kur'anu, namazu i islamskim propisima."
-            },
-            {
-                question: "Sura El-Ihlas vrijedi kao trećina Kur'ana.",
-                options: ["DA", "NE"],
-                answer: "DA",
-                explanation: "Muhammed, a.s., je rekao da sura El-Ihlas (Kul huvallahu ehad) vrijedi kao trećina Kur'ana jer govori o Allahovom jedinstvu."
-            },
-            {
-                question: "Dinskih šarta ima trideset i tri.",
-                options: ["DA", "NE"],
-                answer: "DA",
-                explanation: "Dinskih šarta ima 33: 6 imanskih, 5 islamskih, 4 abdestka, 3 tejemumska, 3 gusulska i 12 namaskih šarta."
-            },
-            // ===== VIŠESTRUKI IZBOR (15) =====
-            {
-                question: "Koliko ima imanskih šarta?",
-                options: ["Pet", "Šest", "Sedam", "Deset"],
-                answer: "Šest",
-                explanation: "Imanskih šarta ima šest: vjerovanje u Allaha, meleke, Allahove knjige, poslanike, Sudnji dan i kader (sudbinu)."
-            },
-            {
-                question: "Kako glasi islamski pozdrav?",
-                options: ["Merhaba", "Es-selamu alejkum", "Zdravo", "Dobar dan"],
-                answer: "Es-selamu alejkum",
-                explanation: "Es-selamu alejkum je islamski pozdrav koji znači 'Neka je na vas Allahov mir'. Odgovaramo sa 'Ve alejkumus-selam'."
-            },
-            {
-                question: "Koja sura se uči u svakom rekatu namaza?",
-                options: ["El-Ihlas", "El-Fatiha", "En-Nas", "El-Felek"],
-                answer: "El-Fatiha",
-                explanation: "Sura El-Fatiha se uči u svakom rekatu namaza. Bez nje namaz nije ispravan."
-            },
-            {
-                question: "Gdje je rođen Muhammed, a.s.?",
-                options: ["Medina", "Jeruzalem", "Mekka", "Taif"],
-                answer: "Mekka",
-                explanation: "Muhammed, a.s., je rođen u Mekki 12. rebiul-evvela (20. aprila) 571. godine."
-            },
-            {
-                question: "Šta znači riječ 'Islam'?",
-                options: ["Ljubav", "Predanost Allahu", "Znanje", "Putovanje"],
-                answer: "Predanost Allahu",
-                explanation: "Islam znači predanost, pokornost i mir. Musliman je onaj koji se predao Allahovoj volji."
-            },
-            {
-                question: "Koji je prvi islamski šart?",
-                options: ["Namaz", "Post", "Šehadet", "Zekat"],
-                answer: "Šehadet",
-                explanation: "Šehadet (Kelimei-šehadet) je prvi islamski šart - svjedočenje da nema boga osim Allaha i da je Muhammed Njegov poslanik."
-            },
-            {
-                question: "Kako se zove Allahova knjiga objavljena Muhammedu, a.s.?",
-                options: ["Tevrat", "Zebur", "Indžil", "Kur'an"],
-                answer: "Kur'an",
-                explanation: "Kur'an je posljednja Allahova knjiga objavljena poslaniku Muhammedu, a.s., preko meleka Džibrila."
-            },
-            {
-                question: "Šta učimo kada se divimo nečemu lijepom?",
-                options: ["Subhanallah", "Mašallah", "Inšallah", "Estagfirullah"],
-                answer: "Mašallah",
-                explanation: "Mašallah (Što Allah hoće) kažemo kada se divimo nečemu lijepom, kako bismo zaštitili od uroka."
-            },
-            {
-                question: "Ko je majka Muhammeda, a.s.?",
-                options: ["Hatidža", "Amina", "Fatima", "Aiša"],
-                answer: "Amina",
-                explanation: "Majka Muhammeda, a.s., bila je Amina, a otac Abdullah. Rano je ostao bez roditelja."
-            },
-            {
-                question: "Šta znači 'Dželle šanuhu'?",
-                options: ["Neka je mir na njega", "Uzvišeni", "Milostivi", "Svemogući"],
-                answer: "Uzvišeni",
-                explanation: "Dželle šanuhu (skraćeno dž.š.) znači 'Uzvišeni' i izgovaramo ga kada spomenemo Allahovo ime."
-            },
-            {
-                question: "Koliko islamskih šarta ima?",
-                options: ["Tri", "Četiri", "Pet", "Šest"],
-                answer: "Pet",
-                explanation: "Islamskih šarta ima pet: šehadet, namaz, post, zekat i hadž."
-            },
-            {
-                question: "Šta je din?",
-                options: ["Džamija", "Vjera", "Mekteb", "Namaz"],
-                answer: "Vjera",
-                explanation: "Din je arapska riječ koja znači vjera. Dinski šarti su vjerske dužnosti koje mora ispuniti svaki musliman."
-            },
-            {
-                question: "Kako se zove djed Muhammeda, a.s.?",
-                options: ["Ebu Talib", "Abdulmuttalib", "Abbas", "Hamza"],
-                answer: "Abdulmuttalib",
-                explanation: "Djed Muhammeda, a.s., bio je Abdulmuttalib, a amidža Ebu Talib koji ga je odgojio."
-            },
-            {
-                question: "Šta znači 'Inšallah'?",
-                options: ["Hvala Allahu", "Ako Bog da", "Slava Allahu", "Oprosti mi Bože"],
-                answer: "Ako Bog da",
-                explanation: "Inšallah znači 'Ako Bog da' ili 'Ako Allah hoće'. Kažemo ga kada se nadamo nečemu u budućnosti."
-            },
-            {
-                question: "Prva sura u Kur'anu je:",
-                options: ["El-Bekare", "El-Ihlas", "El-Fatiha", "En-Nas"],
-                answer: "El-Fatiha",
-                explanation: "El-Fatiha je prva sura u Kur'anu. Ima sedam ajeta i naziva se 'Majka Kur'ana'."
-            },
-            // ===== PAMETNA PITANJA (30) =====
-            {
-                question: "IZBACI ULJEZA: Koja riječ ne pripada nizu?",
-                options: ["Šehadet", "Namaz", "Iman", "Post"],
-                answer: "Iman",
-                explanation: "Iman (vjerovanje) nije islamski šart. Šehadet, namaz i post su islamski šarti, dok je iman šest temeljnih istina vjere."
-            },
-            {
-                question: "IZBACI ULJEZA: Koja riječ ne pripada nizu?",
-                options: ["Kur'an", "Tevrat", "Zebur", "Mekka"],
-                answer: "Mekka",
-                explanation: "Mekka je grad, dok su Kur'an, Tevrat i Zebur Allahove objavljene knjige."
-            },
-            {
-                question: "IZBACI ULJEZA: Koja riječ ne pripada?",
-                options: ["Abdullah", "Amina", "Hatidža", "Abdulmuttalib"],
-                answer: "Hatidža",
-                explanation: "Hatidža je bila supruga Muhammeda, a.s. Abdullah (otac), Amina (majka) i Abdulmuttalib (djed) su njegova porodica iz djetinjstva."
-            },
-            {
-                question: "IZBACI ULJEZA: Šta ne spada u imanske šarte?",
-                options: ["Vjerovanje u Allaha", "Vjerovanje u meleke", "Klanjanje namaza", "Vjerovanje u poslanike"],
-                answer: "Klanjanje namaza",
-                explanation: "Namaz je islamski šart (praktična dužnost), a ne imanski šart. Imanski šarti su vjerovanja srcem."
-            },
-            {
-                question: "IZBACI ULJEZA: Koja riječ ne pripada?",
-                options: ["Bismilla", "Euzubilla", "Subhaneke", "Zekat"],
-                answer: "Zekat",
-                explanation: "Zekat je islamski šart (obavezno davanje), dok su Bismilla, Euzubilla i Subhaneke dove i učenja."
-            },
-            {
-                question: "ASOCIJACIJA: Riječ 'Mekka' vas asocira na:",
-                options: ["Mjesto rođenja Muhammeda, a.s.", "Prvu džamiju", "Medinu", "Jeruzalem"],
-                answer: "Mjesto rođenja Muhammeda, a.s.",
-                explanation: "Mekka je grad u Arabiji gdje je rođen Muhammed, a.s., i gdje se nalazi Kaba - najsvetije mjesto u islamu."
-            },
-            {
-                question: "ASOCIJACIJA: Broj '5' u islamu vas asocira na:",
-                options: ["Islamske šarte", "Imanske šarte", "Dnevne namaze", "Oboje A i C"],
-                answer: "Oboje A i C",
-                explanation: "Broj 5 u islamu predstavlja i pet islamskih šarta i pet dnevnih namaza (sabah, podne, ikindija, akšam, jacija)."
-            },
-            {
-                question: "ASOCIJACIJA: Riječ 'Džibril' vas asocira na:",
-                options: ["Melek koji je donosio objavu", "Allahovo ime", "Poslanika", "Suru u Kur'anu"],
-                answer: "Melek koji je donosio objavu",
-                explanation: "Džibril (Gabrijel) je melek koji je donosio Allahovu objavu poslanicima, uključujući Kur'an Muhammedu, a.s."
-            },
-            {
-                question: "ASOCIJACIJA: Riječ 'El-Fatiha' vas asocira na:",
-                options: ["Zadnju suru Kur'ana", "Prvu suru koja se uči u namazu", "Dovu poslije jela", "Salavate"],
-                answer: "Prvu suru koja se uči u namazu",
-                explanation: "El-Fatiha je prva sura Kur'ana i obavezno se uči u svakom rekatu namaza."
-            },
-            {
-                question: "ASOCIJACIJA: Broj '33' u islamu vas asocira na:",
-                options: ["Broj poslanika", "Broj dinskih šarta", "Broj sura", "Broj meleka"],
-                answer: "Broj dinskih šarta",
-                explanation: "Dinskih šarta ima ukupno 33: 6 imanskih, 5 islamskih, 4 abdestka, 3 tejemumska, 3 gusulska i 12 namaskih."
-            },
-            {
-                question: "ANALOGIJA: Islam : vjera = Kur'an : ?",
-                options: ["Knjiga", "Poslanik", "Melek", "Namaz"],
-                answer: "Knjiga",
-                explanation: "Kao što je Islam vjera, tako je Kur'an knjiga - Allahova objavljena Knjiga."
-            },
-            {
-                question: "ANALOGIJA: Muhammed, a.s. : Mekka = Hidžra : ?",
-                options: ["Jeruzalem", "Medina", "Taif", "Jemen"],
-                answer: "Medina",
-                explanation: "Kao što je Muhammed, a.s., vezan za Mekku (rodno mjesto), tako je Hidžra vezana za Medinu (preseljenje u Medinu)."
-            },
-            {
-                question: "ANALOGIJA: Šehadet : prvi = Hadž : ?",
-                options: ["Drugi", "Treći", "Četvrti", "Peti"],
-                answer: "Peti",
-                explanation: "Šehadet je prvi islamski šart, a hadž je peti (zadnji) islamski šart."
-            },
-            {
-                question: "ANALOGIJA: Amina : majka = Abdullah : ?",
-                options: ["Brat", "Djed", "Otac", "Amidža"],
-                answer: "Otac",
-                explanation: "Kao što je Amina majka Muhammeda, a.s., tako je Abdullah njegov otac."
-            },
-            {
-                question: "ANALOGIJA: Es-selamu alejkum : pozdrav = El-hamdu lillah : ?",
-                options: ["Oprost", "Zahvala", "Molba", "Čuđenje"],
-                answer: "Zahvala",
-                explanation: "Kao što je 'Es-selamu alejkum' islamski pozdrav, tako je 'El-hamdu lillah' izraz zahvale Allahu."
-            },
-            {
-                question: "KO SAM JA? Ja sam prvi islamski šart. Izgovaram se pri prihvatanju islama. Svjedočim o Allahovom jedinstvu.",
-                options: ["Namaz", "Šehadet", "Post", "Zekat"],
-                answer: "Šehadet",
-                explanation: "Šehadet (Kelimei-šehadet) je svjedočenje da nema boga osim Allaha i da je Muhammed Allahov poslanik."
-            },
-            {
-                question: "KO SAM JA? Ja sam grad u Arabiji. U meni je rođen Muhammed, a.s. U meni se nalazi Kaba.",
-                options: ["Medina", "Mekka", "Jeruzalem", "Taif"],
-                answer: "Mekka",
-                explanation: "Mekka je sveti grad u Arabiji, rodno mjesto Muhammeda, a.s., i mjesto gdje se nalazi Kaba."
-            },
-            {
-                question: "ŠTA SAM JA? Ja sam prva sura u Kur'anu. Imam sedam ajeta. Učim se u svakom rekatu namaza.",
-                options: ["El-Bekare", "El-Ihlas", "El-Fatiha", "En-Nas"],
-                answer: "El-Fatiha",
-                explanation: "El-Fatiha je prva sura Kur'ana, ima 7 ajeta i obavezna je u svakom rekatu namaza."
-            },
-            {
-                question: "KO SAM JA? Ja sam melek. Donosio sam objavu poslanicima. Kur'an sam prenio Muhammedu, a.s.",
-                options: ["Mikail", "Džibril", "Israfil", "Azrail"],
-                answer: "Džibril",
-                explanation: "Džibril (Gabrijel) je melek koji je donosio Allahovu objavu svim poslanicima, uključujući Kur'an."
-            },
-            {
-                question: "ŠTA SAM JA? Ja sam dova na početku namaza. Slavim i veličam Allaha. Počinjem riječima 'Subhaneke Allahumme'.",
-                options: ["Fatiha", "Subhaneke", "Et-Tehijatu", "Salavati"],
-                answer: "Subhaneke",
-                explanation: "Subhaneke je dova kojom slavimo i veličamo Allaha na početku namaza, poslije iftitahi-tekbira."
-            },
-            {
-                question: "DOPUNI NIZ: Šehadet, namaz, post, zekat, ...?",
-                options: ["Iman", "Hadž", "Ihsan", "Sadaka"],
-                answer: "Hadž",
-                explanation: "Pet islamskih šarta su: 1. Šehadet, 2. Namaz, 3. Post, 4. Zekat, 5. Hadž."
-            },
-            {
-                question: "DOPUNI NIZ: Tevrat, Zebur, Indžil, ...?",
-                options: ["Suhuf", "Kur'an", "Hadis", "Fikh"],
-                answer: "Kur'an",
-                explanation: "Četiri velike Allahove knjige su: Tevrat (Musau), Zebur (Davudu), Indžil (Isau), Kur'an (Muhammedu, a.s.)."
-            },
-            {
-                question: "DOPUNI NIZ: Allah, meleki, knjige, poslanici, Sudnji dan, ...?",
-                options: ["Namaz", "Kader", "Post", "Zekat"],
-                answer: "Kader",
-                explanation: "Šest imanskih šarta su: vjerovanje u Allaha, meleke, knjige, poslanike, Sudnji dan i kader (sudbinu)."
-            },
-            {
-                question: "DOPUNI NIZ: Subhaneke, Euzubilla, Bismilla, Fatiha, ...?",
-                options: ["Et-Tehijatu", "Sura", "Selam", "Salavat"],
-                answer: "Sura",
-                explanation: "Na prvom stajanju u namazu učimo redom: Subhaneke, Euzubilla, Bismilla, Fatiha, pa zatim suru."
-            },
-            {
-                question: "DOPUNI NIZ: Bismillah, Inšallah, Mašallah, ...?",
-                options: ["Namaz", "Subhanallah", "Kur'an", "Mekteb"],
-                answer: "Subhanallah",
-                explanation: "Ovo su islamski izrazi: Bismillah (U ime Allaha), Inšallah (Ako Bog da), Mašallah (Što Allah hoće), Subhanallah (Slava Allahu)."
-            },
-            {
-                question: "SITUACIJA: Ahmed vidi prekrasan cvijet u bašči. Koje riječi treba izgovoriti?",
-                options: ["Inšallah", "Mašallah", "Estagfirullah", "Bismillah"],
-                answer: "Mašallah",
-                explanation: "Mašallah kažemo kada se divimo nečemu lijepom, da zahvalimo Allahu i zaštitimo od uroka."
-            },
-            {
-                question: "SITUACIJA: Merjem planira sutra posjetiti baku. Šta treba reći?",
-                options: ["Mašallah", "Subhanallah", "Inšallah", "El-hamdu lillah"],
-                answer: "Inšallah",
-                explanation: "Inšallah (Ako Bog da) kažemo kada govorimo o budućim planovima, jer samo Allah zna šta će se desiti."
-            },
-            {
-                question: "SITUACIJA: Hasan je upravo položio ispit. Šta treba reći?",
-                options: ["Inšallah", "Estagfirullah", "El-hamdu lillah", "Bismillah"],
-                answer: "El-hamdu lillah",
-                explanation: "El-hamdu lillah (Hvala Allahu) kažemo kada smo zahvalni za nešto dobro što nam se desilo."
-            },
-            {
-                question: "SITUACIJA: Selma počinje učiti lekciju. Šta treba proučiti?",
-                options: ["El-hamdu lillah", "Mašallah", "Euzubillu i Bismillu", "Salavate"],
-                answer: "Euzubillu i Bismillu",
-                explanation: "Prije svakog posla, uključujući učenje, proučimo Euzubillu (tražimo zaštitu od šejtana) i Bismillu (u ime Allaha)."
-            },
-            {
-                question: "SITUACIJA: Emir čuje da je neko kihnuo. Šta treba reći?",
-                options: ["Mašallah", "Jerhamukellah", "Inšallah", "Subhanallah"],
-                answer: "Jerhamukellah",
-                explanation: "Jerhamukellah (Allah ti se smilovao) kažemo kada čujemo da je neko kihnuo, nakon što on kaže 'El-hamdu lillah'."
-            }
-        ];
-
+        // =====================================================
+        // KONFIGURACIJA
+        // =====================================================
+        const KVIZ_NAZIV = "1a - Osnove Islama";
+        const API_URL = "/wp-json/mekteb/v1";
+        
+        // =====================================================
+        // VARIJABLE
+        // =====================================================
+        let loggedUser = null;
+        let quizStartTime = null;
         let questions = [];
         let currentQuestion = 0;
         let score = 0;
 
+        // =====================================================
+        // PITANJA
+        // =====================================================
+        const allQuestions = [
+            {question: "Islam je Allahova vjera objavljena svim poslanicima.", options: ["DA", "NE"], answer: "DA", explanation: "Islam znači predanost Allahu. To je vjera koju je Uzvišeni Allah objavio svim poslanicima, od Adema, a.s., do Muhammeda, a.s."},
+            {question: "Kelimei-šehadet se izgovara samo jednom u životu.", options: ["DA", "NE"], answer: "NE", explanation: "Kelimei-šehadet izgovaramo svakodnevno, posebno u namazu. To je naša stalna potvrda pripadnosti islamu."},
+            {question: "Selam je islamski pozdrav koji znači 'Neka je na vas Allahov mir'.", options: ["DA", "NE"], answer: "DA", explanation: "Selam (Es-selamu alejkum) je pozdrav mira kojim se muslimani pozdravljaju."},
+            {question: "Muhammed, a.s., je rođen u Medini.", options: ["DA", "NE"], answer: "NE", explanation: "Muhammed, a.s., je rođen u Mekki 12. rebiul-evvela 571. godine. U Medinu se preselio (hidžra) 622. godine."},
+            {question: "Imanskih šarta ima šest.", options: ["DA", "NE"], answer: "DA", explanation: "Imanski šarti su šest temeljnih istina vjere: vjerovanje u Allaha, meleke, knjige, poslanike, Sudnji dan i kader."},
+            {question: "Islamskih šarta ima pet.", options: ["DA", "NE"], answer: "DA", explanation: "Pet islamskih šarta su: šehadet, namaz, post, zekat i hadž."},
+            {question: "Sura El-Fatiha se naziva 'Majka Kur'ana'.", options: ["DA", "NE"], answer: "DA", explanation: "El-Fatiha je prva sura u Kur'anu i naziva se 'Ummul-Kur'an' (Majka Kur'ana)."},
+            {question: "Bismilla se uči samo prije jela.", options: ["DA", "NE"], answer: "NE", explanation: "Bismilla (U ime Allaha) se uči prije svakog posla, ne samo prije jela."},
+            {question: "Ihsan je najveći stupanj vjerovanja.", options: ["DA", "NE"], answer: "DA", explanation: "Ihsan je obožavanje Allaha kao da Ga vidiš, jer ako ti Njega ne vidiš, On tebe vidi."},
+            {question: "Subhaneke se uči na početku svakog namaza.", options: ["DA", "NE"], answer: "DA", explanation: "Subhaneke je dova kojom veličamo Allaha na početku namaza, nakon iftitahi-tekbira."},
+            {question: "Euzubilla znači 'U ime Allaha'.", options: ["DA", "NE"], answer: "NE", explanation: "Euzubilla znači 'Tražim Allahovu zaštitu od prokletog šejtana'. 'U ime Allaha' je Bismilla."},
+            {question: "Allah je stvorio čovjeka kao najsavršenije stvorenje.", options: ["DA", "NE"], answer: "DA", explanation: "Čovjek je Allahovo najodabranije i najsavršenije stvorenje."},
+            {question: "Mekteb je mjesto gdje učimo o islamskim propisima.", options: ["DA", "NE"], answer: "DA", explanation: "Mekteb je islamska škola gdje djeca uče o vjeri, Kur'anu i namazu."},
+            {question: "Sura El-Ihlas vrijedi kao trećina Kur'ana.", options: ["DA", "NE"], answer: "DA", explanation: "Muhammed, a.s., je rekao da sura El-Ihlas vrijedi kao trećina Kur'ana."},
+            {question: "Dinskih šarta ima trideset i tri.", options: ["DA", "NE"], answer: "DA", explanation: "Dinskih šarta ima 33: 6 imanskih, 5 islamskih, 4 abdestka, 3 tejemumska, 3 gusulska i 12 namaskih."},
+            {question: "Koliko ima imanskih šarta?", options: ["Pet", "Šest", "Sedam", "Deset"], answer: "Šest", explanation: "Imanskih šarta ima šest: vjerovanje u Allaha, meleke, knjige, poslanike, Sudnji dan i kader."},
+            {question: "Kako glasi islamski pozdrav?", options: ["Merhaba", "Es-selamu alejkum", "Zdravo", "Dobar dan"], answer: "Es-selamu alejkum", explanation: "Es-selamu alejkum znači 'Neka je na vas Allahov mir'."},
+            {question: "Koja sura se uči u svakom rekatu namaza?", options: ["El-Ihlas", "El-Fatiha", "En-Nas", "El-Felek"], answer: "El-Fatiha", explanation: "Sura El-Fatiha se uči u svakom rekatu namaza."},
+            {question: "Gdje je rođen Muhammed, a.s.?", options: ["Medina", "Jeruzalem", "Mekka", "Taif"], answer: "Mekka", explanation: "Muhammed, a.s., je rođen u Mekki 571. godine."},
+            {question: "Šta znači riječ 'Islam'?", options: ["Ljubav", "Predanost Allahu", "Znanje", "Putovanje"], answer: "Predanost Allahu", explanation: "Islam znači predanost, pokornost i mir."},
+            {question: "Koji je prvi islamski šart?", options: ["Namaz", "Post", "Šehadet", "Zekat"], answer: "Šehadet", explanation: "Šehadet je prvi islamski šart - svjedočenje vjere."},
+            {question: "Kako se zove Allahova knjiga objavljena Muhammedu, a.s.?", options: ["Tevrat", "Zebur", "Indžil", "Kur'an"], answer: "Kur'an", explanation: "Kur'an je posljednja Allahova knjiga."},
+            {question: "Šta učimo kada se divimo nečemu lijepom?", options: ["Subhanallah", "Mašallah", "Inšallah", "Estagfirullah"], answer: "Mašallah", explanation: "Mašallah kažemo kada se divimo nečemu lijepom."},
+            {question: "Ko je majka Muhammeda, a.s.?", options: ["Hatidža", "Amina", "Fatima", "Aiša"], answer: "Amina", explanation: "Majka Muhammeda, a.s., bila je Amina."},
+            {question: "Šta znači 'Dželle šanuhu'?", options: ["Neka je mir na njega", "Uzvišeni", "Milostivi", "Svemogući"], answer: "Uzvišeni", explanation: "'Dželle šanuhu' znači 'Uzvišen je On'."},
+            {question: "IZBACI ULJEZA: Koja riječ ne pripada islamskim izrazima?", options: ["Bismilla", "Mašallah", "Inšallah", "Hvala"], answer: "Hvala", explanation: "'Hvala' je obična riječ, dok su ostale islamski izrazi."},
+            {question: "IZBACI ULJEZA: Šta od navedenog NIJE imanski šart?", options: ["Vjerovanje u Allaha", "Vjerovanje u meleke", "Namaz", "Vjerovanje u Sudnji dan"], answer: "Namaz", explanation: "Namaz je ISLAMSKI šart, ne imanski."},
+            {question: "ANALOGIJA: Ako je Bismilla početak, šta je El-hamdu lillah?", options: ["Kraj", "Zahvala", "Početak", "Molba"], answer: "Zahvala", explanation: "Bismilla je za početak, El-hamdu lillah je zahvala."},
+            {question: "ANALOGIJA: Ako je Mekka rodno mjesto Poslanika, šta je Medina?", options: ["Mjesto smrti", "Mjesto hidžre", "Mjesto objave", "Sveti grad"], answer: "Mjesto hidžre", explanation: "Medina je grad hidžre 622. godine."},
+            {question: "KO SAM JA? Ja sam prvi islamski šart. Izgovaram se pri prihvatanju islama.", options: ["Namaz", "Šehadet", "Post", "Zekat"], answer: "Šehadet", explanation: "Šehadet je svjedočenje vjere."},
+            {question: "KO SAM JA? Ja sam grad u Arabiji. U meni je rođen Muhammed, a.s.", options: ["Medina", "Mekka", "Jeruzalem", "Taif"], answer: "Mekka", explanation: "Mekka je rodno mjesto Muhammeda, a.s."},
+            {question: "ŠTA SAM JA? Ja sam prva sura u Kur'anu. Imam sedam ajeta.", options: ["El-Bekare", "El-Ihlas", "El-Fatiha", "En-Nas"], answer: "El-Fatiha", explanation: "El-Fatiha je prva sura sa 7 ajeta."},
+            {question: "KO SAM JA? Ja sam melek. Donosio sam objavu poslanicima.", options: ["Mikail", "Džibril", "Israfil", "Azrail"], answer: "Džibril", explanation: "Džibril je melek koji donosi objavu."},
+            {question: "ŠTA SAM JA? Ja sam dova na početku namaza. Počinjem riječima 'Subhaneke'.", options: ["Fatiha", "Subhaneke", "Et-Tehijatu", "Salavati"], answer: "Subhaneke", explanation: "Subhaneke je dova na početku namaza."},
+            {question: "DOPUNI NIZ: Šehadet, namaz, post, zekat, ...?", options: ["Iman", "Hadž", "Ihsan", "Sadaka"], answer: "Hadž", explanation: "Pet islamskih šarta završava hadžom."},
+            {question: "DOPUNI NIZ: Tevrat, Zebur, Indžil, ...?", options: ["Suhuf", "Kur'an", "Hadis", "Fikh"], answer: "Kur'an", explanation: "Četiri velike knjige: Tevrat, Zebur, Indžil, Kur'an."},
+            {question: "DOPUNI NIZ: Allah, meleki, knjige, poslanici, Sudnji dan, ...?", options: ["Namaz", "Kader", "Post", "Zekat"], answer: "Kader", explanation: "Šest imanskih šarta završava kaderom."},
+            {question: "DOPUNI NIZ: Subhaneke, Euzubilla, Bismilla, Fatiha, ...?", options: ["Et-Tehijatu", "Sura", "Selam", "Salavat"], answer: "Sura", explanation: "Poslije Fatihe uči se sura."},
+            {question: "SITUACIJA: Ahmed vidi prekrasan cvijet. Šta treba reći?", options: ["Inšallah", "Mašallah", "Estagfirullah", "Bismillah"], answer: "Mašallah", explanation: "Mašallah kažemo za nešto lijepo."},
+            {question: "SITUACIJA: Merjem planira sutra posjetiti baku. Šta treba reći?", options: ["Mašallah", "Subhanallah", "Inšallah", "El-hamdu lillah"], answer: "Inšallah", explanation: "Inšallah kažemo za buduće planove."},
+            {question: "SITUACIJA: Hasan je upravo položio ispit. Šta treba reći?", options: ["Inšallah", "Estagfirullah", "El-hamdu lillah", "Bismillah"], answer: "El-hamdu lillah", explanation: "El-hamdu lillah je zahvala Allahu."},
+            {question: "SITUACIJA: Selma počinje učiti lekciju. Šta treba proučiti?", options: ["El-hamdu lillah", "Mašallah", "Euzubillu i Bismillu", "Salavate"], answer: "Euzubillu i Bismillu", explanation: "Prije učenja proučimo Euzubillu i Bismillu."},
+            {question: "SITUACIJA: Emir čuje da je neko kihnuo. Šta treba reći?", options: ["Mašallah", "Jerhamukellah", "Inšallah", "Subhanallah"], answer: "Jerhamukellah", explanation: "Jerhamukellah kažemo onome ko kihne."}
+        ];
+
+        // =====================================================
+        // INICIJALIZACIJA
+        // =====================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Provjeri da li je korisnik prijavljen
+            const userData = localStorage.getItem('mektebUser');
+            if (userData) {
+                loggedUser = JSON.parse(userData);
+                document.getElementById('welcomeMsg').textContent = `Dobrodošao/la, ${loggedUser.name}! 🌟`;
+                document.getElementById('welcomeMsg').classList.add('show');
+            }
+            
+            // Pokreni kviz
+            quizStartTime = new Date();
+            initQuiz();
+        });
+
+        // =====================================================
+        // KVIZ FUNKCIJE
+        // =====================================================
         function shuffleArray(array) {
             const shuffled = [...array];
             for (let i = shuffled.length - 1; i > 0; i--) {
@@ -807,6 +481,10 @@
 
         function showResults() {
             const percentage = Math.round((score / questions.length) * 100);
+            const duration = Math.round((new Date() - quizStartTime) / 1000);
+            const minutes = Math.floor(duration / 60);
+            const seconds = duration % 60;
+            
             let message, emoji;
             if (percentage >= 90) { message = 'Izvrsno! Mashallah!'; emoji = '🌟'; }
             else if (percentage >= 70) { message = 'Vrlo dobro!'; emoji = '✨'; }
@@ -819,10 +497,48 @@
             document.getElementById('resultMessage').textContent = message;
             document.getElementById('resultScore').textContent = `${score}/${questions.length}`;
             document.getElementById('resultPercentage').textContent = `${percentage}% tačnih odgovora`;
+            document.getElementById('resultTime').textContent = `Vrijeme: ${minutes}m ${seconds}s`;
+            
+            // Spremi rezultat samo ako je korisnik prijavljen
+            if (loggedUser) {
+                saveResult(score, questions.length, duration);
+            }
         }
 
-        function restartQuiz() { initQuiz(); }
-        initQuiz();
+        // =====================================================
+        // SPREMANJE REZULTATA
+        // =====================================================
+        function saveResult(bodovi, ukupno, trajanje) {
+            const resultSaved = document.getElementById('resultSaved');
+            
+            fetch(API_URL + '/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: loggedUser.id,
+                    quiz: KVIZ_NAZIV,
+                    score: bodovi,
+                    total: ukupno,
+                    time: trajanje
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resultSaved.innerHTML = '✅ Rezultat je spremljen u tvoj Mektebski karton';
+                    resultSaved.classList.add('show');
+                }
+            })
+            .catch(error => {
+                console.error('Save error:', error);
+            });
+        }
+
+        function restartQuiz() {
+            quizStartTime = new Date();
+            document.getElementById('resultSaved').classList.remove('show');
+            initQuiz();
+        }
     </script>
 </body>
 </html>

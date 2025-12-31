@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1c Hard - Dove, Bajrami, Hidžra | MEKTEB</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Lora', serif;
+            background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #065f46 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        .quiz-header { text-align: center; margin-bottom: 2rem; }
+        .quiz-icon { width: 80px; height: 80px; margin-bottom: 1rem; }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle { font-size: 1.2rem; color: #d1fae5; }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #fbbf24;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        .back-link:hover { color: #f59e0b; transform: translateX(-5px); }
+        
+        .quiz-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .start-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.3rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); }
+        
+        .screen { display: none; }
+        .screen.active { display: block; }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-bar-container {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin: 0 1rem;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .options { display: flex; flex-direction: column; gap: 1rem; }
+        
+        .option {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-family: 'Lora', serif;
+        }
+        .option:hover:not(.disabled) { 
+            background: rgba(34, 197, 94, 0.4);
+            transform: translateX(10px);
+        }
+        .option.correct {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #10b981;
+        }
+        .option.incorrect {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-color: #ef4444;
+        }
+        .option.disabled { pointer-events: none; }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .checkbox-option input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .answer-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+            margin-top: 1.5rem;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        .answer-btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); 
+        }
+
+        .reorder-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .reorder-item {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        .reorder-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .reorder-btn {
+            background: #fbbf24;
+            color: #064e3b;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .reorder-btn:hover {
+            background: #f59e0b;
+            transform: scale(1.1);
+        }
+
+        .text-container {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            line-height: 2;
+            font-size: 1.1rem;
+        }
+        .word {
+            padding: 3px 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 2px;
+        }
+        .word:hover {
+            background: rgba(251, 191, 36, 0.3);
+        }
+        .word.marked {
+            background: #fbbf24;
+            color: #064e3b;
+            font-weight: 600;
+        }
+
+        .sentence-builder {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            min-height: 100px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+        .drop-zone {
+            background: rgba(255,255,255,0.1);
+            border: 2px dashed #fbbf24;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            min-width: 100px;
+            min-height: 45px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .drop-zone.filled {
+            border-style: solid;
+            background: rgba(251, 191, 36, 0.2);
+        }
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+        }
+        .draggable-word {
+            background: #fbbf24;
+            color: #064e3b;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .draggable-word:hover {
+            background: #f59e0b;
+            transform: scale(1.05);
+        }
+        .draggable-word.used {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .popup-overlay.active { display: flex; }
+
+        .popup-content {
+            background: #fbbf24;
+            color: #1a1a1a;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: popupIn 0.3s ease;
+        }
+
+        @keyframes popupIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .popup-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #065f46;
+        }
+        .popup-explanation {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        .popup-btn {
+            background: linear-gradient(to right, #065f46, #0f766e);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+        }
+        .popup-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(6, 95, 70, 0.4); }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .result-emoji { font-size: 5rem; margin-bottom: 1rem; }
+        .result-message { font-size: 1.8rem; margin-bottom: 1rem; font-family: 'Playfair Display', serif; }
+        .result-score { font-size: 3rem; color: #fbbf24; font-weight: bold; margin-bottom: 0.5rem; }
+        .result-percentage { font-size: 1.2rem; color: #d1fae5; margin-bottom: 2rem; }
+        
+        .btn-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        
+        .retry-btn, .home-btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .retry-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            border: none;
+        }
+        .home-btn {
+            background: transparent;
+            color: #fbbf24;
+            border: 2px solid #fbbf24;
+        }
+        .retry-btn:hover, .home-btn:hover { transform: translateY(-3px); }
+    </style>
+</head>
+<body>
+    <div class="container screen active" id="startScreen">
+        <a href="index.html" class="back-link">← Početna</a>
+        <div class="quiz-header">
+            <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
+            <h1>KVIZ 1C - HARD</h1>
+            <p class="subtitle">Dove, Bajrami, Hidžra - Ilmihal 1</p>
+        </div>
+        <div class="quiz-info">
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">📚 Teme: Dove, Ramazanski i Kurban-bajram, Hidžra, Mevlud</p>
+            <p style="margin-bottom: 2rem;">20 pitanja od 52 iz baze • 4 različita tipa pitanja • Napredni nivo</p>
+            <button class="start-btn" onclick="startQuiz()">POKRENI KVIZ</button>
+        </div>
+    </div>
+
+    <div class="container screen" id="quizScreen">
+        <div class="quiz-header">
+            <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
+            <h1>KVIZ 1C - HARD</h1>
+            <p class="subtitle">Dove, Bajrami, Hidžra</p>
+        </div>
+        <div class="progress-info">
+            <a href="index.html" class="back-link" style="margin:0;">← Početna</a>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <span id="questionCount">1/20</span>
+        </div>
+        <div class="question-card">
+            <div class="question-text" id="questionText"></div>
+            <div id="questionContainer"></div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup-content">
+            <div class="popup-icon" id="popupIcon">✅</div>
+            <div class="popup-title" id="popupTitle">Tačno!</div>
+            <div class="popup-explanation" id="popupExplanation"></div>
+            <button class="popup-btn" onclick="nextQuestion()">Sljedeće pitanje →</button>
+        </div>
+    </div>
+
+    <div class="container screen" id="resultScreen">
+        <div class="quiz-header">
+            <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
+            <h1>REZULTAT</h1>
+        </div>
+        <div class="result-card">
+            <div class="result-emoji" id="resultEmoji">🌟</div>
+            <div class="result-message" id="resultMessage">Odličan rezultat!</div>
+            <div class="result-score" id="resultScore">16/20</div>
+            <div class="result-percentage" id="resultPercentage">80% tačnih odgovora</div>
+            <div class="btn-group">
+                <button class="retry-btn" onclick="startQuiz()">Pokušaj ponovo</button>
+                <a href="index.html" class="home-btn">Početna stranica</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            // CHECKBOX (13)
+            {type:'checkbox',question:'Koje dove učimo?',options:['Rabbi jessir','Rabbi zidni ilma','Allahu rabbi','Hasbi rabbi','Kelime-i šehadet'],correct:['Rabbi jessir','Rabbi zidni ilma','Allahu rabbi','Hasbi rabbi'],explanation:'Sve navedene su dove osim Kelime-i šehadeta koja je svjedočenje vjere.'},
+            {type:'checkbox',question:'Koliko dana traju bajrami?',options:['Ramazanski 3 dana','Ramazanski 4 dana','Kurban 3 dana','Kurban 4 dana'],correct:['Ramazanski 3 dana','Kurban 4 dana'],explanation:'Ramazanski bajram traje 3 dana, Kurban-bajram traje 4 dana.'},
+            {type:'checkbox',question:'Šta je tačno o Hidžri?',options:['Dogodila se 622. godine','Preselenje iz Mekke u Medinu','Preselenje iz Medine u Mekku','Od nje počinje islamski kalendar'],correct:['Dogodila se 622. godine','Preselenje iz Mekke u Medinu','Od nje počinje islamski kalendar'],explanation:'Hidžra je preselenje iz Mekke u Medinu 622. godine, od kada počinje hidžretska godina.'},
+            {type:'checkbox',question:'Koliko mjeseci ima hidžretska godina?',options:['10','11','12','13'],correct:['12'],explanation:'Hidžretska godina ima 12 mjeseci.'},
+            {type:'checkbox',question:'Koji su mubarek-dani?',options:['Nova hidžretska godina','Mevlud','Ramazanski bajram','Kurban-bajram','Dženaza'],correct:['Nova hidžretska godina','Mevlud','Ramazanski bajram','Kurban-bajram'],explanation:'Četiri glavna mubarek-dana su: Nova hidžretska godina, Mevlud, Ramazanski bajram i Kurban-bajram.'},
+            {type:'checkbox',question:'Kada se obilježava Ramazanski bajram?',options:['Poslije mjeseca ramazana','Prvi ševvala','Poslije posta','Poslije hadža'],correct:['Poslije mjeseca ramazana','Prvi ševvala','Poslije posta'],explanation:'Ramazanski bajram je prvi dan mjeseca ševvala, poslije mjeseca ramazana i posta.'},
+            {type:'checkbox',question:'Kada se obilježava Kurban-bajram?',options:['Deseti zul-hidžea','Poslije hadža','Poslije posta','Traje 4 dana'],correct:['Deseti zul-hidžea','Poslije hadža','Traje 4 dana'],explanation:'Kurban-bajram počinje 10. zul-hidžea, poslije hadža, i traje 4 dana.'},
+            {type:'checkbox',question:'Kada je rođen Muhammed a.s.?',options:['12. rebiul-evvela','571. godine','U Mekki','U Medini'],correct:['12. rebiul-evvela','571. godine','U Mekki'],explanation:'Muhammed a.s. rođen je 12. rebiul-evvela 571. godine u Mekki.'},
+            {type:'checkbox',question:'Šta učimo na Kurban-bajram?',options:['Tekbirje','Allahu ekber','Fatihu','Salavate'],correct:['Tekbirje','Allahu ekber'],explanation:'Na Kurban-bajram učimo tekbirje koji počinju sa "Allahu ekber...".'},
+            {type:'checkbox',question:'Prvi dan hidžretskog kalendara je:',options:['Petak','Subota','Nedjelja','Ponedjeljak'],correct:['Petak'],explanation:'Prvi dan sedmice hidžretskog kalendara je petak.'},
+            {type:'checkbox',question:'Koliko dana traje hidžretska godina?',options:['355 dana','365 dana','354 dana','366 dana'],correct:['355 dana'],explanation:'Hidžretska (lunarna) godina ima 355 dana.'},
+            {type:'checkbox',question:'Šta radimo na Ramazanski bajram?',options:['Klanjamo bajram-namaz','Idemo na mezarje','Učimo Fatihu','Posjećujemo rodbinu'],correct:['Klanjamo bajram-namaz','Idemo na mezarje','Učimo Fatihu','Posjećujemo rodbinu'],explanation:'Na Ramazanski bajram klanjamo bajram-namaz, idemo na mezarje, učimo Fatihu i posjećujemo rodbinu.'},
+            {type:'checkbox',question:'Što znače ovi izrazi?',options:['Rabbi jessir - olakšaj','Rabbi zidni ilma - proširi znanje','Allahu rabbi - Allah moj Gospodar','Hasbi rabbi - moj učitelj'],correct:['Rabbi jessir - olakšaj','Rabbi zidni ilma - proširi znanje','Allahu rabbi - Allah moj Gospodar'],explanation:'Rabbi jessir = olakšaj, Rabbi zidni ilma = proširi znanje, Allahu rabbi = Allah moj Gospodar.'},
+
+            // REORDER (13)
+            {type:'reorder',question:'Poredaj dovu Rabbi jessir:',items:[{text:'Rabbi jessir',order:1},{text:'ve la tu\'assir',order:2},{text:'Rabbi temmim',order:3},{text:'bil-hajr!',order:4}],explanation:'Rabbi jessir: Gospodaru olakšaj, a ne otežaj, dovrši sa dobrom!'},
+            {type:'reorder',question:'Poredaj dovu Rabbi zidni ilma:',items:[{text:'Rabbi',order:1},{text:'zidni',order:2},{text:'\'ilma',order:3}],explanation:'Rabbi zidni \'ilma: Gospodaru moj, znanje moje proširi!'},
+            {type:'reorder',question:'Poredaj prvih 6 mjeseci hidžretske godine:',items:[{text:'Muharrem',order:1},{text:'Safer',order:2},{text:'Rebiul-evvel',order:3},{text:'Rebiul-ahir',order:4},{text:'Džumadel-ula',order:5},{text:'Džumadel-uhra',order:6}],explanation:'Prvih 6 mjeseci hidžretske godine.'},
+            {type:'reorder',question:'Poredaj drugih 6 mjeseci hidžretske godine:',items:[{text:'Redžeb',order:1},{text:'Ša\'ban',order:2},{text:'Ramazan',order:3},{text:'Ševval',order:4},{text:'Zul-kade',order:5},{text:'Zul-hidže',order:6}],explanation:'Drugih 6 mjeseci hidžretske godine.'},
+            {type:'reorder',question:'Poredaj 4 mubarek-dana:',items:[{text:'Nova hidžretska godina',order:1},{text:'Mevlud',order:2},{text:'Ramazanski bajram',order:3},{text:'Kurban-bajram',order:4}],explanation:'Četiri glavna mubarek-dana po redu kroz hidžretsku godinu.'},
+            {type:'reorder',question:'Poredaj tekbirje (dio):',items:[{text:'Allahu ekber',order:1},{text:'Allahu ekber',order:2},{text:'La ilahe illallahu',order:3},{text:'vallahu ekber',order:4}],explanation:'Tekbirje: Allahu ekber, Allahu ekber, La ilahe illallahu vallahu ekber...'},
+            {type:'reorder',question:'Poredaj dovu Allahu rabbi:',items:[{text:'Allahu rabbi',order:1},{text:'ve Muhammeden nebijji',order:2},{text:'vel-Kur\'anu kitabi',order:3},{text:'vel-islamu dini',order:4}],explanation:'Allahu rabbi po redu.'},
+            {type:'reorder',question:'Poredaj događaje Hidžre:',items:[{text:'Život u Mekki',order:1},{text:'Preselenje',order:2},{text:'Dolazak u Medinu',order:3},{text:'Početak hidžretske godine',order:4}],explanation:'Hronologija događaja oko Hidžre.'},
+            {type:'reorder',question:'Poredaj Hasbi rabbi:',items:[{text:'Hasbi rabbi',order:1},{text:'džellallahu',order:2},{text:'La ilahe illa huve',order:3},{text:'\'alejhi tevekkeltlu',order:4}],explanation:'Dova Hasbi rabbi po redu.'},
+            {type:'reorder',question:'Poredaj radnje na Ramazanski bajram:',items:[{text:'Ujutro pojesti nešto',order:1},{text:'Otići u džamiju',order:2},{text:'Klanjati bajram-namaz',order:3},{text:'Ići na mezarje',order:4}],explanation:'Redoslijed radnji na Ramazanski bajram.'},
+            {type:'reorder',question:'Poredaj dane Ramazanskog bajrama:',items:[{text:'Prvi dan - bajram-namaz',order:1},{text:'Drugi dan - mezarje',order:2},{text:'Treći dan - posjete',order:3}],explanation:'Tri dana Ramazanskog bajrama.'},
+            {type:'reorder',question:'Poredaj dane Kurban-bajrama:',items:[{text:'Prvi dan - bajram-namaz',order:1},{text:'Drugi dan - kurban',order:2},{text:'Treći dan - kurban',order:3},{text:'Četvrti dan - kurban',order:4}],explanation:'Četiri dana Kurban-bajrama.'},
+            {type:'reorder',question:'Poredaj rođenje Muhammeda a.s.:',items:[{text:'Godina 571.',order:1},{text:'Mjesec rebiul-evvel',order:2},{text:'Dan 12.',order:3},{text:'Grad Mekka',order:4}],explanation:'Podaci o rođenju Muhammeda a.s.'},
+
+            // MARK WORDS (13)
+            {type:'markWords',question:'Pronađi greške:',text:'Ramazanski bajram traje 4 dana, a Kurban-bajram traje 3 dana.',words:['Ramazanski','bajram','traje','4','dana,','a','Kurban-bajram','traje','3','dana.'],incorrect:[3,8],explanation:'Ramazanski traje 3 dana (ne 4), Kurban traje 4 dana (ne 3).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Hidžra se dogodila 632. godine. To je preselenje iz Medine u Mekku.',words:['Hidžra','se','dogodila','632.','godine.','To','je','preselenje','iz','Medine','u','Mekku.'],incorrect:[3,9,11],explanation:'Hidžra je 622. godine (ne 632), iz MEKKE (ne Medine) u MEDINU (ne Mekku).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Hidžretska godina ima 10 mjeseci i 365 dana.',words:['Hidžretska','godina','ima','10','mjeseci','i','365','dana.'],incorrect:[3,6],explanation:'Hidžretska godina ima 12 mjeseci (ne 10) i 355 dana (ne 365).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Muhammed a.s. rođen je 10. muharrema 571. godine u Medini.',words:['Muhammed','a.s.','rođen','je','10.','muharrema','571.','godine','u','Medini.'],incorrect:[4,5,9],explanation:'Muhammed a.s. rođen je 12. REBIUL-EVVELA (ne 10. muharrema) u MEKKI (ne Medini).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Ramazanski bajram je 10. ševvala, poslije mjeseca ramazana.',words:['Ramazanski','bajram','je','10.','ševvala,','poslije','mjeseca','ramazana.'],incorrect:[3],explanation:'Ramazanski bajram je 1. ševvala (ne 10.).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Kurban-bajram je 1. zul-hidžea i traje 3 dana.',words:['Kurban-bajram','je','1.','zul-hidžea','i','traje','3','dana.'],incorrect:[2,6],explanation:'Kurban-bajram je 10. zul-hidžea (ne 1.) i traje 4 dana (ne 3).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Prvi dan hidžretskog kalendara je subota. Godina ima 400 dana.',words:['Prvi','dan','hidžretskog','kalendara','je','subota.','Godina','ima','400','dana.'],incorrect:[5,8],explanation:'Prvi dan je PETAK (ne subota), godina ima 355 dana (ne 400).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Mubarek-dana ima tri: Mevlud, Ramazanski bajram i Hidžra.',words:['Mubarek-dana','ima','tri:','Mevlud,','Ramazanski','bajram','i','Hidžra.'],incorrect:[2,7],explanation:'Mubarek-dana ima 4 (ne tri): Nova hidžretska godina, Mevlud, Ramazanski bajram, Kurban-bajram. Hidžra nije mubarek-dan.'},
+            {type:'markWords',question:'Pronađi greške:',text:'Rabbi jessir znači: Gospodaru, otežaj a ne olakšaj!',words:['Rabbi','jessir','znači:','Gospodaru,','otežaj','a','ne','olakšaj!'],incorrect:[4,7],explanation:'Rabbi jessir znači: Gospodaru, OLAKŠAJ (ne otežaj) a ne OTEŽAJ (ne olakšaj)!'},
+            {type:'markWords',question:'Pronađi greške:',text:'Rabbi zidni ilma znači: Gospodaru, smanji moje znanje!',words:['Rabbi','zidni','ilma','znači:','Gospodaru,','smanji','moje','znanje!'],incorrect:[5],explanation:'Rabbi zidni ilma znači: Gospodaru, PROŠIRI (ne smanji) moje znanje!'},
+            {type:'markWords',question:'Pronađi greške:',text:'Na Ramazanski bajram klanjamo dženaza-namaz u džamiji.',words:['Na','Ramazanski','bajram','klanjamo','dženaza-namaz','u','džamiji.'],incorrect:[4],explanation:'Klanjamo BAJRAM-NAMAZ (ne dženaza-namaz).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Tekbirje učimo na Ramazanski bajram tokom sva 3 dana.',words:['Tekbirje','učimo','na','Ramazanski','bajram','tokom','sva','3','dana.'],incorrect:[3,4],explanation:'Tekbirje učimo na KURBAN-bajram (ne Ramazanski) tokom sva 4 dana.'},
+            {type:'markWords',question:'Pronađi greške:',text:'Allahu rabbi znači: Allah je veliki i moćan uvijek.',words:['Allahu','rabbi','znači:','Allah','je','veliki','i','moćan','uvijek.'],incorrect:[5,6,7,8],explanation:'Allahu rabbi znači: Allah moj Gospodar (ne "je veliki i moćan uvijek").'},
+
+            // DRAG DROP (13)
+            {type:'dragDrop',question:'Dopuni bajrame:',template:['Ramazanski bajram traje','DROP','dana, Kurban-bajram traje','DROP','dana'],words:['3','4','2','5'],correct:['3','4'],explanation:'Ramazanski 3 dana, Kurban 4 dana.'},
+            {type:'dragDrop',question:'Dopuni Hidžru:',template:['Hidžra se dogodila','DROP','godine, preselenje iz','DROP','u Medinu'],words:['622.','Mekke','632.','Medine'],correct:['622.','Mekke'],explanation:'Hidžra 622. godine iz Mekke u Medinu.'},
+            {type:'dragDrop',question:'Dopuni hidžretsku godinu:',template:['Hidžretska godina ima','DROP','mjeseci i','DROP','dana'],words:['12','355','10','365'],correct:['12','355'],explanation:'Hidžretska godina: 12 mjeseci, 355 dana.'},
+            {type:'dragDrop',question:'Dopuni Mevlud:',template:['Muhammed a.s. rođen','DROP','rebiul-evvela','DROP','godine'],words:['12.','571.','10.','622.'],correct:['12.','571.'],explanation:'Muhammed a.s. rođen 12. rebiul-evvela 571. godine.'},
+            {type:'dragDrop',question:'Dopuni Rabbi jessir:',template:['Rabbi jessir ve la','DROP','Rabbi temmim','DROP'],words:['tu\'assir,','bil-hajr!','tu\'alim,','bil-ilm!'],correct:['tu\'assir,','bil-hajr!'],explanation:'Rabbi jessir: olakšaj a ne otežaj, dovrši sa dobrom!'},
+            {type:'dragDrop',question:'Dopuni Rabbi zidni ilma:',template:['Rabbi','DROP','\'ilma - Gospodaru,','DROP','moje proširi'],words:['zidni','znanje','jessir','dobro'],correct:['zidni','znanje'],explanation:'Rabbi zidni \'ilma: Gospodaru, znanje moje proširi!'},
+            {type:'dragDrop',question:'Dopuni Ramazanski bajram:',template:['Ramazanski bajram je','DROP','dan mjeseca','DROP'],words:['prvi','ševvala','deseti','ramazana'],correct:['prvi','ševvala'],explanation:'Ramazanski bajram: 1. ševvala.'},
+            {type:'dragDrop',question:'Dopuni Kurban-bajram:',template:['Kurban-bajram je','DROP','dan mjeseca','DROP'],words:['deseti','zul-hidžea','prvi','ševvala'],correct:['deseti','zul-hidžea'],explanation:'Kurban-bajram: 10. zul-hidžea.'},
+            {type:'dragDrop',question:'Dopuni broj mubarek-dana:',template:['Mubarek-dana ima','DROP','Prvi je','DROP'],words:['4.','Nova hidžretska godina','3.','Mevlud','5.','Ramazanski bajram'],correct:['4.','Nova hidžretska godina'],explanation:'Mubarek-dana ima 4, prvi je Nova hidžretska godina.'},
+            {type:'dragDrop',question:'Dopuni mjesece:',template:['Treći mjesec je','DROP','a deveti je','DROP'],words:['Rebiul-evvel','Ramazan','Safer','Ševval'],correct:['Rebiul-evvel','Ramazan'],explanation:'Treći mjesec: Rebiul-evvel, deveti: Ramazan.'},
+            {type:'dragDrop',question:'Dopuni dan hidžretskog kalendara:',template:['Prvi dan sedmice je','DROP','Dan počinje od','DROP','sunca'],words:['petak.','zalaska','subota.','izlaska'],correct:['petak.','zalaska'],explanation:'Prvi dan petak, dan počinje od zalaska sunca.'},
+            {type:'dragDrop',question:'Dopuni tekbirje:',template:['Allahu ekber, Allahu ekber, La ilahe','DROP','vallahu ekber, ve','DROP'],words:['illallahu','lillahil-hamd','elallahu','subhanallah'],correct:['illallahu','lillahil-hamd'],explanation:'Tekbirje: ...La ilahe illallahu vallahu ekber, ve lillahil-hamd.'},
+            {type:'dragDrop',question:'Dopuni Allahu rabbi:',template:['Allahu','DROP','ve Muhammeden','DROP'],words:['rabbi','nebijji','ilahi','resulullah'],correct:['rabbi','nebijji'],explanation:'Allahu rabbi ve Muhammeden nebijji...'}
+        ];
+
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const TOTAL_QUESTIONS = 20;
+        let currentAnswer = null;
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function startQuiz() {
+            currentQuestions = shuffleArray(allQuestions).slice(0, TOTAL_QUESTIONS);
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            document.getElementById('startScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.remove('active');
+            document.getElementById('quizScreen').classList.add('active');
+            
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            currentAnswer = null;
+            
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('questionCount').textContent = `${currentQuestionIndex + 1}/${TOTAL_QUESTIONS}`;
+            document.getElementById('progressBar').style.width = `${((currentQuestionIndex) / TOTAL_QUESTIONS) * 100}%`;
+            
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = '';
+            
+            if (question.type === 'checkbox') {
+                renderCheckbox(question, container);
+            } else if (question.type === 'reorder') {
+                renderReorder(question, container);
+            } else if (question.type === 'markWords') {
+                renderMarkWords(question, container);
+            } else if (question.type === 'dragDrop') {
+                renderDragDrop(question, container);
+            }
+        }
+
+        function renderCheckbox(q, container) {
+            const shuffled = shuffleArray([...q.options]);
+            shuffled.forEach(opt => {
+                const div = document.createElement('div');
+                div.className = 'option checkbox-option';
+                div.innerHTML = `<input type="checkbox" value="${opt}"><span>${opt}</span>`;
+                container.appendChild(div);
+            });
+            
+            const btn = document.createElement('button');
+            btn.className = 'answer-btn';
+            btn.textContent = 'PROVJERI ODGOVOR';
+            btn.onclick = checkCheckbox;
+            container.appendChild(btn);
+        }
+
+        function checkCheckbox() {
+            const q = currentQuestions[currentQuestionIndex];
+            const checkboxes = document.querySelectorAll('#questionContainer input[type="checkbox"]');
+            const selected = [];
+            checkboxes.forEach(cb => {
+                if (cb.checked) selected.push(cb.value);
+            });
+            
+            const isCorrect = q.correct.length === selected.length && 
+                             q.correct.every(c => selected.includes(c));
+            
+            if (isCorrect) score++;
+            showPopup(isCorrect, q.explanation);
+        }
+
+        function renderReorder(q, container) {
+            const ul = document.createElement('ul');
+            ul.className = 'reorder-list';
+            ul.id = 'reorderList';
+            
+            const shuffled = shuffleArray([...q.items]);
+            shuffled.forEach((item) => {
+                const li = document.createElement('li');
+                li.className = 'reorder-item';
+                li.dataset.correctOrder = item.order;
+                li.innerHTML = `
+                    <span>${item.text}</span>
+                    <div class="reorder-controls">
+                        <button class="reorder-btn" onclick="moveItemUp(this)">↑</button>
+                        <button class="reorder-btn" onclick="moveItemDown(this)">↓</button>
+                    </div>
+                `;
+                ul.appendChild(li);
+            });
+            container.appendChild(ul);
+            
+            const btn = document.createElement('button');
+            btn.className = 'answer-btn';
+            btn.textContent = 'PROVJERI REDOSLIJED';
+            btn.onclick = checkReorder;
+            container.appendChild(btn);
+        }
+
+        function moveItemUp(btn) {
+            const item = btn.closest('.reorder-item');
+            const prev = item.previousElementSibling;
+            if (prev) {
+                item.parentNode.insertBefore(item, prev);
+            }
+        }
+
+        function moveItemDown(btn) {
+            const item = btn.closest('.reorder-item');
+            const next = item.nextElementSibling;
+            if (next) {
+                item.parentNode.insertBefore(next, item);
+            }
+        }
+
+        function checkReorder() {
+            const q = currentQuestions[currentQuestionIndex];
+            const items = document.querySelectorAll('#reorderList .reorder-item');
+            let correct = 0;
+            
+            items.forEach((item, idx) => {
+                const correctOrder = parseInt(item.dataset.correctOrder);
+                if (correctOrder === idx + 1) correct++;
+            });
+            
+            const isCorrect = correct === items.length;
+            if (isCorrect) score++;
+            showPopup(isCorrect, q.explanation);
+        }
+
+        function renderMarkWords(q, container) {
+            const textDiv = document.createElement('div');
+            textDiv.className = 'text-container';
+            
+            q.words.forEach((word, idx) => {
+                const span = document.createElement('span');
+                span.className = 'word';
+                span.textContent = word;
+                span.dataset.index = idx;
+                span.onclick = function() {
+                    this.classList.toggle('marked');
+                };
+                textDiv.appendChild(span);
+                if (idx < q.words.length - 1) {
+                    textDiv.appendChild(document.createTextNode(' '));
+                }
+            });
+            container.appendChild(textDiv);
+            
+            const btn = document.createElement('button');
+            btn.className = 'answer-btn';
+            btn.textContent = 'PROVJERI OZNAČENE RIJEČI';
+            btn.onclick = checkMarkWords;
+            container.appendChild(btn);
+        }
+
+        function checkMarkWords() {
+            const q = currentQuestions[currentQuestionIndex];
+            const words = document.querySelectorAll('.word');
+            const marked = [];
+            
+            words.forEach(word => {
+                if (word.classList.contains('marked')) {
+                    marked.push(parseInt(word.dataset.index));
+                }
+            });
+            
+            const isCorrect = q.incorrect.length === marked.length && 
+                             q.incorrect.every(i => marked.includes(i));
+            
+            if (isCorrect) score++;
+            showPopup(isCorrect, q.explanation);
+        }
+
+        function renderDragDrop(q, container) {
+            const builder = document.createElement('div');
+            builder.className = 'sentence-builder';
+            builder.id = 'sentenceBuilder';
+            
+            let dropIndex = 0;
+            q.template.forEach(part => {
+                if (part === 'DROP') {
+                    const drop = document.createElement('div');
+                    drop.className = 'drop-zone';
+                    drop.dataset.index = dropIndex++;
+                    drop.onclick = function() {
+                        if (currentAnswer && !this.classList.contains('filled')) {
+                            this.textContent = currentAnswer.textContent;
+                            this.classList.add('filled');
+                            currentAnswer.classList.add('used');
+                            currentAnswer = null;
+                        } else if (this.classList.contains('filled')) {
+                            const text = this.textContent;
+                            this.textContent = '';
+                            this.classList.remove('filled');
+                            document.querySelectorAll('.draggable-word').forEach(w => {
+                                if (w.textContent === text) w.classList.remove('used');
+                            });
+                        }
+                    };
+                    builder.appendChild(drop);
+                } else {
+                    const text = document.createElement('span');
+                    text.textContent = part;
+                    builder.appendChild(text);
+                }
+            });
+            container.appendChild(builder);
+            
+            const bank = document.createElement('div');
+            bank.className = 'word-bank';
+            
+            shuffleArray([...q.words]).forEach(word => {
+                const div = document.createElement('div');
+                div.className = 'draggable-word';
+                div.textContent = word;
+                div.onclick = function() {
+                    if (!this.classList.contains('used')) {
+                        document.querySelectorAll('.draggable-word').forEach(w => w.style.transform = 'scale(1)');
+                        currentAnswer = this;
+                        this.style.transform = 'scale(1.1)';
+                    }
+                };
+                bank.appendChild(div);
+            });
+            container.appendChild(bank);
+            
+            const btn = document.createElement('button');
+            btn.className = 'answer-btn';
+            btn.textContent = 'PROVJERI REČENICU';
+            btn.onclick = checkDragDrop;
+            container.appendChild(btn);
+        }
+
+        function checkDragDrop() {
+            const q = currentQuestions[currentQuestionIndex];
+            const zones = document.querySelectorAll('#sentenceBuilder .drop-zone');
+            let correct = 0;
+            
+            zones.forEach((zone, idx) => {
+                const userAnswer = zone.textContent.trim();
+                if (userAnswer === q.correct[idx]) correct++;
+            });
+            
+            const isCorrect = correct === q.correct.length;
+            if (isCorrect) score++;
+            showPopup(isCorrect, q.explanation);
+        }
+
+        function showPopup(isCorrect, explanation) {
+            const popup = document.getElementById('popupOverlay');
+            const icon = document.getElementById('popupIcon');
+            const title = document.getElementById('popupTitle');
+            const explanationEl = document.getElementById('popupExplanation');
+            
+            if (isCorrect) {
+                icon.textContent = '✅';
+                title.textContent = 'Tačno!';
+                title.style.color = '#065f46';
+            } else {
+                icon.textContent = '❌';
+                title.textContent = 'Netačno!';
+                title.style.color = '#dc2626';
+            }
+            
+            explanationEl.textContent = explanation;
+            popup.classList.add('active');
+        }
+
+        function nextQuestion() {
+            document.getElementById('popupOverlay').classList.remove('active');
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex >= TOTAL_QUESTIONS) {
+                showResults();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function showResults() {
+            const percentage = Math.round((score / TOTAL_QUESTIONS) * 100);
+            let message, emoji;
+            
+            if (percentage >= 90) {
+                message = 'Izvanredno! Mashallah!';
+                emoji = '🌟';
+            } else if (percentage >= 70) {
+                message = 'Vrlo dobro!';
+                emoji = '✨';
+            } else if (percentage >= 50) {
+                message = 'Dobro! Nastavite učiti.';
+                emoji = '📚';
+            } else {
+                message = 'Potrebno je više učenja.';
+                emoji = '💪';
+            }
+            
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.add('active');
+            
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultScore').textContent = `${score}/${TOTAL_QUESTIONS}`;
+            document.getElementById('resultPercentage').textContent = `${percentage}% tačnih odgovora`;
+        }
+    </script>
+</body>
+</html>

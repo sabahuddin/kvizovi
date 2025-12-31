@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1b Hard - Namaz, Abdest, Ruknovi | MEKTEB</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Lora', serif;
+            background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #065f46 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        
+        .quiz-header { text-align: center; margin-bottom: 2rem; }
+        
+        .quiz-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle { font-size: 1.2rem; color: #d1fae5; }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #fbbf24;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        .back-link:hover { color: #f59e0b; transform: translateX(-5px); }
+        
+        .quiz-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .start-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.3rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); }
+        
+        .screen { display: none; }
+        .screen.active { display: block; }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-bar-container {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin: 0 1rem;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .options { display: flex; flex-direction: column; gap: 1rem; }
+        
+        .option {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-family: 'Lora', serif;
+        }
+        .option:hover:not(.disabled) { 
+            background: rgba(34, 197, 94, 0.4);
+            transform: translateX(10px);
+        }
+        .option.correct {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #10b981;
+        }
+        .option.incorrect {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-color: #ef4444;
+        }
+        .option.disabled { pointer-events: none; }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .checkbox-option input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .answer-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+            margin-top: 1.5rem;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        .answer-btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); 
+        }
+
+        .reorder-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .reorder-item {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        .reorder-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .reorder-btn {
+            background: #fbbf24;
+            color: #064e3b;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .reorder-btn:hover {
+            background: #f59e0b;
+            transform: scale(1.1);
+        }
+
+        .text-container {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            line-height: 2;
+            font-size: 1.1rem;
+        }
+        .word {
+            padding: 3px 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 2px;
+        }
+        .word:hover {
+            background: rgba(251, 191, 36, 0.3);
+        }
+        .word.marked {
+            background: #fbbf24;
+            color: #064e3b;
+            font-weight: 600;
+        }
+
+        .sentence-builder {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            min-height: 100px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+        .drop-zone {
+            background: rgba(255,255,255,0.1);
+            border: 2px dashed #fbbf24;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            min-width: 100px;
+            min-height: 45px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .drop-zone.filled {
+            border-style: solid;
+            background: rgba(251, 191, 36, 0.2);
+        }
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+        }
+        .draggable-word {
+            background: #fbbf24;
+            color: #064e3b;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .draggable-word:hover {
+            background: #f59e0b;
+            transform: scale(1.05);
+        }
+        .draggable-word.used {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .popup-overlay.active { display: flex; }
+
+        .popup-content {
+            background: #fbbf24;
+            color: #1a1a1a;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: popupIn 0.3s ease;
+        }
+
+        @keyframes popupIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .popup-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #065f46;
+        }
+
+        .popup-explanation {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .popup-btn {
+            background: linear-gradient(to right, #065f46, #0f766e);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+        }
+        .popup-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(6, 95, 70, 0.4); }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(110, 231, 183, 0.3);
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .result-emoji { font-size: 5rem; margin-bottom: 1rem; }
+        .result-message { font-size: 1.8rem; margin-bottom: 1rem; font-family: 'Playfair Display', serif; }
+        .result-score { font-size: 3rem; color: #fbbf24; font-weight: bold; margin-bottom: 0.5rem; }
+        .result-percentage { font-size: 1.2rem; color: #d1fae5; margin-bottom: 2rem; }
+        
+        .btn-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        
+        .retry-btn, .home-btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Lora', serif;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .retry-btn {
+            background: linear-gradient(to right, #10b981, #14b8a6);
+            color: white;
+            border: none;
+        }
+        .home-btn {
+            background: transparent;
+            color: #fbbf24;
+            border: 2px solid #fbbf24;
+        }
+        .retry-btn:hover, .home-btn:hover { transform: translateY(-3px); }
+    </style>
+</head>
+<body>
+    <div class="container screen active" id="startScreen">
+        <a href="index.html" class="back-link">← Početna</a>
+        <div class="quiz-header">
+            <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
+            <h1>KVIZ 1B - HARD</h1>
+            <p class="subtitle">Namaz, Abdest, Ruknovi - Ilmihal 1</p>
+        </div>
+        <div class="quiz-info">
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">📚 Teme: 12 Namaskih šartova, Abdest, Sabah i Akšam namaz, 6 Ruknova</p>
+            <p style="margin-bottom: 2rem;">20 pitanja od 52 iz baze • 4 različita tipa pitanja • Napredni nivo</p>
+            <button class="start-btn" onclick="startQuiz()">POKRENI KVIZ</button>
+        </div>
+    </div>
+
+    <div class="container screen" id="quizScreen">
+        <div class="quiz-header">
+            <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
+            <h1>KVIZ 1B - HARD</h1>
+            <p class="subtitle">Namaz, Abdest, Ruknovi</p>
+        </div>
+        <div class="progress-info">
+            <a href="index.html" class="back-link" style="margin:0;">← Početna</a>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <span id="questionCount">1/20</span>
+        </div>
+        <div class="question-card">
+            <div class="question-text" id="questionText"></div>
+            <div id="questionContainer"></div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup-content">
+            <div class="popup-icon" id="popupIcon">✅</div>
+            <div class="popup-title" id="popupTitle">Tačno!</div>
+            <div class="popup-explanation" id="popupExplanation"></div>
+            <button class="popup-btn" onclick="nextQuestion()">Sljedeće pitanje →</button>
+        </div>
+    </div>
+
+    <div class="container screen" id="resultScreen">
+        <div class="quiz-header">
+            <img src="mekteb_logo.png" alt="MEKTEB" class="quiz-icon">
+            <h1>REZULTAT</h1>
+        </div>
+        <div class="result-card">
+            <div class="result-emoji" id="resultEmoji">🌟</div>
+            <div class="result-message" id="resultMessage">Odličan rezultat!</div>
+            <div class="result-score" id="resultScore">16/20</div>
+            <div class="result-percentage" id="resultPercentage">80% tačnih odgovora</div>
+            <div class="btn-group">
+                <button class="retry-btn" onclick="startQuiz()">Pokušaj ponovo</button>
+                <a href="index.html" class="home-btn">Početna stranica</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            // CHECKBOX (13)
+            {type:'checkbox',question:'Koji su abdeski šarti (farzi)?',options:['Umiti lice','Oprati ruke do lakata','Namazati glavu (mesh)','Oprati noge do članaka','Proučiti dovu'],correct:['Umiti lice','Oprati ruke do lakata','Namazati glavu (mesh)','Oprati noge do članaka'],explanation:'Abdeskih šartova (farzi) ima 4: umiti lice, oprati ruke do lakata, namazati glavu (mesh), oprati noge do članaka.'},
+            {type:'checkbox',question:'Šta kvari abdest?',options:['Spavanje','Oticanje krvi','Povraćanje','Glasno smijanje u namazu','Pričanje'],correct:['Spavanje','Oticanje krvi','Povraćanje','Glasno smijanje u namazu'],explanation:'Abdest kvare: spavanje, oticanje krvi, povraćanje, prirodna nužda i glasno smijanje u namazu.'},
+            {type:'checkbox',question:'Koji su namaski ruknovi?',options:['Iftitahi-tekbir','Kijam','Kiraet','Ruku\'','Sedžda','Kadei-ehire','Abdest'],correct:['Iftitahi-tekbir','Kijam','Kiraet','Ruku\'','Sedžda','Kadei-ehire'],explanation:'Šest namaskih ruknova su: Iftitahi-tekbir, Kijam, Kiraet, Ruku\', Sedžda i Kadei-ehire.'},
+            {type:'checkbox',question:'Kada se ne može klanjati namaz?',options:['Kada sunce izlazi','Kada je sunce u zenitu','Kada sunce zalazi','Poslije podne','Ujutro'],correct:['Kada sunce izlazi','Kada je sunce u zenitu','Kada sunce zalazi'],explanation:'Namaz se ne može klanjati u 3 vremena: kada sunce izlazi, kada je u zenitu i kada zalazi.'},
+            {type:'checkbox',question:'Koliko rekata ima Sabah-namaz?',options:['2 sunnet','2 farz','4 sunnet','3 farz'],correct:['2 sunnet','2 farz'],explanation:'Sabah-namaz ima ukupno 4 rekata: 2 sunnet + 2 farz.'},
+            {type:'checkbox',question:'Koliko rekata ima Akšam-namaz?',options:['3 farz','2 sunnet','4 farz','2 farz'],correct:['3 farz','2 sunnet'],explanation:'Akšam-namaz ima ukupno 5 rekata: 3 farz + 2 sunnet.'},
+            {type:'checkbox',question:'Šta učimo na prvom stajanju u namazu?',options:['Subhaneke','Euzubillu','Fatiha','Sura','Salavati'],correct:['Subhaneke','Euzubillu','Fatiha','Sura'],explanation:'Na prvom stajanju učimo: Subhaneke, Euzubillu, Bismillu, Fatiha i jedna sura.'},
+            {type:'checkbox',question:'Koji su namaski šarti?',options:['Nijet','Biti čist','Biti prema Kibli','Klanjati na vrijeme','Biti gladan','Propisna odjeća'],correct:['Nijet','Biti čist','Biti prema Kibli','Klanjati na vrijeme','Propisna odjeća'],explanation:'Neki od 12 namaskih šartova su: nijet, čistoća, kibla, vrijeme, propisna odjeća...'},
+            {type:'checkbox',question:'Koliko ima gusulskih šartova?',options:['2','3','4','5'],correct:['3'],explanation:'Gusulski šarti su 3: gargara (isprati usta), istinšak (isprati nos), umiti cijelo tijelo.'},
+            {type:'checkbox',question:'Šta radimo na sedždi?',options:['Spuštamo čelo','Spuštamo nos','Spuštamo koljena','Stojimo uspravno','Učimo Subhane Rabbijel-E\'ala'],correct:['Spuštamo čelo','Spuštamo nos','Spuštamo koljena','Učimo Subhane Rabbijel-E\'ala'],explanation:'Na sedždi spuštamo čelo, nos i koljena na tlo, i učimo "Subhane Rabbijel-E\'ala" 3 puta.'},
+            {type:'checkbox',question:'Kada podižemo ruke?',options:['Pri iftitahi-tekbiru','Pri ruku\'u','Kod sjedenja','Poslije sedžde'],correct:['Pri iftitahi-tekbiru'],explanation:'Ruke podižemo pri iftitahi-tekbiru (početnom tekbiru).'},
+            {type:'checkbox',question:'Koji su sunneti gusula?',options:['Proučiti Bismillu','Oprati vidljive nečistoće','Saprati tijelo tri puta','Početi sa glavom','Jesti prije gusula'],correct:['Proučiti Bismillu','Oprati vidljive nečistoće','Saprati tijelo tri puta','Početi sa glavom'],explanation:'Sunneti gusula su: proučiti Bismillu, oprati nečistoće, saprati tijelo 3x, početi sa glavom.'},
+            {type:'checkbox',question:'Šta učimo na kadei-ehire?',options:['Et-Tehijatu','Salavate','Dove','Fatihu','Subhaneke'],correct:['Et-Tehijatu','Salavate','Dove'],explanation:'Na kadei-ehire (zadnjem sjedenju) učimo: Et-Tehijatu, Salavate i Dove.'},
+
+            // REORDER (13)
+            {type:'reorder',question:'Poredaj abdeste šarte:',items:[{text:'Umiti lice',order:1},{text:'Oprati ruke do lakata',order:2},{text:'Namazati glavu (mesh)',order:3},{text:'Oprati noge do članaka',order:4}],explanation:'4 abdeska šarta po redu.'},
+            {type:'reorder',question:'Poredaj 6 namaskih ruknova:',items:[{text:'Iftitahi-tekbir',order:1},{text:'Kijam',order:2},{text:'Kiraet',order:3},{text:'Ruku\'',order:4},{text:'Sedžda',order:5},{text:'Kadei-ehire',order:6}],explanation:'Šest namaskih ruknova po redu.'},
+            {type:'reorder',question:'Poredaj Sabah-namaz:',items:[{text:'2 sunnet rekata',order:1},{text:'2 farz rekata',order:2}],explanation:'Sabah-namaz: prvo 2 sunnet, pa 2 farz.'},
+            {type:'reorder',question:'Poredaj Akšam-namaz:',items:[{text:'3 farz rekata',order:1},{text:'2 sunnet rekata',order:2}],explanation:'Akšam-namaz: prvo 3 farz, pa 2 sunnet.'},
+            {type:'reorder',question:'Poredaj 5 dnevnih namaza:',items:[{text:'Sabah',order:1},{text:'Podne',order:2},{text:'Ikindija',order:3},{text:'Akšam',order:4},{text:'Jacija',order:5}],explanation:'Pet dnevnih namaza po redu.'},
+            {type:'reorder',question:'Poredaj prvo stajanje u namazu:',items:[{text:'Subhaneke',order:1},{text:'Euzubillu',order:2},{text:'Bismillu',order:3},{text:'Fatiha',order:4},{text:'Sura',order:5}],explanation:'Prvo stajanje: Subhaneke, Euzubillu, Bismillu, Fatiha, Sura.'},
+            {type:'reorder',question:'Poredaj gusulske šarte:',items:[{text:'Gargara (isprati usta)',order:1},{text:'Istinšak (ispirati nos)',order:2},{text:'Umiti cijelo tijelo',order:3}],explanation:'Tri gusulska šarta po redu.'},
+            {type:'reorder',question:'Poredaj kad spuštamo dijelove tijela na sedždu:',items:[{text:'Koljena',order:1},{text:'Dlanovi',order:2},{text:'Čelo i nos',order:3}],explanation:'Na sedždu: prvo koljena, pa dlanove, pa čelo i nos.'},
+            {type:'reorder',question:'Poredaj prvo učenje na sedždi:',items:[{text:'Subhane',order:1},{text:'Rabbijel-E\'ala',order:2},{text:'(3 puta)',order:3}],explanation:'Na sedždi učimo: Subhane Rabbijel-E\'ala (3 puta).'},
+            {type:'reorder',question:'Poredaj prvo učenje na ruku\'u:',items:[{text:'Subhane',order:1},{text:'Rabbijel-\'Ažim',order:2},{text:'(3 puta)',order:3}],explanation:'Na ruku\'u učimo: Subhane Rabbijel-\'Ažim (3 puta).'},
+            {type:'reorder',question:'Poredaj drugo stajanje:',items:[{text:'Bismillu',order:1},{text:'Fatiha',order:2},{text:'Sura',order:3}],explanation:'Drugo stajanje: Bismillu, Fatiha, Sura.'},
+            {type:'reorder',question:'Poredaj kadei-ehire:',items:[{text:'Et-Tehijatu',order:1},{text:'Salavati',order:2},{text:'Dove',order:3}],explanation:'Na kadei-ehire (zadnje sjedenje): Et-Tehijatu, Salavati, Dove.'},
+            {type:'reorder',question:'Poredaj dijelove jednog rekata:',items:[{text:'Kijam + Kiraet',order:1},{text:'Ruku\'',order:2},{text:'Sedžda',order:3},{text:'Sedžda (druga)',order:4}],explanation:'Jedan rekat: Kijam+Kiraet, Ruku\', Sedžda, Sedžda.'},
+
+            // MARK WORDS (13)
+            {type:'markWords',question:'Pronađi greške:',text:'Abdeskih šartova ima 5. Prvi je umiti lice, drugi je oprati noge.',words:['Abdeskih','šartova','ima','5.','Prvi','je','umiti','lice,','drugi','je','oprati','noge.'],incorrect:[3,8,9,10,11],explanation:'Abdeskih šartova ima 4 (ne 5), drugi je oprati RUKE do lakata (ne noge).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Sabah-namaz ima 3 sunnet rekata i 2 farz rekata.',words:['Sabah-namaz','ima','3','sunnet','rekata','i','2','farz','rekata.'],incorrect:[2],explanation:'Sabah-namaz ima 2 sunnet rekata (ne 3), i 2 farz.'},
+            {type:'markWords',question:'Pronađi greške:',text:'Akšam-namaz ima 3 farz i 3 sunnet rekata.',words:['Akšam-namaz','ima','3','farz','i','3','sunnet','rekata.'],incorrect:[5],explanation:'Akšam-namaz ima 3 farz i 2 sunnet rekata (ne 3 sunnet).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Namaskih ruknova ima 5: Kijam, Kiraet, Ruku\', Sedžda, Kadei-ehire.',words:['Namaskih','ruknova','ima','5:','Kijam,','Kiraet,','Ruku\',','Sedžda,','Kadei-ehire.'],incorrect:[3,4],explanation:'Namaskih ruknova ima 6 (ne 5), prvi je Iftitahi-tekbir.'},
+            {type:'markWords',question:'Pronađi greške:',text:'Gusulskih šartova ima 4. Prvi je gargara, drugi abdest.',words:['Gusulskih','šartova','ima','4.','Prvi','je','gargara,','drugi','abdest.'],incorrect:[3,8],explanation:'Gusulskih šartova ima 3 (ne 4), drugi je istinšak (ne abdest).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Na prvom stajanju učimo: Fatihu, Suru, Euzubillu, Bismillu.',words:['Na','prvom','stajanju','učimo:','Fatihu,','Suru,','Euzubillu,','Bismillu.'],incorrect:[4,5,6,7],explanation:'Redoslijed je: Subhaneke, Euzubillu, Bismillu, Fatiha, Sura.'},
+            {type:'markWords',question:'Pronađi greške:',text:'Na sedždi učimo: Subhane Rabbijel-\'Ažim tri puta.',words:['Na','sedždi','učimo:','Subhane','Rabbijel-\'Ažim','tri','puta.'],incorrect:[4],explanation:'Na sedždi učimo Subhane Rabbijel-E\'ALA (ne \'Ažim).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Na ruku\'u učimo: Subhane Rabbijel-E\'ala pet puta.',words:['Na','ruku\'u','učimo:','Subhane','Rabbijel-E\'ala','pet','puta.'],incorrect:[4,5],explanation:'Na ruku\'u učimo Subhane Rabbijel-\'AŽIM (ne E\'ala) TRI puta (ne pet).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Namaz se ne može klanjati u 5 vremena: izlazak sunca, podne, zenit, zalazak, noć.',words:['Namaz','se','ne','može','klanjati','u','5','vremena:','izlazak','sunca,','podne,','zenit,','zalazak,','noć.'],incorrect:[6,10,14],explanation:'Namaz se ne može klanjati u 3 vremena (ne 5): izlazak, zenit, zalazak. Podne i noć su dozvoljeni.'},
+            {type:'markWords',question:'Pronađi greške:',text:'Iftitahi-tekbir je zadnji namaski rukn.',words:['Iftitahi-tekbir','je','zadnji','namaski','rukn.'],incorrect:[2],explanation:'Iftitahi-tekbir je PRVI namaski rukn (ne zadnji).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Kadei-ehire je prvo sjedenje u namazu.',words:['Kadei-ehire','je','prvo','sjedenje','u','namazu.'],incorrect:[2],explanation:'Kadei-ehire je POSLJEDNJE sjedenje (ne prvo).'},
+            {type:'markWords',question:'Pronađi greške:',text:'Dnevnih namaza ima četiri: Sabah, Podne, Ikindija, Akšam.',words:['Dnevnih','namaza','ima','četiri:','Sabah,','Podne,','Ikindija,','Akšam.'],incorrect:[3],explanation:'Dnevnih namaza ima PET (ne četiri): Sabah, Podne, Ikindija, Akšam, Jacija.'},
+            {type:'markWords',question:'Pronađi greške:',text:'Abdest se uzima pet puta dnevno prije svakog namaza.',words:['Abdest','se','uzima','pet','puta','dnevno','prije','svakog','namaza.'],incorrect:[3,4,5],explanation:'Abdest NE MORA uzimati pet puta - može se klanjati više namaza sa jednim abdestom ako nije pokvaren.'},
+
+            // DRAG DROP (13)
+            {type:'dragDrop',question:'Dopuni abdeste šarte:',template:['Abdeskih šartova ima','DROP','Prvi je umiti','DROP','drugi oprati','DROP'],words:['4.','lice,','ruke,','5.','nos,','noge,'],correct:['4.','lice,','ruke,'],explanation:'Abdeskih šartova ima 4: umiti lice, oprati ruke...'},
+            {type:'dragDrop',question:'Dopuni Sabah-namaz:',template:['Sabah-namaz ima','DROP','sunnet i','DROP','farz rekata'],words:['2','3','4','1'],correct:['2','2'],explanation:'Sabah-namaz: 2 sunnet + 2 farz.'},
+            {type:'dragDrop',question:'Dopuni Akšam-namaz:',template:['Akšam-namaz ima','DROP','farz i','DROP','sunnet rekata'],words:['3','2','4','5'],correct:['3','2'],explanation:'Akšam-namaz: 3 farz + 2 sunnet.'},
+            {type:'dragDrop',question:'Dopuni broj ruknova:',template:['Namaskih ruknova ima','DROP','Prvi je','DROP'],words:['6.','Iftitahi-tekbir','5.','Kijam','7.','Ruku\''],correct:['6.','Iftitahi-tekbir'],explanation:'Namaskih ruknova ima 6, prvi je Iftitahi-tekbir.'},
+            {type:'dragDrop',question:'Dopuni sedždu:',template:['Na sedždi učimo','DROP','Rabbijel-','DROP'],words:['Subhane','E\'ala','Allahu','\'Ažim'],correct:['Subhane','E\'ala'],explanation:'Na sedždi: Subhane Rabbijel-E\'ala.'},
+            {type:'dragDrop',question:'Dopuni ruku\':',template:['Na ruku\'u učimo','DROP','Rabbijel-','DROP'],words:['Subhane','\'Ažim','Allahu','E\'ala'],correct:['Subhane','\'Ažim'],explanation:'Na ruku\'u: Subhane Rabbijel-\'Ažim.'},
+            {type:'dragDrop',question:'Dopuni broj namaza:',template:['Dnevnih namaza ima','DROP','Prvi je','DROP'],words:['5.','Sabah','4.','Podne','6.','Akšam'],correct:['5.','Sabah'],explanation:'Dnevnih namaza ima 5, prvi je Sabah.'},
+            {type:'dragDrop',question:'Dopuni gusul:',template:['Gusulskih šartova ima','DROP','Prvi je','DROP'],words:['3.','gargara','4.','istinšak','2.','mesh'],correct:['3.','gargara'],explanation:'Gusulskih šartova ima 3, prvi je gargara.'},
+            {type:'dragDrop',question:'Dopuni prvo stajanje:',template:['Na prvom stajanju prvo učimo','DROP','pa','DROP'],words:['Subhaneke','Euzubillu','Fatihu','Bismillu'],correct:['Subhaneke','Euzubillu'],explanation:'Prvo stajanje: Subhaneke, Euzubillu, Bismillu, Fatiha, Sura.'},
+            {type:'dragDrop',question:'Dopuni kadei-ehire:',template:['Na kadei-ehire učimo','DROP','pa','DROP','pa dove'],words:['Et-Tehijatu,','Salavate,','Fatihu,','Subhaneke,'],correct:['Et-Tehijatu,','Salavate,'],explanation:'Kadei-ehire: Et-Tehijatu, Salavati, Dove.'},
+            {type:'dragDrop',question:'Dopuni kada se ne može klanjati:',template:['Namaz se ne može klanjati u','DROP','vremena:','DROP','sunca, zenit, zalazak'],words:['3','izlazak','4','podne','5','noć'],correct:['3','izlazak'],explanation:'U 3 vremena: izlazak sunca, zenit, zalazak.'},
+            {type:'dragDrop',question:'Dopuni koji rukn:',template:['Iftitahi-tekbir je','DROP','namaski rukn, a Kadei-ehire je','DROP'],words:['prvi','zadnji','drugi','peti','treći','četvrti'],correct:['prvi','zadnji'],explanation:'Iftitahi-tekbir je prvi, Kadei-ehire je zadnji rukn.'},
+            {type:'dragDrop',question:'Dopuni rekat:',template:['Jedan rekat čine:','DROP','+','DROP','+ Ruku\' + Sedžda + Sedžda'],words:['Kijam','Kiraet','Tekbir','Selam'],correct:['Kijam','Kiraet'],explanation:'Jedan rekat: Kijam + Kiraet + Ruku\' + 2x Sedžda.'}
+        ];
+
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const TOTAL_QUESTIONS = 20;
+        let currentAnswer = null;
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function startQuiz() {
+            currentQuestions = shuffleArray(allQuestions).slice(0, TOTAL_QUESTIONS);
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            document.getElementById('startScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.remove('active');
+            document.getElementById('quizScreen').classList.add('active');
+            
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            currentAnswer = null;
+            
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('questionCount').textContent = `${currentQuestionIndex + 1}/${TOTAL_QUESTIONS}`;
+            document.getElementById('progressBar').style.width = `${((currentQuestionIndex) / TOTAL_QUESTIONS) * 100}%`;
+            
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = '';
+            
+            if (question.type === 'checkbox') {
+                renderCheckbox(question, container);
+            } else if (question.type === 'reorder') {
+                renderReorder(question, container);
+            } else if (question.type === 'markWords') {
+                renderMarkWords(question, container);
+            } else if (question.type === 'dragDrop') {
+                renderDragDrop(question, container);
+            }
+        }
+
+        function renderCheckbox(q, container) {
+            const shuffled = shuffleArray([...q.options]);
+            shuffled.forEach(opt => {
+                const div = document.createElement('div');
+                div.className = 'option checkbox-option';
+                div.innerHTML = `<input type="checkbox" value="${opt}"><span>${opt}</span>`;
+                container.appendChild(div);
+            });
+            
+            const btn = document.createElement('button');
+            btn.className = 'answer-btn';
+            btn.textContent = 'PROVJERI ODGOVOR';
+            btn.onclick = checkCheckbox;
+            container.appendChild(btn);
+        }
+
+        function checkCheckbox() {
+            const q = currentQuestions[currentQuestionIndex];
+            const checkboxes = document.querySelectorAll('#questionContainer input[type="checkbox"]');
+            const selected = [];
+            checkboxes.forEach(cb => {
+                if (cb.checked) selected.push(cb.value);
+            });
+            
+            const isCorrect = q.correct.length === selected.length && 
+                             q.correct.every(c => selected.includes(c));
+            
+            if (isCorrect) score++;
+            showPopup(isCorrect, q.explanation);
+        }
+
+        function renderReorder(q, container) {
+            const ul = document.createElement('ul');
+            ul.className = 'reorder-list';
+            ul.id = 'reorderList';
+            
+            const shuffled = shuffleArray([...q.items]);
+            shuffled.forEach((item) => {
+                const li = document.createElement('li');
+                li.className = 'reorder-item';
+                li.dataset.correctOrder = item.order;
+                li.innerHTML = `
+                    <span>${item.text}</span>
+                    <div class="reorder-controls">
+                        <button class="reorder-btn" onclick="moveItemUp(this)">↑</button>
+                        <button class="reorder-btn" onclick="moveItemDown(this)">↓</button>
+                    </div>
+                `;
+                ul.appendChild(li);
+            });
+            container.appendChild(ul);
+            
+            const btn = document.createElement('button');
+            btn.className = 'answer-btn';
+            btn.textContent = 'PROVJERI REDOSLIJED';
+            btn.onclick = checkReorder;
+            container.appendChild(btn);
+        }
+
+        function moveItemUp(btn) {
+            const item = btn.closest('.reorder-item');
+            const prev = item.previousElementSibling;
+            if (prev) {
+                item.parentNode.insertBefore(item, prev);
+            }
+        }
+
+        function moveItemDown(btn) {
+            const item = btn.closest('.reorder-item');
+            const next = item.nextElementSibling;
+            if (next) {
+                item.parentNode.insertBefore(next, item);
+            }
+        }
+
+        function checkReorder() {
+            const q = currentQuestions[currentQuestionIndex];
+            const items = document.querySelectorAll('#reorderList .reorder-item');
+            let correct = 0;
+            
+            items.forEach((item, idx) => {
+                const correctOrder = parseInt(item.dataset.correctOrder);
+                if (correctOrder === idx + 1) correct++;
+            });
+            
+            const isCorrect = correct === items.length;
+            if (isCorrect) score++;
+            showPopup(isCorrect, q.explanation);
+        }
+
+        function renderMarkWords(q, container) {
+            const textDiv = document.createElement('div');
+            textDiv.className = 'text-container';
+            
+            q.words.forEach((word, idx) => {
+                const span = document.createElement('span');
+                span.className = 'word';
+                span.textContent = word;
+                span.dataset.index = idx;
+                span.onclick = function() {
+                    this.classList.toggle('marked');
+                };
+                textDiv.appendChild(span);
+                if (idx < q.words.length - 1) {
+                    textDiv.appendChild(document.createTextNode(' '));
+                }
+            });
+            container.appendChild(textDiv);
+            
+            const btn = document.createElement('button');
+            btn.className = 'answer-btn';
+            btn.textContent = 'PROVJERI OZNAČENE RIJEČI';
+            btn.onclick = checkMarkWords;
+            container.appendChild(btn);
+        }
+
+        function checkMarkWords() {
+            const q = currentQuestions[currentQuestionIndex];
+            const words = document.querySelectorAll('.word');
+            const marked = [];
+            
+            words.forEach(word => {
+                if (word.classList.contains('marked')) {
+                    marked.push(parseInt(word.dataset.index));
+                }
+            });
+            
+            const isCorrect = q.incorrect.length === marked.length && 
+                             q.incorrect.every(i => marked.includes(i));
+            
+            if (isCorrect) score++;
+            showPopup(isCorrect, q.explanation);
+        }
+
+        function renderDragDrop(q, container) {
+            const builder = document.createElement('div');
+            builder.className = 'sentence-builder';
+            builder.id = 'sentenceBuilder';
+            
+            let dropIndex = 0;
+            q.template.forEach(part => {
+                if (part === 'DROP') {
+                    const drop = document.createElement('div');
+                    drop.className = 'drop-zone';
+                    drop.dataset.index = dropIndex++;
+                    drop.onclick = function() {
+                        if (currentAnswer && !this.classList.contains('filled')) {
+                            this.textContent = currentAnswer.textContent;
+                            this.classList.add('filled');
+                            currentAnswer.classList.add('used');
+                            currentAnswer = null;
+                        } else if (this.classList.contains('filled')) {
+                            const text = this.textContent;
+                            this.textContent = '';
+                            this.classList.remove('filled');
+                            document.querySelectorAll('.draggable-word').forEach(w => {
+                                if (w.textContent === text) w.classList.remove('used');
+                            });
+                        }
+                    };
+                    builder.appendChild(drop);
+                } else {
+                    const text = document.createElement('span');
+                    text.textContent = part;
+                    builder.appendChild(text);
+                }
+            });
+            container.appendChild(builder);
+            
+            const bank = document.createElement('div');
+            bank.className = 'word-bank';
+            
+            shuffleArray([...q.words]).forEach(word => {
+                const div = document.createElement('div');
+                div.className = 'draggable-word';
+                div.textContent = word;
+                div.onclick = function() {
+                    if (!this.classList.contains('used')) {
+                        document.querySelectorAll('.draggable-word').forEach(w => w.style.transform = 'scale(1)');
+                        currentAnswer = this;
+                        this.style.transform = 'scale(1.1)';
+                    }
+                };
+                bank.appendChild(div);
+            });
+            container.appendChild(bank);
+            
+            const btn = document.createElement('button');
+            btn.className = 'answer-btn';
+            btn.textContent = 'PROVJERI REČENICU';
+            btn.onclick = checkDragDrop;
+            container.appendChild(btn);
+        }
+
+        function checkDragDrop() {
+            const q = currentQuestions[currentQuestionIndex];
+            const zones = document.querySelectorAll('#sentenceBuilder .drop-zone');
+            let correct = 0;
+            
+            zones.forEach((zone, idx) => {
+                const userAnswer = zone.textContent.trim();
+                if (userAnswer === q.correct[idx]) correct++;
+            });
+            
+            const isCorrect = correct === q.correct.length;
+            if (isCorrect) score++;
+            showPopup(isCorrect, q.explanation);
+        }
+
+        function showPopup(isCorrect, explanation) {
+            const popup = document.getElementById('popupOverlay');
+            const icon = document.getElementById('popupIcon');
+            const title = document.getElementById('popupTitle');
+            const explanationEl = document.getElementById('popupExplanation');
+            
+            if (isCorrect) {
+                icon.textContent = '✅';
+                title.textContent = 'Tačno!';
+                title.style.color = '#065f46';
+            } else {
+                icon.textContent = '❌';
+                title.textContent = 'Netačno!';
+                title.style.color = '#dc2626';
+            }
+            
+            explanationEl.textContent = explanation;
+            popup.classList.add('active');
+        }
+
+        function nextQuestion() {
+            document.getElementById('popupOverlay').classList.remove('active');
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex >= TOTAL_QUESTIONS) {
+                showResults();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function showResults() {
+            const percentage = Math.round((score / TOTAL_QUESTIONS) * 100);
+            let message, emoji;
+            
+            if (percentage >= 90) {
+                message = 'Izvanredno! Mashallah!';
+                emoji = '🌟';
+            } else if (percentage >= 70) {
+                message = 'Vrlo dobro!';
+                emoji = '✨';
+            } else if (percentage >= 50) {
+                message = 'Dobro! Nastavite učiti.';
+                emoji = '📚';
+            } else {
+                message = 'Potrebno je više učenja.';
+                emoji = '💪';
+            }
+            
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.add('active');
+            
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultScore').textContent = `${score}/${TOTAL_QUESTIONS}`;
+            document.getElementById('resultPercentage').textContent = `${percentage}% tačnih odgovora`;
+        }
+    </script>
+</body>
+</html>
